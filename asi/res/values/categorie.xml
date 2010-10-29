@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="catT">
+		<item>>TOUT LE SITE</item>
+		<item>toutlesite</item>
+		<item>http://www.arretsurimages.net/tous-les-contenus.rss</item>
+		<item>no</item>
+		<item>#ACB7C6</item>
+	</string-array>
+	<string-array name="catE">
+		<item>>EMISSIONS</item>
+		<item>"@rrêt sur images, Ligne j@une, D@ns le texte"</item>
+		<item>http://www.arretsurimages.net/emissions.rss</item>
+		<item>subcatE</item>
+		<item>#3A36FF</item>
+	</string-array>
+	<string-array name="catC">
+		<item>>CHRONIQUES</item>
+		<item>"Le making of, Chez les matinautes, Chez Judith Bernard, Chez
+			Alain Korkos, Chez Sherlock Com, Chez Daniel Schneidermann, Chez
+			Anne-Sophie Jacques, Chez les mômes"</item>
+		<item>http://www.arretsurimages.net/chroniques.rss</item>
+		<item>subcatC</item>
+		<item>#FF398E</item>
+	</string-array>
+	<string-array name="catD">
+		<item>>ARTICLES DE LA REDACTION</item>
+		<item>articles</item>
+		<item>http://www.arretsurimages.net/dossiers.rss</item>
+		<item>no</item>
+		<item>#3399FF</item>
+	</string-array>
+	<string-array name="catG">
+		<item>">GRATUIT AUJOURD'HUI"</item>
+		<item>gratuit</item>
+		<item>http://www.arretsurimages.net/gratuit.rss</item>
+		<item>no</item>
+		<item>#FEC763</item>
+	</string-array>
+	<string-array name="catV">
+		<item>>VITE DIT</item>
+		<item>vite</item>
+		<item>http://www.arretsurimages.net/vite-dit.rss</item>
+		<item>no</item>
+		<item>#FEC763</item>
+	</string-array>
+		<string-array name="catF">
+		<item>>FORUM</item>
+		<item>forum</item>
+		<item>http://www.arretsurimages.net/forum/feed.php?0,type=rss</item>
+		<item>no</item>
+		<item>#B4DC45</item>
+	</string-array>
+	<string-array name="subcatE">
+		<item>"Toutes les émissions"</item>
+		<item>http://www.arretsurimages.net/emissions.rss</item>
+		<item></item>
+		<item>"@rrêt sur images"</item>
+		<item>http://www.arretsurimages.net/emissions-asi.rss</item>
+		<item>pola_asi</item>
+		<item>"Ligne j@une"</item>
+		<item>http://www.arretsurimages.net/emissions-lj.rss</item>
+		<item>pola_lj</item>
+		<item>"D@ns le texte;"</item>
+		<item>http://www.arretsurimages.net/emissions-dlt.rss</item>
+		<item>pola_dt</item>
+	</string-array>
+	<string-array name="subcatC">
+		<item>"Toutes les chroniques"</item>
+		<item>http://www.arretsurimages.net/chroniques.rss</item>
+		<item>kro</item>
+		<item>Chez Daniel</item>
+		<item>http://www.arretsurimages.net/chroniqueur.2.rss</item>
+		<item>kro_daniel</item>
+		<item>Chez Judith</item>
+		<item>http://www.arretsurimages.net/chroniqueur.5.rss</item>
+		<item>kro_judith</item>
+		<item>Chez Alain</item>
+		<item>http://www.arretsurimages.net/chroniqueur.8.rss</item>
+		<item>kro_korkos</item>
+		<item>Chez les matinautes</item>
+		<item>http://www.arretsurimages.net/chroniqueur.12.rss</item>
+		<item>kro_neuf_quinze</item>
+		<item>Chez Anne-Sophie</item>
+		<item>http://www.arretsurimages.net/chroniqueur.14.rss</item>
+		<item>kro_anso</item>
+		<item>"Chez Sherlock Com'"</item>
+		<item>http://www.arretsurimages.net/chroniqueur.17.rss</item>
+		<item>kro_sherlock</item>
+		<item>Chez Rafik</item>
+		<item>http://www.arretsurimages.net/chroniqueur.20.rss</item>
+		<item>kro_rafik</item>
+		<item>Chez Didier</item>
+		<item>http://www.arretsurimages.net/chroniqueur.21.rss</item>
+		<item>kro_didier</item>
+		<item>Chez les Sarkosis</item>
+		<item>http://www.arretsurimages.net/chroniqueur.23.rss</item>
+		<item>kro_sarkozi</item>
+		<item>Chez nous</item>
+		<item>http://www.arretsurimages.net/chroniqueur.1.rss</item>
+		<item>kro</item>
+	</string-array>
+</resources>
+
+

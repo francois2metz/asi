@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="hello">Hello World, main!</string>
+	<string name="app_name">arretsurimages.net</string>
+	<color name="color_text">#47637f</color>
+	<color name="color_fond">#ACB7C6</color>
+	<color name="color_white">#FFFFFF</color>
+	<style name="shadow">
+		<item name="android:shadowColor">#000000</item>
+		<item name="android:shadowRadius">1.5</item>
+		<item name="android:shadowDx">1</item>
+		<item name="android:shadowDy">1</item>
+	</style>
+	<string name="apropos">"Bienvenue sur l’application officielle du site arretsurimages.net
+
+L’appli permet de visionner les derniers contenus produits par le site : émissions, chroniques, articles de la rédaction et vite-dits.
+
+Pour consulter l’ensemble des contenus, il faut être abonné au site. Les non-abonnés ont accès à la partie gratuite du site (vite-dits, articles de la rédaction de plus de quinze jours et contenus sélections par la rédaction ou votés gratuits par les @sinautes).
+
+L’application a été gracieusement développée par Benoît Valot.
+
+Pour toute question, merci de vous reporter à l’espace Android du site arretsurimages.net ou de nous écrire à android@arretsurimages.net
+
+v1.3.1 : Login automatique, crash fix après un long moment d'inutilisation, installation sur la SDcard, amélioration des messages d’erreurs"</string>
+</resources>
+
+
