@@ -82,11 +82,12 @@ public class page_load {
 					ligneCodeHTML = ligneCodeHTML.replaceFirst(
 							"<a href=\".*typo-vite-titre\">",
 							"<h2 class=\"typo-titre\">");
-					if (ligneCodeHTML.contains("recherche.php"))
-						ligneCodeHTML = ligneCodeHTML.replaceFirst("</a>",
-								"</span>");
-					ligneCodeHTML = ligneCodeHTML.replaceFirst(
-							"<a href=\"/recherche.php.*?\">", "<span>");
+					//lien sur les auteurs
+//					if (ligneCodeHTML.contains("recherche.php"))
+//						ligneCodeHTML = ligneCodeHTML.replaceFirst("</a>",
+//								"</span>");
+//					ligneCodeHTML = ligneCodeHTML.replaceFirst(
+//							"<a href=\"/recherche.php.*?\">", "<span>");
 					sb.append(ligneCodeHTML);
 					sb.append("\n");
 				}

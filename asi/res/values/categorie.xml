@@ -44,10 +44,17 @@
 		<item>no</item>
 		<item>#FEC763</item>
 	</string-array>
-		<string-array name="catF">
+	<string-array name="catF">
 		<item>>FORUM</item>
 		<item>forum</item>
 		<item>http://www.arretsurimages.net/forum/feed.php?0,type=rss</item>
+		<item>no</item>
+		<item>#B4DC45</item>
+	</string-array>
+	<string-array name="catR">
+		<item>>RECHERCHE</item>
+		<item>recherche</item>
+		<item>recherche</item>
 		<item>no</item>
 		<item>#B4DC45</item>
 	</string-array>

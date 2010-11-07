@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 public class page extends asi_activity {
 	/** Called when the activity is first created. */
@@ -127,18 +126,30 @@ public class page extends asi_activity {
 						startActivity(i);
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/dossier.*")) {
-						Log.d("ASI", "Dossier non lancé");
-						Toast.makeText(
-								page.this,
-								"Les liens vers les dossiers ne sont pas pris en charge!",
-								Toast.LENGTH_LONG).show();
+						Log.d("ASI", "Dossier lancé");
+						Intent i = new Intent(getApplicationContext(), liste_articles_recherche.class);
+						i.putExtra("titre", "DOSSIER");
+						i.putExtra("color", "#3399FF");
+						i.putExtra("image", "articles");
+						i.putExtra("url", url);
+						page.this.startActivity(i);
+//						Toast.makeText(
+//								page.this,
+//								"Les liens vers les dossiers ne sont pas pris en charge!",
+//								Toast.LENGTH_LONG).show();
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/recherche.*")) {
-						Log.d("ASI", "recherche non lancé");
-						Toast.makeText(
-								page.this,
-								"Les liens vers la page de recherche ne sont pas pris en charge!",
-								Toast.LENGTH_LONG).show();
+						Log.d("ASI", "recherche lancé");
+						Intent i = new Intent(getApplicationContext(), liste_articles_recherche.class);
+						i.putExtra("titre", "RECHERCHE");
+						i.putExtra("color", "#B4DC45");
+						i.putExtra("image", "recherche");
+						i.putExtra("url", url);
+						page.this.startActivity(i);
+//						Toast.makeText(
+//								page.this,
+//								"Les liens vers la page de recherche ne sont pas pris en charge!",
+//								Toast.LENGTH_LONG).show();
 					} else {
 						Log.d("ASI", "Chargement arret sur image");
 						Intent i = new Intent(getApplicationContext(),

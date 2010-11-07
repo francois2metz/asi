@@ -81,7 +81,20 @@ public class article {
 		else if(title.contains("mission"))
 			this.color="#3A36FF";
 		else if(title.contains("Article"))
-			this.color="#3399FF";	
+			this.color="#3399FF";
+	}
+	
+	public void setDescription_on_recherche(String html) {
+		html = html.replaceAll("\n", "");
+		html = html.replaceAll("\\s+", " ");
+
+		int fin = html.length();
+		if (fin > 100)
+			fin = 100;
+		html = html.substring(0, fin);
+		html = html.replaceFirst(" \\w+$", "");
+		html = html + " ...";
+		this.description = html;
 	}
 
 	public String getUri() {
@@ -111,6 +124,17 @@ public class article {
 		if(this.color==null)
 			return("#ACB7C6");
 		return color;
+	}
+
+	public void set_color_from_recherche(String rec) {
+		if(rec.contains("vite"))
+			this.color="#FEC763";
+		else if(rec.contains("chro"))
+			this.color="#FF398E";
+		else if(rec.contains("emi"))
+			this.color="#3A36FF";
+		else if(rec.contains("doss"))
+			this.color="#3399FF";
 	}
 
 }

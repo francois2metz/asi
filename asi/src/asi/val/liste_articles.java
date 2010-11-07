@@ -37,22 +37,22 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class liste_articles extends asi_activity {
-	private ListView maListViewPerso;
+	protected ListView maListViewPerso;
 
-	private Vector<article> articles;
+	protected Vector<article> articles;
 
-	private String color;
+	protected String color;
 
-	private int image;
+	protected int image;
 
-	private Parcelable state;
+	protected Parcelable state;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		// Récupération de la listview créée dans le fichier main.xml
 		maListViewPerso = (ListView) findViewById(R.id.listviewperso);
-
+		
 		TextView text = (TextView) findViewById(R.id.list_text);
 		text.setText(this.getIntent().getExtras().getString("titre")
 				.replaceFirst(">", ""));
@@ -66,8 +66,15 @@ public class liste_articles extends asi_activity {
 		ImageView v = (ImageView) findViewById(R.id.cat_image);
 		if (image != 0) {
 			v.setImageResource(image);
-		}else
+		} else
 			v.setImageResource(R.drawable.toutlesite);
+
+		this.set_content_page();
+
+	}
+
+	protected void set_content_page() {
+		// TODO Auto-generated method stub
 		// recuperation de l'url des flux rss
 		String url = this.getIntent().getExtras().getString("url");
 		new get_rss_url().execute(url);
@@ -81,8 +88,8 @@ public class liste_articles extends asi_activity {
 		if (articles != null) {
 			this.load_data();
 		}
-		if (state != null)
-			maListViewPerso.onRestoreInstanceState(state);
+		//if (state != null)
+			//maListViewPerso.onRestoreInstanceState(state);
 	}
 
 	public void onSaveInstanceState(final Bundle b) {
@@ -91,9 +98,7 @@ public class liste_articles extends asi_activity {
 		super.onSaveInstanceState(b);
 	}
 
-	public void load_data() {
-
-		// Création de la ArrayList qui nous permettra de remplire la listView
+	public ArrayList<HashMap<String, String>> get_listitem() {
 		ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
 
 		// chargement des articles
@@ -113,6 +118,13 @@ public class liste_articles extends asi_activity {
 				map.put("griser", "enabled-false");
 			listItem.add(map);
 		}
+		return listItem;
+	}
+
+	public void load_data() {
+
+		// Création de la ArrayList qui nous permettra de remplire la listView
+		ArrayList<HashMap<String, String>> listItem = this.get_listitem();
 
 		// Création d'un SimpleAdapter qui se chargera de mettre les items
 		// présent dans notre list (listItem) dans la vue affichageitem
@@ -124,6 +136,9 @@ public class liste_articles extends asi_activity {
 
 		// on ajoute le binder
 		mSchedule.setViewBinder(new bind_color());
+		
+		//on sauve
+		state = maListViewPerso.onSaveInstanceState();
 
 		// On attribut à notre listView l'adapter que l'on vient de créer
 		maListViewPerso.setAdapter(mSchedule);
@@ -137,8 +152,11 @@ public class liste_articles extends asi_activity {
 				// (titre, description, img)
 				HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 						.getItemAtPosition(position);
-
-				liste_articles.this.load_page(map.get("url"), map.get("titre"));
+				if (map.get("url").contains("recherche.php"))
+					liste_articles.this.do_on_recherche_item(map.get("url"));
+				else
+					liste_articles.this.load_page(map.get("url"),
+							map.get("titre"));
 			}
 		});
 		maListViewPerso
@@ -150,13 +168,17 @@ public class liste_articles extends asi_activity {
 						// TODO Auto-generated method stub
 						HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 								.getItemAtPosition(position);
-						liste_articles.this.choice_action_item(map.get("url"),
-								map.get("titre"));
+						if (map.get("url").contains("recherche.php"))
+							liste_articles.this.do_on_recherche_item(map.get("url"));
+						else
+							liste_articles.this.choice_action_item(
+									map.get("url"), map.get("titre"));
 
 						return false;
 					}
 
 				});
+		maListViewPerso.onRestoreInstanceState(state);
 	}
 
 	private void choice_action_item(final String url, final String titre) {
@@ -179,22 +201,27 @@ public class liste_articles extends asi_activity {
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
+	
+	protected void do_on_recherche_item(String url){
+		//a faire uniquement dans les recherches
+	}
 
 	private void partage(String url, String titre) {
 		// TODO Auto-generated method stub
 		try {
 			Intent emailIntent = new Intent(Intent.ACTION_SEND);
 			emailIntent.putExtra(Intent.EXTRA_TEXT,
-					"Un article interessant sur le site arretsurimage.net:\n"+titre+"\n"+url);
+					"Un article interessant sur le site arretsurimage.net:\n"
+							+ titre + "\n" + url);
 			emailIntent.setType("text/plain");
-			//emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			// emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(Intent.createChooser(emailIntent,
 					"Partager cet article"));
 		} catch (Exception e) {
 			new erreur_dialog(this, "Chargement de la page", e).show();
 		}
 	}
-	
+
 	private void marquer_comme_lu(String url) {
 		try {
 			main.group.add_articles_lues(url);

@@ -65,10 +65,10 @@ public class main_view extends asi_activity {
 		int[] liste = null;
 		if (!gratuit) {
 			liste = new int[] { R.array.catT, R.array.catE, R.array.catD,
-					R.array.catC, R.array.catV};
+					R.array.catC, R.array.catV, R.array.catR};
 		} else {
 			liste = new int[] { R.array.catT, R.array.catE, R.array.catD,
-					R.array.catC, R.array.catG};
+					R.array.catC, R.array.catG, R.array.catR};
 		}
 
 		Resources res = getResources();
@@ -103,7 +103,10 @@ public class main_view extends asi_activity {
 				// (titre, description, img)
 				HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 						.getItemAtPosition(position);
-				if (map.get("subcat").equalsIgnoreCase("no"))
+				if(map.get("url").equalsIgnoreCase("recherche"))
+					main_view.this.do_recherche(map.get("titre"),
+							map.get("color"),map.get("image"));
+				else if (map.get("subcat").equalsIgnoreCase("no"))
 					main_view.this.load_page(map.get("url"), map.get("titre"),
 							map.get("color"),map.get("image"));
 				else
@@ -111,6 +114,12 @@ public class main_view extends asi_activity {
 							.get("titre"),map.get("color"));
 			}
 		});
+	}
+
+	protected void do_recherche(String titre, String color, String image) {
+		new recherche_dialog(this, titre,color,image)
+		.show();
+		
 	}
 
 	private void load_page(String url, String titre, String color, String image) {

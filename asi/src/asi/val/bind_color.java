@@ -24,8 +24,7 @@ public class bind_color implements ViewBinder {
 	public boolean setViewValue(View arg0, Object arg1, String arg2) {
 		// TODO Auto-generated method stub
 		
-		if (arg2.contains("#")) {
-			//Log.d("ASI","bind_color_color"+" "+arg2);
+		if (arg2.matches("#\\w+")) {
 			arg0.setBackgroundColor(Color.parseColor(arg2));
 			return (true);
 		} else if (arg2.contains("enabled-")) {

@@ -43,6 +43,12 @@ public class css_style {
 		data.append("a:hover, a:active, ul#onglets-emissions li a, ul#onglets-agenda li a { outline:0;}"+"\n");
 		data.append("a:focus {outline:1;}"+"\n");
 		
+		//link
+		data.append("a { text-decoration:none; color:#6c829e; font-weight:bold; font-size:10px;} "+"\n");
+		data.append("a:hover { text-decoration:none; color:#000;}"+"\n");
+		data.append("a.chevron:hover,a.chevrons:hover { text-decoration:none;background-color:transparent}"+"\n");
+		data.append("a.chevron:hover span,a.chevrons:hover span { text-decoration:underline}"+"\n");
+		
 		 data.append(".bloc-bande-contenu  {background:transparent url(\"/images/blocs/fonds/cont-html-doss-1-bg.png\") left bottom repeat-y;width:737px;border-bottom:1px solid #BEC6D1;border-left:1px solid #BEC6D1;border-right:1px solid #BEC6D1;position:relative;}"+"\n");
 		 data.append(".bloc-bande-contenu-chro  {background:transparent url(\"/images/blocs/fonds/cont-html-chro-1-bg.png\") left bottom repeat-y !important;}	"+"\n");
 		 data.append(".bloc-bande-contenu-emi  {background:transparent url(\"/images/blocs/fonds/cont-html-emi-1-bg.png\") left bottom repeat-y !important;}"+"\n");
