@@ -17,11 +17,15 @@ L’appli permet de visionner les derniers contenus produits par le site : émis
 
 Pour consulter l’ensemble des contenus, il faut être abonné au site. Les non-abonnés ont accès à la partie gratuite du site (vite-dits, articles de la rédaction de plus de quinze jours et contenus sélections par la rédaction ou votés gratuits par les @sinautes).
 
-L’application a été gracieusement développée par Benoît Valot.
+L’application a été gracieusement développée par Benoît Valot et publiée sous licence GPL.
 
-Pour toute question, merci de vous reporter à l’espace Android du site arretsurimages.net ou de nous écrire à android@arretsurimages.net
+Pour toute question, merci de vous reporter à l’espace Android du site arretsurimages.net ou de nous écrire à android@arretsurimages.net"</string>
 
-v1.3.1 : Login automatique, crash fix après un long moment d'inutilisation, installation sur la SDcard, amélioration des messages d’erreurs"</string>
+<string name="news">"v1.3.2 : Ajout d'une fonction de recherche.
+
+Gestion des liens 'Dossiers' et 'Recherche' dans les articles.
+
+L'application est passée sous licence GPL."</string>
 </resources>
 
 

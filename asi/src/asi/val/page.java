@@ -142,7 +142,7 @@ public class page extends asi_activity {
 						Log.d("ASI", "recherche lancé");
 						Intent i = new Intent(getApplicationContext(), liste_articles_recherche.class);
 						i.putExtra("titre", "RECHERCHE");
-						i.putExtra("color", "#B4DC45");
+						i.putExtra("color", "#ACB7C6");
 						i.putExtra("image", "recherche");
 						i.putExtra("url", url);
 						page.this.startActivity(i);

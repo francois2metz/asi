@@ -63,7 +63,7 @@ public class main extends asi_activity {
 	private Vector<download_video> downloading;
 
 	private Vector<String> articles_lues;
-	
+
 	private boolean autologin;
 
 	// private NotificationManager mNotificationManager;
@@ -71,7 +71,7 @@ public class main extends asi_activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
-		Log.d("ASI","Main create");
+		Log.d("ASI", "Main create");
 		// Récupération de la listview créée dans le fichier main.xml
 		txt_username = (EditText) findViewById(R.id.txt_username);
 
@@ -91,19 +91,48 @@ public class main extends asi_activity {
 		// fichiers
 		downloading = new Vector<download_video>();
 		this.set_articles_lues();
-		this.autologin=true;
-		
-		//on lance l'autologin
-		Cookies = settings.getString("cookies", "");	
+
+		// autologin activé
+		this.autologin = true;
+
+		// on recupere l'ancien cookie
+		Cookies = settings.getString("cookies", "");
+
+		// on teste la version de l'application, si mise à jour, alors ajout
+		// d'un message sur les nouveautés
+		int old_version = settings.getInt("old_version", 29);
+		if (old_version < 30) {
+			this.show_news_dialog();
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putInt("old_version", 30);
+			editor.commit();
+			this.autologin=false;
+		}
 	}
-	
-	public void onStart(){
+
+	private void show_news_dialog() {
+		// TODO Auto-generated method stub
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Nouveautés");
+		builder.setMessage(R.string.news);
+		builder.setCancelable(false);
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		builder.create().show();
+	}
+
+	public void onStart() {
 		super.onStart();
-		if(!Cookies.equals("")&&this.autologin){
+
+		// demarage de l'autologin
+		if (!Cookies.equals("") && this.autologin) {
 			this.load_page(false);
-			Toast.makeText(this, txt_username.getText()+" connecté.",
+			Toast.makeText(this, txt_username.getText() + " connecté.",
 					Toast.LENGTH_SHORT).show();
-		}	
+		}
 	}
 
 	private void connect_to_abonne() {
@@ -139,13 +168,14 @@ public class main extends asi_activity {
 		editor.putString("user", txt_username.getText().toString());
 		editor.putString("pass", txt_password.getText().toString());
 		editor.putString("cookies", Cookies);
-		this.autologin=true;
+		this.autologin = true;
 		// Commit the edits!
 		editor.commit();
 	}
 
 	private class get_cookies_value extends AsyncTask<String, Void, String> {
-		private final progress_dialog dialog = new progress_dialog(main.this,this);
+		private final progress_dialog dialog = new progress_dialog(main.this,
+				this);
 
 		private BufferedReader in;
 		private OutputStreamWriter out;
@@ -333,12 +363,12 @@ public class main extends asi_activity {
 
 	private void test_length_article_lu() {
 		try {
-			if (this.articles_lues.size() > 1000) {
+			if (this.articles_lues.size() > 2000) {
 				Vector<String> temp = new Vector<String>();
 				Log.d("ASI", "diminue la longeur de la sauvegarde");
 				FileOutputStream fos = openFileOutput(FILENAME,
 						Context.MODE_PRIVATE);
-				for (int i = 500; i < this.articles_lues.size(); i++) {
+				for (int i = 1000; i < this.articles_lues.size(); i++) {
 					String url_article = this.articles_lues.elementAt(i) + "\n";
 					temp.add(this.articles_lues.elementAt(i));
 					fos.write(url_article.getBytes());
@@ -461,6 +491,6 @@ public class main extends asi_activity {
 
 	public void is_autologin(boolean b) {
 		// TODO Auto-generated method stub
-		this.autologin=b;
+		this.autologin = b;
 	}
 }
