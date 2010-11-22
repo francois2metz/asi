@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 public class page extends asi_activity {
 	/** Called when the activity is first created. */
@@ -107,23 +108,19 @@ public class page extends asi_activity {
 						intent.setAction(android.content.Intent.ACTION_VIEW);
 						intent.setDataAndType(Uri.parse(url), "audio/*");
 						startActivity(intent);
-					} else if (url.matches(".*arretsurimages\\.net\\/media.*")) {
-						Intent i = new Intent(Intent.ACTION_VIEW);
-						Uri u = Uri.parse(url);
-						i.setData(u);
-						startActivity(i);
+					} else if (url.matches(".*arretsurimages\\.net\\/contenu.*")) {
+						Log.d("ASI", "Chargement arret sur image");
+						Intent i = new Intent(getApplicationContext(),
+								page.class);
+						i.putExtra("url", url);
+						page.this.startActivity(i);
 					} else if (url
-							.matches(".*arretsurimages\\.net\\/abonnements.*")) {
-						Intent i = new Intent(Intent.ACTION_VIEW);
-						Uri u = Uri.parse(url);
-						i.setData(u);
-						startActivity(i);
-					} else if (url
-							.matches(".*arretsurimages\\.net\\/forum.*")) {
-						Intent i = new Intent(Intent.ACTION_VIEW);
-						Uri u = Uri.parse(url);
-						i.setData(u);
-						startActivity(i);
+							.matches(".*arretsurimages\\.net\\/vite.*")) {
+						Log.d("ASI", "Chargement arret sur image");
+						Intent i = new Intent(getApplicationContext(),
+								page.class);
+						i.putExtra("url", url);
+						page.this.startActivity(i);
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/dossier.*")) {
 						Log.d("ASI", "Dossier lancé");
@@ -146,16 +143,38 @@ public class page extends asi_activity {
 						i.putExtra("image", "recherche");
 						i.putExtra("url", url);
 						page.this.startActivity(i);
-//						Toast.makeText(
-//								page.this,
-//								"Les liens vers la page de recherche ne sont pas pris en charge!",
-//								Toast.LENGTH_LONG).show();
-					} else {
-						Log.d("ASI", "Chargement arret sur image");
-						Intent i = new Intent(getApplicationContext(),
-								page.class);
+
+					} else if (url
+							.matches(".*arretsurimages\\.net\\/chroniqueur.*")) {
+						Log.d("ASI", "Chronique lancé");
+						Intent i = new Intent(getApplicationContext(), liste_articles_recherche.class);
+						i.putExtra("titre", "CHRONIQUES");
+						i.putExtra("color", "#FF398E");
+						i.putExtra("image", "kro");
 						i.putExtra("url", url);
 						page.this.startActivity(i);
+
+					} else if (url
+							.matches(".*arretsurimages\\.net\\/media.*")) {
+						Intent i = new Intent(Intent.ACTION_VIEW);
+						Uri u = Uri.parse(url);
+						i.setData(u);
+						startActivity(i);
+					} else if (url
+							.matches(".*arretsurimages\\.net\\/emission.*")) {
+						Toast.makeText(
+								page.this,
+								"Ce lien n'est pas visible sur l'application Android",
+								Toast.LENGTH_LONG).show();
+					}else {
+						Toast.makeText(
+						page.this,
+						"Ce lien n'est pas visible sur l'application Android : Ouverture du navigateur",
+						Toast.LENGTH_LONG).show();
+						Intent i = new Intent(Intent.ACTION_VIEW);
+						Uri u = Uri.parse(url);
+						i.setData(u);
+						startActivity(i);
 					}
 					return true;
 				} else if (url

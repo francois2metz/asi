@@ -45,6 +45,7 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 	private boolean cancel;
 
 	protected void onPreExecute() {
+		vid=null;
 		in = null;
 		out = null;
 		totalsize = -1;
@@ -167,7 +168,8 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 		if (!path.exists())
 			path.mkdir();
 		String correctpath = vid.getTitle();
-		correctpath = correctpath.replaceAll("\\W", "");
+		correctpath = correctpath.replaceAll("\\W", "_");
+		correctpath = correctpath.replaceAll("_+$", "");
 		File temp = new File(path.getAbsolutePath() + "/" + "ASI-"
 				+ correctpath + "-" + vid.getNumber() + ".mp4");
 		// + "ASI-"+vid.getTitle()+"-"+vid.getNumber()+".mp4");

@@ -42,9 +42,8 @@ public class SD_video_view extends reload_activity {
 
 	private Vector<File> video_sd;
 
-	private final File path = new File(Environment
-			.getExternalStorageDirectory()
-			+ "/ASI");
+	private final File path = new File(
+			Environment.getExternalStorageDirectory() + "/ASI");
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,41 +55,43 @@ public class SD_video_view extends reload_activity {
 		// Ajout de l'image
 		ImageView v = (ImageView) findViewById(R.id.cat_image);
 		v.setImageResource(R.drawable.video);
-		
+
 		text.setText("Vidéos téléchargées");
 		video_sd = new Vector<File>();
-		
-		this.load_data();
+
+		//this.load_data();
 	}
 
 	protected void load_data() {
-		try {
-			Thread.sleep(100);
-		} catch (Exception e) {
-
-		}
-		//on vide la liste de vidéo
+		// try {
+		// Thread.sleep(100);
+		// } catch (Exception e) {
+		//
+		// }
+		// on vide la liste de vidéo
 		video_sd.clear();
-		
-		try{
-		// on vérifie que l'on peux enregistrer
-		String state = Environment.getExternalStorageState();
-		if (!Environment.MEDIA_MOUNTED.equals(state))
-			throw new StopException(
-					"La carte SD n'est pas montée");
-		
-		// recuperation de la liste de vidéo du dossier
-		if (path.exists()) {
-			File[] liste = path.listFiles();
-			for (int i = 0; i < liste.length; i++) {
-				if (liste[i].getName().endsWith(".mp4"))
-					video_sd.add(liste[i]);
+
+		try {
+			// on vérifie que l'on peux enregistrer
+			String state = Environment.getExternalStorageState();
+			if (!Environment.MEDIA_MOUNTED.equals(state))
+				throw new StopException("La carte SD n'est pas montée");
+
+			// recuperation de la liste de vidéo du dossier
+			if (path.exists()) {
+				File[] liste = path.listFiles();
+				for (int i = 0; i < liste.length; i++) {
+					if (liste[i].getName().endsWith(".mp4"))
+						video_sd.add(liste[i]);
+				}
 			}
-		}
-		}catch(StopException e){
-			new erreur_dialog(this, "Lecture de la carte SD", e.toString()).show();
-		}catch(Exception e){
-			new erreur_dialog(this, "Lecture de la carte SD", e).show();			
+		} catch (StopException e) {
+			new erreur_dialog(this, "Lecture de la carte SD", e.toString())
+					.show();
+			this.update.stop_update();
+		} catch (Exception e) {
+			new erreur_dialog(this, "Lecture de la carte SD", e).show();
+			this.update.stop_update();
 		}
 
 		// Création de la ArrayList qui nous permettra de remplire la listView
@@ -100,17 +101,25 @@ public class SD_video_view extends reload_activity {
 		for (int i = 0; i < video_sd.size(); i++) {
 			dvid = video_sd.elementAt(i);
 			map = new HashMap<String, String>();
-			map.put("titre", dvid.getName());
-			int leng = (int) (dvid.length()/1000);
+			map.put("titre", dvid.getName().replaceAll("_", " "));
+			int leng = (int) (dvid.length() / 1000);
 			map.put("description", leng + " ko");
 			map.put("int", "" + i);
 			listItem.add(map);
 
 		}
+		// Si aucune vidéo sur la carte sd, on ajoute un message
+		if (video_sd.size() == 0) {
+			map = new HashMap<String, String>();
+			map.put("titre", "Aucune vidéo téléchargée sur la carte SD");
+			map.put("description", "");
+			map.put("int", "null");
+			listItem.add(map);
+		}
 
-		//on sauve l'état de la liste
+		// on sauve l'état de la liste
 		Parcelable state = maListViewPerso.onSaveInstanceState();
-		
+
 		// Création d'un SimpleAdapter qui se chargera de mettre les items
 		// présent dans notre list (listItem) dans la vue affichageitem
 		SimpleAdapter mSchedule = new SimpleAdapter(this.getBaseContext(),
@@ -130,19 +139,19 @@ public class SD_video_view extends reload_activity {
 				// (titre, description, img)
 				HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 						.getItemAtPosition(position);
-
-				SD_video_view.this.traitement_video(map.get("int"));
+				if (!map.get("int").equals("null"))
+					SD_video_view.this.traitement_video(map.get("int"));
 			}
 		});
-		
-		//on restore la position
+
+		// on restore la position
 		maListViewPerso.onRestoreInstanceState(state);
 	}
 
 	private void do_on_video(final File vid) throws Exception {
 		final CharSequence[] items = { "Visualiser", "Supprimer" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(vid.getName());
+		builder.setTitle(vid.getName().replaceAll("_", ""));
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visualiser")) {
@@ -154,9 +163,10 @@ public class SD_video_view extends reload_activity {
 				} else if (items[item].equals("Supprimer")) {
 					if (vid.exists())
 						vid.delete();
-					Toast.makeText(SD_video_view.this, "Fichier supprimé", Toast.LENGTH_SHORT).show();
+					Toast.makeText(SD_video_view.this, "Fichier supprimé",
+							Toast.LENGTH_SHORT).show();
 				}
-				//SD_video_view.this.load_data();
+				// SD_video_view.this.load_data();
 			}
 		});
 		AlertDialog alert = builder.create();

@@ -15,12 +15,11 @@
 
 package asi.val;
 
-import android.app.Activity;
 import android.util.Log;
 
-public class reload_activity extends Activity {
+public class reload_activity extends asi_activity {
 	
-	private auto_updated update;
+	protected auto_updated update;
 	
 //	public boolean onCreateOptionsMenu(Menu menu) {
 //		MenuInflater inflater = getMenuInflater();
@@ -78,8 +77,8 @@ public class reload_activity extends Activity {
 			Log.d("ASI", "update_start");
 			while (!stop) {
 				try {
-					Thread.sleep(1500);
 					runOnUiThread(run);
+					Thread.sleep(1500);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					Log.e("ASI", "Error_thread" + e.toString());

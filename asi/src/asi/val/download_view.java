@@ -54,15 +54,15 @@ public class download_view extends reload_activity {
 		// recuperation de la liste de telechargement
 		this.video_download = main.group.get_download_video();
 
-		this.load_data();
+		//this.load_data();
 	}
 
 	protected void load_data() {
-		try {
-			Thread.sleep(100);
-		} catch (Exception e) {
-
-		}
+		// try {
+		// Thread.sleep(100);
+		// } catch (Exception e) {
+		//
+		// }
 		// Création de la ArrayList qui nous permettra de remplire la listView
 		ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> map;
@@ -77,7 +77,7 @@ public class download_view extends reload_activity {
 		// }
 
 		for (int i = 0; i < video_download.size(); i++) {
-			//les vidéos finis de télécharger sont cachées
+			// les vidéos finis de télécharger sont cachées
 			boolean visible = true;
 			dvid = video_download.elementAt(i);
 			map = new HashMap<String, String>();
@@ -91,21 +91,38 @@ public class download_view extends reload_activity {
 			else {
 				if (dvid.get_error() == null) {
 					if (dvid.is_video_complete())
-						visible=false;
-						//map.put("description", "Téléchargement terminé - "
-						//		+ dvid.get_pourcentage_download());
+						visible = false;
+					// map.put("description", "Téléchargement terminé - "
+					// + dvid.get_pourcentage_download());
 					else
 						map.put("description", "Téléchargement interrompu - "
 								+ dvid.get_pourcentage_download());
 				} else
-					map.put("description",
-							"ERREUR lors du téléchargement");// - " + dvid.get_error());
+					map.put("description", "ERREUR lors du téléchargement");// -
+																			// "
+																			// +
+																			// dvid.get_error());
 
 			}
 			map.put("int", "" + i);
 
 			if (visible)
 				listItem.add(map);
+		}
+
+		// Si tout les téléchargements sont terminés ou aucun de lancé
+		if (listItem.size() == 0) {
+			map = new HashMap<String, String>();
+			if (video_download.size() == 0){
+				map.put("titre", "Aucun téléchargement en cours");
+				map.put("description", "");
+			}
+			else{
+				map.put("titre", "Tout les téléchargements sont terminés");
+				map.put("description", "Accédé aux vidéos via le menu <Vidéos téléchargées>");
+			}
+			map.put("int", "null");
+			listItem.add(map);
 		}
 
 		// on sauve l'état de la liste
@@ -130,8 +147,8 @@ public class download_view extends reload_activity {
 				// (titre, description, img)
 				HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 						.getItemAtPosition(position);
-
-				download_view.this.traitement_video(map.get("int"));
+				if (!map.get("int").equals("null"))
+					download_view.this.traitement_video(map.get("int"));
 			}
 		});
 
@@ -140,7 +157,7 @@ public class download_view extends reload_activity {
 	}
 
 	private void do_on_video_error(final download_video vid) throws Exception {
-		final CharSequence[] items = { "Relancer", "Effacer","Erreur" };
+		final CharSequence[] items = { "Relancer", "Effacer", "Erreur" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(vid.get_titre());
 		builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -148,10 +165,11 @@ public class download_view extends reload_activity {
 				if (items[item].equals("Relancer")) {
 					main.group.get_download_video().remove(vid);
 					main.group.downloadvideo(vid.get_download_video());
-				} else if (items[item].equals("Effacer")){
+				} else if (items[item].equals("Effacer")) {
 					main.group.get_download_video().remove(vid);
-				}else{
-					new erreur_dialog(download_view.this, vid.get_titre(), vid.get_error()).show();
+				} else {
+					new erreur_dialog(download_view.this, vid.get_titre(), vid
+							.get_error()).show();
 				}
 				// download_view.this.load_data();
 			}

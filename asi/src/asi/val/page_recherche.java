@@ -116,7 +116,7 @@ public class page_recherche {
 			//Log.d("ASI",ligneCodeHTML);
 				
 			//on récupere les informations de chaque artcile;
-				if (ligneCodeHTML.contains("bloc-contenu-5")){//bloc-rech
+				if (ligneCodeHTML.contains("bloc-contenu-5")||ligneCodeHTML.contains("bloc-contenu-6")){//bloc-rech
 					start = true;
 					article = new article();
 					article.set_color_from_recherche(ligneCodeHTML);

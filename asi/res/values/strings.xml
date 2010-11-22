@@ -21,11 +21,12 @@ L’application a été gracieusement développée par Benoît Valot et publiée
 
 Pour toute question, merci de vous reporter à l’espace Android du site arretsurimages.net ou de nous écrire à android@arretsurimages.net"</string>
 
-<string name="news">"v1.3.2 : Ajout d'une fonction de recherche.
+<string name="news">"v1.3.3 : Correction de bugs
 
-Gestion des liens 'Dossiers' et 'Recherche' dans les articles.
+Amélioration des icônes menu et application
 
-L'application est passée sous licence GPL."</string>
+Gestion des liens 'chroniques' dans les articles et amélioration de la gestion des liens interne.
+"</string>
 </resources>
 
 
