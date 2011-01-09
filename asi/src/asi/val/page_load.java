@@ -35,7 +35,8 @@ public class page_load {
 		setContent("");
 		u.replaceAll(" ", "");
 		url = new URL(u);
-		cookies = main.group.getCookies();
+		//cookies = main.group.getCookies();
+		cookies = shared_datas.shared.getCookies();
 	}
 
 	private String getPage() throws Exception {

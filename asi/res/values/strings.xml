@@ -2,6 +2,7 @@
 <resources>
 	<string name="hello">Hello World, main!</string>
 	<string name="app_name">arretsurimages.net</string>
+	<string name="widget_name">arretsurimages.net</string>
 	<color name="color_text">#47637f</color>
 	<color name="color_fond">#ACB7C6</color>
 	<color name="color_white">#FFFFFF</color>
@@ -21,11 +22,13 @@ L’application a été gracieusement développée par Benoît Valot et publiée
 
 Pour toute question, merci de vous reporter à l’espace Android du site arretsurimages.net ou de nous écrire à android@arretsurimages.net"</string>
 
-<string name="news">"v1.3.3 : Correction de bugs
+<string name="news">"v1.4.0 : Correction de bugs.
 
-Amélioration des icônes menu et application
+Ajout d'un widget donnant accès aux derniers articles du site et des liens direct vers les vidéos/téléchargements.
 
-Gestion des liens 'chroniques' dans les articles et amélioration de la gestion des liens interne.
+Ajout d'un menu 'Paramètres' pour gérer l'autologin.
+
+Ajout d'un menu 'Marquer comme lu' dans la liste d'articles pour tous les marquer d'un coup.
 "</string>
 </resources>
 

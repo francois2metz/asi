@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="conf_autologin">
+		<item>autologin</item>
+		<item>Auto-login</item>
+		<item>"Se connecter automatiquement au démarrage de l'application"</item>
+	</string-array>
+</resources>

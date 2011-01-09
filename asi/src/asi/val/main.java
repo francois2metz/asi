@@ -16,8 +16,6 @@
 package asi.val;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -25,10 +23,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,7 +35,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -48,24 +43,18 @@ import android.widget.Toast;
 
 public class main extends asi_activity {
 
-	private String Cookies;
+	//private String Cookies;
 
-	public static main group;
+	//public static main group;
 
 	public static final String PREFERENCE = "asi_pref";
-
-	private static final String FILENAME = "article_lus";
 
 	private EditText txt_username;
 
 	private EditText txt_password;
 
-	private Vector<download_video> downloading;
-
-	private Vector<String> articles_lues;
-
 	private boolean autologin;
-
+	
 	// private NotificationManager mNotificationManager;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -85,26 +74,21 @@ public class main extends asi_activity {
 		this.button_load();
 
 		// On lie l'activity
-		main.group = this;
-
-		// on initialise le vector de telechargement et on lis les anciens
-		// fichiers
-		downloading = new Vector<download_video>();
-		this.set_articles_lues();
+		//main.group = this;
 
 		// autologin activé
-		this.autologin = true;
+		this.autologin = this.get_datas().isAutologin();
 
 		// on recupere l'ancien cookie
-		Cookies = settings.getString("cookies", "");
+		//Cookies = settings.getString("cookies", "");
 
 		// on teste la version de l'application, si mise à jour, alors ajout
 		// d'un message sur les nouveautés
-		int old_version = settings.getInt("old_version", 30);
-		if (old_version < 31) {
+		int old_version = settings.getInt("old_version", 34);
+		if (old_version < 35) {
 			this.show_news_dialog();
 			SharedPreferences.Editor editor = settings.edit();
-			editor.putInt("old_version", 31);
+			editor.putInt("old_version", 35);
 			editor.commit();
 			this.autologin=false;
 		}
@@ -126,9 +110,9 @@ public class main extends asi_activity {
 
 	public void onStart() {
 		super.onStart();
-
 		// demarage de l'autologin
-		if (!Cookies.equals("") && this.autologin) {
+		if (!this.get_datas().getCookies().equals("phorum_session_v5=deleted") && this.autologin) {
+			//this.get_datas().setCookies(Cookies);
 			this.load_page(false);
 			Toast.makeText(this, txt_username.getText() + " connecté.",
 					Toast.LENGTH_SHORT).show();
@@ -161,16 +145,17 @@ public class main extends asi_activity {
 		}
 	}
 
-	protected void save_login_password() {
+	protected void save_login_password(String cookies) {
 		// on sauve les preferences car le login/pass ok
 		SharedPreferences settings = getSharedPreferences(PREFERENCE, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString("user", txt_username.getText().toString());
 		editor.putString("pass", txt_password.getText().toString());
-		editor.putString("cookies", Cookies);
-		this.autologin = true;
+		editor.putString("cookies", cookies);
+		//this.autologin = true;
 		// Commit the edits!
 		editor.commit();
+		this.get_datas().setCookies(cookies);
 	}
 
 	private class get_cookies_value extends AsyncTask<String, Void, String> {
@@ -266,8 +251,8 @@ public class main extends asi_activity {
 				Log.e("ASI", "Erreur d'arret de la boite de dialog");
 			}
 			if (mess.matches(".*phorum_session_v5.*")) {
-				main.this.setCookies(mess);
-				main.this.save_login_password();
+				//main.this.setCookies(mess);
+				main.this.save_login_password(mess);
 				main.this.load_page(false);
 			} else {
 				new erreur_dialog(main.this, "Connexion au site", mess).show();
@@ -276,7 +261,8 @@ public class main extends asi_activity {
 	};
 
 	private void connect_to_gratuit() {
-		this.setCookies("phorum_session_v5=deleted");
+		//this.setCookies("phorum_session_v5=deleted");
+		this.get_datas().setCookies("phorum_session_v5=deleted");
 		this.load_page(true);
 	}
 
@@ -285,6 +271,8 @@ public class main extends asi_activity {
 			Intent i = new Intent(this, main_view.class);
 			i.putExtra("gratuit", gratuit);
 			this.startActivity(i);
+			if(this.datas.isAutologin())
+				this.finish();
 
 		} catch (Exception e) {
 			new erreur_dialog(main.this, "Chargement des catégories", e).show();
@@ -322,171 +310,31 @@ public class main extends asi_activity {
 		});
 	}
 
-	public void setCookies(String cookies) {
-		Cookies = cookies;
-	}
-
-	public String getCookies() {
-		return Cookies;
-	}
-
-	public void downloadvideo(video_url url) {
-		download_video d = new download_video();
-		d.execute(url);
-		this.downloading.add(d);
-	}
-
-	public Vector<download_video> get_download_video() {
-		return (this.downloading);
-	}
-
-	private void set_articles_lues() {
-		try {
-			this.articles_lues = new Vector<String>();
-			FileInputStream fos = openFileInput(FILENAME);
-			InputStreamReader isr = new InputStreamReader(fos);
-			BufferedReader objBufferReader = new BufferedReader(isr);
-			String strLine;
-			while ((strLine = objBufferReader.readLine()) != null) {
-				this.articles_lues.add(strLine);
-			}
-			;
-			fos.close();
-			this.test_length_article_lu();
-		} catch (java.io.FileNotFoundException e) {
-			Toast.makeText(this, "Création du fichier de sauvegarde",
-					Toast.LENGTH_SHORT).show();
-		} catch (Exception e) {
-			new erreur_dialog(main.this, "Lecture des articles lus", e).show();
-		}
-	}
-
-	private void test_length_article_lu() {
-		try {
-			if (this.articles_lues.size() > 2000) {
-				Vector<String> temp = new Vector<String>();
-				Log.d("ASI", "diminue la longeur de la sauvegarde");
-				FileOutputStream fos = openFileOutput(FILENAME,
-						Context.MODE_PRIVATE);
-				for (int i = 1000; i < this.articles_lues.size(); i++) {
-					String url_article = this.articles_lues.elementAt(i) + "\n";
-					temp.add(this.articles_lues.elementAt(i));
-					fos.write(url_article.getBytes());
-				}
-				fos.flush();
-				fos.close();
-				this.articles_lues = temp;
-			}
-		} catch (Exception e) {
-			new erreur_dialog(main.this, "Sauvegarde des articles lus", e)
-					.show();
-		}
-
-	}
-
-	public void add_articles_lues(String url_article) {
-		try {
-			if (!this.articles_lues.contains(url_article)) {
-				this.articles_lues.add(url_article);
-				FileOutputStream fos = openFileOutput(FILENAME,
-						Context.MODE_APPEND);
-				url_article = url_article + "\n";
-				fos.write(url_article.getBytes());
-				fos.flush();
-				fos.close();
-			}
-		} catch (Exception e) {
-			new erreur_dialog(main.this, "Sauvegarde des articles lus", e)
-					.show();
-		}
-		// Log.d("ASI","add_url_lu="+url_article);
-	}
-
-	public boolean contain_articles_lues(String url_article) {
-		if (this.articles_lues.contains(url_article)) {
-			// Log.d("ASI","ok_url_lu="+url_article);
-			return (true);
-		} else {
-			// Log.d("ASI","no_url_lu="+url_article);
-			return (false);
-		}
-	}
+//	public void setCookies(String cookies) {
+//		Cookies = cookies;
+//	}
+//
+//	public String getCookies() {
+//		return Cookies;
+//	}
 
 	// public void onBackPressed(){
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 			// do something on back.
 			Log.d("ASI", "main_BackPressed");
-			this.closed_application();
+			//this.closed_application();
+			this.finish();
 			return true;
 		}
 
 		return super.onKeyDown(keyCode, event);
 	}
 
-	private void closed_application() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Quitter?");
-		builder.setMessage("Tous les téléchargements en cours seront arrêtés")
-				.setCancelable(false)
-				.setPositiveButton("Oui",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								main.this.stop_all_download();
-								main.this.finish();
-							}
-						})
-				.setNegativeButton("Non",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.cancel();
-							}
-						});
-		AlertDialog quitte = builder.create();
-		quitte.show();
-	}
-
-	protected void stop_all_download() {
-		for (int i = 0; i < downloading.size(); i++) {
-			download_video vid = downloading.elementAt(i);
-			String status = vid.getStatus().toString();
-			if (!status.equals("FINISHED"))
-				vid.Stop_download();
-		}
-	}
-
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.layout.info_menu, menu);
 		return true;
-	}
-
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case R.id.info_item:
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("A propos");
-			builder.setMessage(R.string.apropos);
-			// "Application Non officielle réalisée par un asinaute.\n\n"
-			// + "Permet d'accéder aux contenus du site d'Arrêt sur Images.\n\n"
-			// +
-			// "v1.2.6 : Historique des articles lus, icones, mise en forme des articles, accès aux contenus audio des articles\n\n"
-			// + "Les retours de bugs sont les bienvenues")
-			builder.setPositiveButton("ok",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							dialog.cancel();
-						}
-					});
-			builder.show();
-			return true;
-		case R.id.close_item:
-			this.closed_application();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
 	}
 
 	public void is_autologin(boolean b) {

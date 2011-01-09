@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/item4" android:icon="@+drawable/check_menu"
+		android:title="Marquer comme lu" />
 	<item android:id="@+id/item3" android:icon="@+drawable/param_menu"
 		android:title="Paramètres" />
 	<item android:id="@+id/item1" android:icon="@+drawable/telechargement_menu"

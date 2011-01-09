@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget" android:layout_width="wrap_content"
+	android:layout_height="wrap_content" android:orientation="horizontal"
+	android:gravity="center" android:background="@+drawable/wid_background_l">
+	<ImageView android:id="@+id/widget_asi" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:src="@+drawable/wid_asi" />
+	<ImageView android:id="@+id/widget_emi" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:src="@+drawable/wid_emi"
+		android:layout_toRightOf="@id/widget_asi" />
+	<ImageView android:id="@+id/widget_art" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:src="@+drawable/wid_art"
+		android:layout_toRightOf="@id/widget_emi" />
+	<ImageView android:id="@+id/widget_chro"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:src="@+drawable/wid_chro" android:layout_toRightOf="@id/widget_art" />
+	<ImageView android:id="@+id/widget_vite"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:src="@+drawable/wid_vite" android:layout_toRightOf="@id/widget_chro" />
+	<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/widget_next" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_toRightOf="@+id/widget_vite">
+		<ImageView android:id="@+id/widget_asi2"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:src="@+drawable/wid_next" />
+		<TextView android:id="@+id/widget_next_texte"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:textSize="10sp" android:text="0/0" android:layout_margin="1dp"
+			android:layout_gravity="bottom|center_horizontal" android:textColor="@color/color_text" />
+	</FrameLayout>
+
+	<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/widget_mes" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_alignRight="@id/widget_next"
+		android:layout_below="@id/widget_next" android:layout_alignLeft="@id/widget_asi">
+		<ImageView android:id="@+id/widget_asi2"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:src="@+drawable/wid_texte_l" />
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/widget_mess" android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:orientation="horizontal"
+			android:layout_marginLeft="2dp">
+			<TextView android:id="@+id/widget_color"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:textSize="20sp" android:textColor="@color/color_text"
+				android:text="|" android:layout_gravity="center_vertical"
+				android:textStyle="bold" android:layout_marginBottom="1dp" />
+			<TextView android:id="@+id/widget_message"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:textSize="12sp" android:textColor="@color/color_text"
+				android:text="Un example d'article" android:layout_marginLeft="1dp"
+				android:layout_gravity="center_vertical" />
+		</LinearLayout>
+		<ImageView android:id="@+id/widget_check"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:src="@+drawable/wid_check" android:layout_gravity="left|center_vertical"
+			android:layout_marginLeft="2dp" android:visibility="invisible"/>
+	</FrameLayout>
+
+</RelativeLayout>

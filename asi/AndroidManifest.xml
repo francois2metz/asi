@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="asi.val"
-      android:installLocation="auto" android:versionCode="31" android:versionName="1.3.3">
+      android:installLocation="auto" android:versionName="1.4.0" android:versionCode="35">
     <application android:label="@string/app_name" android:icon="@drawable/asi" android:theme="@android:style/Theme.Light">
         <activity android:name=".main"
                   android:label="@string/app_name" android:screenOrientation="portrait">
@@ -21,6 +21,19 @@
 <activity android:name="asi_activity"></activity>
 <activity android:name="SD_video_view"></activity>
 <activity android:name="liste_articles_recherche"></activity>
+<receiver android:label="@string/widget_name" android:name=".widget_receiver" android:icon="@drawable/asi">
+    <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+    <action android:name="asi.val.action.SHOW_CURRENT"></action>
+<action android:name="asi.val.action.SHOW_NEXT"></action>
+
+<action android:name="asi.val.action.CHECK_CURRENT"></action>
+<action android:name="asi.val.action.UPDATE_WIDGET"></action>
+</intent-filter>
+    <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_asi_xml" />
+</receiver>
+<activity android:name="configuration">
+</activity>
 </application>
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="8"></uses-sdk>

@@ -27,6 +27,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -46,6 +49,8 @@ public class liste_articles extends asi_activity {
 	protected int image;
 
 	protected Parcelable state;
+	
+	public Vector<String> test;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -111,7 +116,7 @@ public class liste_articles extends asi_activity {
 			map.put("date", articles.elementAt(i).getDate());
 			map.put("url", articles.elementAt(i).getUri());
 			map.put("color", articles.elementAt(i).getColor());
-			if (main.group
+			if (this.get_datas()
 					.contain_articles_lues(articles.elementAt(i).getUri()))
 				map.put("griser", "enabled-true");
 			else
@@ -224,7 +229,7 @@ public class liste_articles extends asi_activity {
 
 	private void marquer_comme_lu(String url) {
 		try {
-			main.group.add_articles_lues(url);
+			this.get_datas().add_articles_lues(url);
 			state = maListViewPerso.onSaveInstanceState();
 			this.load_data();
 			maListViewPerso.onRestoreInstanceState(state);
@@ -248,6 +253,26 @@ public class liste_articles extends asi_activity {
 
 	public void set_articles(Vector<article> art) {
 		this.articles = art;
+	}
+	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.layout.liste_article_menu, menu);
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.item4:
+			for(int i =0;i<articles.size();i++)
+				this.get_datas().add_articles_lues(articles.elementAt(i).getUri());
+			if(articles.size()>0)
+				this.marquer_comme_lu(articles.elementAt(0).getUri());
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	private class get_rss_url extends AsyncTask<String, Void, String> {
@@ -281,7 +306,7 @@ public class liste_articles extends asi_activity {
 				try {
 					this.dialog.dismiss();
 				} catch (Exception e) {
-					Log.e("ASI", "Erreur de'arret de la boite de dialog");
+					Log.e("ASI", "Erreur d'arret de la boite de dialog");
 				}
 			}
 			if (error == null)

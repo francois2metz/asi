@@ -218,7 +218,7 @@ public class page extends asi_activity {
 				} else {
 					video_url vid = new video_url(url);
 					vid.setTitle(page_title);
-					main.group.downloadvideo(vid);
+					page.this.get_datas().downloadvideo(vid);
 				}
 			}
 		});
@@ -254,7 +254,7 @@ public class page extends asi_activity {
 				page_load page_d = new page_load(args[0]);
 				String mapage = page_d.getContent();
 				page.this.setPagedata(mapage);
-				main.group.add_articles_lues(args[0]);
+				page.this.get_datas().add_articles_lues(args[0]);
 			} catch (Exception e) {
 				//String error = e.toString() + "\n" + e.getStackTrace()[0]
 					//	+ "\n" + e.getStackTrace()[1];

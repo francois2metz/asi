@@ -40,16 +40,16 @@ public class main_view extends asi_activity {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.categories);
+		setContentView(R.layout.main);
 		// Récupération de la listview créée dans le fichier main.xml
-		maListViewPerso = (ListView) findViewById(R.id.listviewcat);
+		maListViewPerso = (ListView) findViewById(R.id.listviewperso);
 
 		gratuit = this.getIntent().getExtras().getBoolean("gratuit");
-		TextView text = (TextView) findViewById(R.id.cat_text);
+		TextView text = (TextView) findViewById(R.id.list_text);
 		// TextView color = (TextView) findViewById(R.id.cat_color);
 		text.setText("Choix des catégories");
 		
-		ImageView v = (ImageView) findViewById(R.id.cat_image2);
+		ImageView v = (ImageView) findViewById(R.id.cat_image);
 		v.setImageResource(R.drawable.toutlesite);
 		
 		this.load_data();
@@ -190,7 +190,12 @@ public class main_view extends asi_activity {
 	// public void onBackPressed(){
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			main.group.is_autologin(false);
+			if(this.get_datas().isAutologin()){
+				//this.closed_application();
+				this.finish();
+				return true;
+			}
+			//main.group.is_autologin(false);
 			//return true;
 		}
 

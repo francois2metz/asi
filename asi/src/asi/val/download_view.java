@@ -52,7 +52,7 @@ public class download_view extends reload_activity {
 
 		text.setText("Téléchargements en cours");
 		// recuperation de la liste de telechargement
-		this.video_download = main.group.get_download_video();
+		this.video_download = this.get_datas().get_download_video();
 
 		//this.load_data();
 	}
@@ -163,10 +163,10 @@ public class download_view extends reload_activity {
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Relancer")) {
-					main.group.get_download_video().remove(vid);
-					main.group.downloadvideo(vid.get_download_video());
+					download_view.this.get_datas().get_download_video().remove(vid);
+					download_view.this.get_datas().downloadvideo(vid.get_download_video());
 				} else if (items[item].equals("Effacer")) {
-					main.group.get_download_video().remove(vid);
+					download_view.this.get_datas().get_download_video().remove(vid);
 				} else {
 					new erreur_dialog(download_view.this, vid.get_titre(), vid
 							.get_error()).show();
@@ -214,10 +214,10 @@ public class download_view extends reload_activity {
 							Uri.fromFile(vid.get_download_path()), "video/*");
 					download_view.this.startActivity(intent);
 				} else if (items[item].equals("Effacer")) {
-					main.group.get_download_video().remove(vid);
+					download_view.this.get_datas().get_download_video().remove(vid);
 				} else if (items[item].equals("Relancer")) {
-					main.group.get_download_video().remove(vid);
-					main.group.downloadvideo(vid.get_download_video());
+					download_view.this.get_datas().get_download_video().remove(vid);
+					download_view.this.get_datas().downloadvideo(vid.get_download_video());
 				}
 				// download_view.this.load_data();
 			}

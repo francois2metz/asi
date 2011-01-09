@@ -43,14 +43,14 @@ public class erreur_dialog extends AlertDialog.Builder {
 	public erreur_dialog(Context arg0, String message, Exception e) {
 		super(arg0);
 		// TODO Auto-generated constructor stub
+		this.mContext = arg0;
 		this.error = e.toString() + "\n" + e.getStackTrace()[0] + "\n"
 				+ e.getStackTrace()[1];
 		this.message = message;
 		this.defined_interface();
 	}
 
-	private void defined_interface() {
-		
+	private void defined_interface() {		
 		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(android.content.Context.LAYOUT_INFLATER_SERVICE);
 		View layout = inflater.inflate(R.layout.error_view,null);
 		TextView text = (TextView) layout.findViewById(R.id.error_titre);

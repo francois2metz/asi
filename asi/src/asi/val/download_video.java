@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -43,6 +44,13 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 	private String error;
 
 	private boolean cancel;
+	
+	private Context activity;
+	
+	public download_video(Context a){
+		super();
+		activity = a;
+	}
 
 	protected void onPreExecute() {
 		vid=null;
@@ -50,7 +58,7 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 		out = null;
 		totalsize = -1;
 		size = 0;
-		Toast.makeText(main.group, "Démarrage du téléchargement",
+		Toast.makeText(activity, "Démarrage du téléchargement",
 				Toast.LENGTH_LONG).show();
 		error = null;
 		cancel = false;
@@ -99,7 +107,7 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 			// Ajout de la video au systeme de lecture
 			try {
 				MediaScannerConnection medconn = new MediaScannerConnection(
-						main.group, null);
+						activity, null);
 				medconn.connect();
 				medconn.scanFile(this.get_download_path().getAbsolutePath(),
 						null);
@@ -146,13 +154,13 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 		if (error == null) {
 			String text = "Téléchargement terminé de :\n" + vid.getTitle()
 					+ " - " + vid.getNumber();
-			Toast.makeText(main.group, text, Toast.LENGTH_LONG).show();
+			Toast.makeText(activity, text, Toast.LENGTH_LONG).show();
 			Log.d("ASI", "Telechargement termine avec succes");
 
 		} else {
 			Log.e("ASI", "Probleme de telechargement \n" + error);
 			Toast.makeText(
-					main.group,
+					activity,
 					"Problème de téléchargement de :\n" + vid.getTitle()
 							+ " - " + vid.getNumber(), Toast.LENGTH_LONG)
 					.show();
@@ -169,7 +177,8 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 			path.mkdir();
 		String correctpath = vid.getTitle();
 		correctpath = correctpath.replaceAll("\\W", "_");
-		correctpath = correctpath.replaceAll("_+$", "");
+		correctpath = correctpath.replaceAll("_+", "_");
+		correctpath = correctpath.replaceAll("_$", "");
 		File temp = new File(path.getAbsolutePath() + "/" + "ASI-"
 				+ correctpath + "-" + vid.getNumber() + ".mp4");
 		// + "ASI-"+vid.getTitle()+"-"+vid.getNumber()+".mp4");
@@ -177,7 +186,7 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 	}
 
 	public String get_titre() {
-		if (vid.equals(null))
+		if (vid==null)
 			return ("En chargement");
 		return ("ASI-" + vid.getTitle() + "-" + vid.getNumber());
 	}
