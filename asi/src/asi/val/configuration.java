@@ -45,7 +45,7 @@ public class configuration extends asi_activity {
 		ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> map;
 		// Chargement des catégories
-		int[] liste = new int[] { R.array.conf_autologin};
+		int[] liste = new int[] { R.array.conf_autologin, R.array.conf_dlsync};
 
 		Resources res = getResources();
 		for (int i = 0; i < liste.length; i++) {
@@ -78,8 +78,8 @@ public class configuration extends asi_activity {
 						.getItemAtPosition(position);
 				if (map.get("type").equalsIgnoreCase("autologin"))
 					configuration.this.do_on_autologin(map.get("titre"));
-				else
-					;
+				if (map.get("type").equalsIgnoreCase("dlsync"))
+					configuration.this.do_on_dlsync(map.get("titre"));
 			}
 		});
 	}
@@ -98,6 +98,28 @@ public class configuration extends asi_activity {
 					configuration.this.get_datas().setAutologin(true);
 				} else {
 					configuration.this.get_datas().setAutologin(false);
+				}
+				dialog.dismiss();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+	
+	private void do_on_dlsync(String titre) {
+		final CharSequence[] items = {"Parallèle", "Série"};
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(titre);
+		int posi = 0;
+		if(!this.get_datas().isDlSync())
+			posi=1;
+		builder.setSingleChoiceItems(items, posi, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int item) {
+		       // Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
+				if (items[item].equals("Parallèle")) {
+					configuration.this.get_datas().setDlSync(true);
+				} else {
+					configuration.this.get_datas().setDlSync(false);
 				}
 				dialog.dismiss();
 			}

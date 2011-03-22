@@ -150,6 +150,7 @@ public class video_view extends Activity {
 		protected String doInBackground(String... args) {
 			try {
 				video_url vid = new video_url(args[0]);
+				vid.setTitle("Streaming");
 				String s = vid.get_relink_adress();
 				video_view.this.set_valid_url(s);
 			} catch (Exception e) {

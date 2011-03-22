@@ -27,22 +27,21 @@ import android.util.Log;
 
 public class video_url {
 
-	private String daylimotion;
+	private String dailymotion;
 	 
 	private String title;
 
-	private String number;
+	private int number;
 	
 	private String image;
-
+	
 	public video_url(String url) {
 		this.set_dailymotion_url(url);
-		this.title="ASI";
 		this.image="";
 	}
 
 	public video_url() {
-		this.daylimotion = "";
+		this.dailymotion = "";
 		this.title = "ASI";
 		this.image="";
 	}
@@ -72,7 +71,7 @@ public class video_url {
 	public String get_href_link_url() throws Exception {
 		//String link = this.get_relink_adress();
 		//String link = this.get_download_url();
-		String href = "<p style=\"text-align: center;\"><a href=\"" + daylimotion+ "&vidnum="+number
+		String href = "<p style=\"text-align: center;\"><a href=\"" + dailymotion+ "&vidnum="+number
 				+ "\" target=\"_blank\">" + "<img src=\""+this.image+"\" alt=\"voir la vidéo\">"
 				+ "<span><br/>&gt; Cliquez pour voir la vidéo &lt;</span></a></p>";
 		// <a href="http://www.bernard-mabille.com/" target="_blank">Bernard
@@ -113,7 +112,7 @@ public class video_url {
 		StringBuffer sb = new StringBuffer("");
 		BufferedReader in = null;
 		try {
-			URL url = new URL(daylimotion);
+			URL url = new URL(dailymotion);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 
@@ -151,29 +150,29 @@ public class video_url {
 	public void set_dailymotion_url(String url) {
 		String[] parse = url.split("&vidnum=");
 		if(parse.length>1){
-			this.setNumber(parse[1]);
-			this.daylimotion = parse[0];
+			this.setNumber(Integer.parseInt(parse[1]));
+			this.dailymotion = parse[0];
 		} else {
-			this.setNumber("0");
-			this.daylimotion = url;
+			this.setNumber(0);
+			this.dailymotion = url;
 		}
-		Log.d("ASI","vidurl="+this.daylimotion);
+		Log.d("ASI","vidurl="+this.dailymotion);
 		Log.d("ASI","vidnum="+this.number);
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setTitle(String page_title) {
+		this.title = page_title;
 	}
 
 	public String getTitle() {
 		return title;
 	}
 
-	public void setNumber(String number) {
+	public void setNumber(int number) {
 		this.number = number;
 	}
 
-	public String getNumber() {
+	public int getNumber() {
 		return number;
 	}
 }

@@ -15,6 +15,8 @@
 
 package asi.val;
 
+import java.util.ArrayList;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +24,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -34,6 +39,8 @@ public class page extends asi_activity {
 	private String pagedata;
 
 	private String page_title;
+	
+	private ArrayList<video_url> videos;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,6 +84,28 @@ public class page extends asi_activity {
 		}
 		// titre de la page
 		setPage_title(this.getIntent().getExtras().getString("titre"));
+	}
+	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		if(!videos.isEmpty()) {
+			inflater.inflate(R.layout.emission_menu, menu);
+		}
+		else {
+			inflater.inflate(R.layout.generic_menu, menu);
+		}
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.item5:
+			telecharger_actes();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	private void load_page() {
@@ -202,7 +231,44 @@ public class page extends asi_activity {
 		this.pagedata = pagedata;
 
 	}
-
+	
+	public void telecharger_actes() {
+		final int nb_actes = videos.size();
+		final CharSequence[] items = new CharSequence[nb_actes];
+		final boolean[] items_selected = new boolean[nb_actes];
+		
+		for(int i = 0; i < nb_actes; i++) {
+			items[i] = "Acte " + (i + 1);
+			items_selected[i] = true;
+		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Télécharger par actes");
+		builder.setMultiChoiceItems(items, items_selected, new DialogInterface.OnMultiChoiceClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+				items_selected[which] = isChecked;
+				
+			}
+		});
+		builder.setPositiveButton("Téléchargement", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				video_url video_selected = null;
+				for(int i = 0;i<nb_actes;i++){
+					if(items_selected[i]) {
+						video_selected = videos.get(i);
+						video_selected.setNumber(i + 1);
+						video_selected.setTitle(page_title);
+						page.this.get_datas().downloadvideo(video_selected);
+					}
+				}
+			}
+		});
+		
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+	
 	public void video_choice(final String url) {
 		final CharSequence[] items = { "Visionner", "Télécharger" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -252,8 +318,12 @@ public class page extends asi_activity {
 			// this.publishProgress("Chargement...");
 			try {
 				page_load page_d = new page_load(args[0]);
+				
+				videos = page_d.getVideos();
+				
 				String mapage = page_d.getContent();
 				page.this.setPagedata(mapage);
+				
 				page.this.get_datas().add_articles_lues(args[0]);
 			} catch (Exception e) {
 				//String error = e.toString() + "\n" + e.getStackTrace()[0]
@@ -314,6 +384,7 @@ public class page extends asi_activity {
 		protected String doInBackground(String... args) {
 			try {
 				video_url vid = new video_url(args[0]);
+				vid.setTitle(page_title);
 				valid_url = vid.get_relink_adress();
 			} catch (Exception e) {
 //				String error = e.toString() + "\n" + e.getStackTrace()[0]

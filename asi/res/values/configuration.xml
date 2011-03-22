@@ -5,4 +5,9 @@
 		<item>Auto-login</item>
 		<item>"Se connecter automatiquement au démarrage de l'application"</item>
 	</string-array>
+	<string-array name="conf_dlsync">
+		<item>dlsync</item>
+		<item>Type de téléchargement</item>
+		<item>"Choisir le type de téléchargement souhaité"</item>
+	</string-array>
 </resources>

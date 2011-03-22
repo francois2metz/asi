@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -81,19 +82,17 @@ public class download_view extends reload_activity {
 			boolean visible = true;
 			dvid = video_download.elementAt(i);
 			map = new HashMap<String, String>();
-			map.put("titre", dvid.get_titre());
-			String status = dvid.getStatus().toString();
-			if (status.equals("RUNNING"))
+			map.put("titre", dvid.get_download_video().getTitle());
+			Status status = dvid.getStatus();
+			if (status == Status.RUNNING)
 				map.put("description",
 						"Téléchargement - " + dvid.get_pourcentage_download());
-			else if (status.equals("PENDING"))
+			else if (status == Status.PENDING)
 				map.put("description", "Téléchargement - En préparation");
 			else {
 				if (dvid.get_error() == null) {
 					if (dvid.is_video_complete())
 						visible = false;
-					// map.put("description", "Téléchargement terminé - "
-					// + dvid.get_pourcentage_download());
 					else
 						map.put("description", "Téléchargement interrompu - "
 								+ dvid.get_pourcentage_download());
@@ -105,9 +104,32 @@ public class download_view extends reload_activity {
 
 			}
 			map.put("int", "" + i);
-
+						
 			if (visible)
 				listItem.add(map);
+		}
+		
+		
+		if(!this.get_datas().isDlSync())
+		{
+			boolean has_running = false;
+			for(download_video dv : video_download)
+			{
+				if(dv.getStatus() == Status.RUNNING){
+					has_running = true;
+					break;
+				}
+			}
+			
+			if(!has_running){
+				for(download_video dv : video_download)
+				{
+					if(dv.getStatus() == Status.PENDING){
+						dv.execute(dv.get_download_video());
+						break;
+					}
+				}
+			}
 		}
 
 		// Si tout les téléchargements sont terminés ou aucun de lancé
@@ -159,7 +181,7 @@ public class download_view extends reload_activity {
 	private void do_on_video_error(final download_video vid) throws Exception {
 		final CharSequence[] items = { "Relancer", "Effacer", "Erreur" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(vid.get_titre());
+		builder.setTitle(vid.get_download_video().getTitle());
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Relancer")) {
@@ -168,7 +190,7 @@ public class download_view extends reload_activity {
 				} else if (items[item].equals("Effacer")) {
 					download_view.this.get_datas().get_download_video().remove(vid);
 				} else {
-					new erreur_dialog(download_view.this, vid.get_titre(), vid
+					new erreur_dialog(download_view.this, vid.get_download_video().getTitle(), vid
 							.get_error()).show();
 				}
 				// download_view.this.load_data();
@@ -180,7 +202,7 @@ public class download_view extends reload_activity {
 
 	private void do_on_video_running(final download_video vid) throws Exception {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(vid.get_titre());
+		builder.setTitle(vid.get_download_video().getTitle());
 		builder.setMessage("Arrêter le téléchargement en cours?")
 				.setCancelable(false)
 				.setPositiveButton("Oui",
@@ -203,7 +225,7 @@ public class download_view extends reload_activity {
 			throws Exception {
 		final CharSequence[] items = { "Visualiser", "Effacer", "Relancer" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(vid.get_titre());
+		builder.setTitle(vid.get_download_video().getTitle());
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visualiser")) {
@@ -231,9 +253,9 @@ public class download_view extends reload_activity {
 			Log.d("ASI", "Num=" + num);
 			download_video vid = video_download
 					.elementAt(Integer.parseInt(num));
-			String status = vid.getStatus().toString();
-			Log.d("ASI", "Status=" + status);
-			if (status.equals("FINISHED")) {
+			Status status = vid.getStatus();
+			Log.d("ASI", "Status=" + status.toString());
+			if (status == Status.FINISHED) {
 				if (vid.get_error() != null)
 					this.do_on_video_error(vid);
 				else

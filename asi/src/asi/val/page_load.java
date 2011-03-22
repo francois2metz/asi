@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +31,12 @@ public class page_load {
 	private URL url;
 
 	private String cookies;
+	
+	private ArrayList<video_url> videos;
+	
+	public ArrayList<video_url> getVideos() {
+		return videos;
+	}
 
 	public page_load(String u) throws Exception {
 		setContent("");
@@ -37,6 +44,7 @@ public class page_load {
 		url = new URL(u);
 		//cookies = main.group.getCookies();
 		cookies = shared_datas.shared.getCookies();
+		videos = new ArrayList<video_url>();
 	}
 
 	private String getPage() throws Exception {
@@ -138,7 +146,8 @@ public class page_load {
 						// .center("<span\">&gt; Problème de lecture de la balise video &lt;</span>");
 						else {
 							video_count++;
-							video.setNumber("" + video_count);
+							video.setNumber(video_count);
+							videos.add(video);
 							ligneCodeHTML = video.get_href_link_url();
 						}
 					}
