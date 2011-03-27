@@ -356,7 +356,7 @@ public class page extends asi_activity {
 			Log.d("ASI", this.page_title);
 		} else {
 			Log.d("ASI", "pas de titre");
-			this.page_title = "";
+			this.page_title = "Sans titre";
 		}
 	}
 

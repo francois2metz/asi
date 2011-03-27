@@ -45,7 +45,7 @@ public class shared_datas {
 				0);
 		Cookies = settings.getString("cookies", "phorum_session_v5=deleted");
 		autologin = settings.getBoolean("autologin", true);
-		dlsync = settings.getBoolean("dlsync", true);
+		dlsync = settings.getBoolean("dlsync", false);
 
 		this.set_articles_lues();
 	}
@@ -69,7 +69,7 @@ public class shared_datas {
 	}
 
 	public void downloadvideo(video_url url) {
-		download_video d = new download_video(activity, url);
+		download_video d = new download_video(this, url);
 		if(!dlsync){
 			boolean has_running = false;
 			for(download_video dv : downloading){
@@ -79,14 +79,26 @@ public class shared_datas {
 				}
 			}
 			if(!has_running)
-				d.execute(url);
+				d.execute("");
 			
 		} else{
-			d.execute(url);
+			d.execute("");
 		}
 		this.downloading.add(d);
 	}
 
+	public void download_next_video() {
+		//lorsque le téléchargement est en série, on lance la vidéo en attente suivante
+		if(!dlsync){
+			for(download_video dv : downloading){
+				if(dv.getStatus() == Status.PENDING){
+					dv.execute("");
+					break;
+				}
+			}
+		}
+	}
+	
 	public Vector<download_video> get_download_video() {
 		return (this.downloading);
 	}
@@ -236,6 +248,7 @@ public class shared_datas {
 		}
 	}
 
+	@SuppressWarnings("finally")
 	public Vector<article> get_widget_article() {
 		Vector<article> temp = new Vector<article>();
 		try {
@@ -271,4 +284,5 @@ public class shared_datas {
 			return (temp);
 		}
 	}
+
 }

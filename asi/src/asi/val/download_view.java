@@ -82,13 +82,13 @@ public class download_view extends reload_activity {
 			boolean visible = true;
 			dvid = video_download.elementAt(i);
 			map = new HashMap<String, String>();
-			map.put("titre", dvid.get_download_video().getTitle());
+			map.put("titre", dvid.get_download_video().getTitle_and_number());
 			Status status = dvid.getStatus();
 			if (status == Status.RUNNING)
 				map.put("description",
 						"Téléchargement - " + dvid.get_pourcentage_download());
 			else if (status == Status.PENDING)
-				map.put("description", "Téléchargement - En préparation");
+				map.put("description", "Téléchargement - En attente");
 			else {
 				if (dvid.get_error() == null) {
 					if (dvid.is_video_complete())
@@ -107,29 +107,6 @@ public class download_view extends reload_activity {
 						
 			if (visible)
 				listItem.add(map);
-		}
-		
-		
-		if(!this.get_datas().isDlSync())
-		{
-			boolean has_running = false;
-			for(download_video dv : video_download)
-			{
-				if(dv.getStatus() == Status.RUNNING){
-					has_running = true;
-					break;
-				}
-			}
-			
-			if(!has_running){
-				for(download_video dv : video_download)
-				{
-					if(dv.getStatus() == Status.PENDING){
-						dv.execute(dv.get_download_video());
-						break;
-					}
-				}
-			}
 		}
 
 		// Si tout les téléchargements sont terminés ou aucun de lancé
@@ -181,7 +158,7 @@ public class download_view extends reload_activity {
 	private void do_on_video_error(final download_video vid) throws Exception {
 		final CharSequence[] items = { "Relancer", "Effacer", "Erreur" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(vid.get_download_video().getTitle());
+		builder.setTitle(vid.get_download_video().getTitle_and_number());
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Relancer")) {
@@ -190,7 +167,7 @@ public class download_view extends reload_activity {
 				} else if (items[item].equals("Effacer")) {
 					download_view.this.get_datas().get_download_video().remove(vid);
 				} else {
-					new erreur_dialog(download_view.this, vid.get_download_video().getTitle(), vid
+					new erreur_dialog(download_view.this, vid.get_download_video().getTitle_and_number(), vid
 							.get_error()).show();
 				}
 				// download_view.this.load_data();
@@ -202,7 +179,7 @@ public class download_view extends reload_activity {
 
 	private void do_on_video_running(final download_video vid) throws Exception {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(vid.get_download_video().getTitle());
+		builder.setTitle(vid.get_download_video().getTitle_and_number());
 		builder.setMessage("Arrêter le téléchargement en cours?")
 				.setCancelable(false)
 				.setPositiveButton("Oui",
@@ -225,7 +202,7 @@ public class download_view extends reload_activity {
 			throws Exception {
 		final CharSequence[] items = { "Visualiser", "Effacer", "Relancer" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(vid.get_download_video().getTitle());
+		builder.setTitle(vid.get_download_video().getTitle_and_number());
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visualiser")) {

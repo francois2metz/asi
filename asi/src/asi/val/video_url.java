@@ -175,4 +175,8 @@ public class video_url {
 	public int getNumber() {
 		return number;
 	}
+	public String getTitle_and_number(){
+		return(title+" - "+number);
+	}
+	
 }

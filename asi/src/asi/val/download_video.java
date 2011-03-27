@@ -22,14 +22,13 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
-public class download_video extends AsyncTask<video_url, Void, String> {
+public class download_video extends AsyncTask<String, Void, String> {
 
 	private video_url vid;
 
@@ -45,34 +44,27 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 
 	private boolean cancel;
 	
-	private Context activity;
+	private shared_datas share;
 	
-	public download_video(Context a){
-		super();
-		activity = a;
-	}
-	
-	public download_video(Context a, video_url v){
-		this(a);
+	public download_video(shared_datas share, video_url v){
+		this.share = share;
 		vid = v;
 	}
 
 	protected void onPreExecute() {
-		vid=null;
 		in = null;
 		out = null;
 		totalsize = -1;
 		size = 0;
-		Toast.makeText(activity, "Démarrage du téléchargement",
-				Toast.LENGTH_LONG).show();
+//		Toast.makeText(share.getContext(), "Démarrage du téléchargement",
+//				Toast.LENGTH_LONG).show();
 		error = null;
 		cancel = false;
 	}
 
-	protected String doInBackground(video_url... arg) {
+	protected String doInBackground(String... arg) {
 		// TODO Auto-generated method stub
 		try {
-			vid = arg[0];
 			// on vérifie que l'on peux enregistrer
 			String state = Environment.getExternalStorageState();
 			if (!Environment.MEDIA_MOUNTED.equals(state))
@@ -104,7 +96,7 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 				size += buf.length;
 				// Lancer une erreur quand le thread est stoppper
 				if (cancel)
-					throw new StopException("Stop");
+					throw new StopException("Stop");		
 			} while (true);
 			conn.disconnect();
 			Log.d("ASI", "Final-download=" + size / 1000);
@@ -112,7 +104,7 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 			// Ajout de la video au systeme de lecture
 			try {
 				MediaScannerConnection medconn = new MediaScannerConnection(
-						activity, null);
+						share.getContext(), null);
 				medconn.connect();
 				medconn.scanFile(this.get_download_path().getAbsolutePath(),
 						null);
@@ -155,17 +147,18 @@ public class download_video extends AsyncTask<video_url, Void, String> {
 	}
 
 	protected void onPostExecute(String er) {
+		share.download_next_video();
 		this.set_error(er);
 		if (error == null) {
 			String text = "Téléchargement terminé de :\n" + vid.getTitle()
 					+ " - " + vid.getNumber();
-			Toast.makeText(activity, text, Toast.LENGTH_LONG).show();
+			Toast.makeText(share.getContext(), text, Toast.LENGTH_LONG).show();
 			Log.d("ASI", "Telechargement termine avec succes");
 
 		} else {
 			Log.e("ASI", "Probleme de telechargement \n" + error);
 			Toast.makeText(
-					activity,
+					share.getContext(),
 					"Problème de téléchargement de :\n" + vid.getTitle()
 							+ " - " + vid.getNumber(), Toast.LENGTH_LONG)
 					.show();
