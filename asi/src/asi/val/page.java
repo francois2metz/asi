@@ -242,7 +242,7 @@ public class page extends asi_activity {
 			items_selected[i] = true;
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Télécharger par actes");
+		builder.setTitle("Vidéos de l'article");
 		builder.setMultiChoiceItems(items, items_selected, new DialogInterface.OnMultiChoiceClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
