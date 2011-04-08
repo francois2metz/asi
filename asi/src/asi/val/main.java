@@ -85,10 +85,10 @@ public class main extends asi_activity {
 		// on teste la version de l'application, si mise à jour, alors ajout
 		// d'un message sur les nouveautés
 		int old_version = settings.getInt("old_version", 34);
-		if (old_version < 35) {
+		if (old_version < 37) {
 			this.show_news_dialog();
 			SharedPreferences.Editor editor = settings.edit();
-			editor.putInt("old_version", 35);
+			editor.putInt("old_version", 37);
 			editor.commit();
 			this.autologin=false;
 		}

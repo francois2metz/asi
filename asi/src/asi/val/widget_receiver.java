@@ -98,7 +98,7 @@ public class widget_receiver extends AppWidgetProvider {
 		}
 	}
 
-	public void defined_intent(Context context, RemoteViews views,
+	private void defined_intent(Context context, RemoteViews views,
 			int[] appWidgetIds) {
 		// Create an Intent to launch asi main
 		Intent intent = new Intent(context, main.class);
@@ -154,6 +154,30 @@ public class widget_receiver extends AppWidgetProvider {
 		views.setOnClickPendingIntent(R.id.widget_next, pendingIntent);
 	}
 
+	private void defined_article(RemoteViews views,Context context,int posi){
+		if (articles.size() != 0) {
+			views.setTextViewText(R.id.widget_message,
+					articles.elementAt(posi).getTitle());
+			// views.setInt(R.id.widget_message, "setBackgroundResource",
+			// Color.parseColor(articles.elementAt(posi).getColor()));
+			views.setTextColor(R.id.widget_color,
+					Color.parseColor(articles.elementAt(posi).getColor()));
+			this.get_datas(context).save_widget_posi(posi);
+			views.setTextViewText(R.id.widget_next_texte, (posi + 1) + "/"
+					+ articles.size());
+			if (this.get_datas(context).contain_articles_lues(
+					articles.elementAt(posi).getUri()))
+				views.setViewVisibility(R.id.widget_check, View.VISIBLE);
+			else
+				views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
+		}else{
+			views.setTextViewText(R.id.widget_message,"Aucun article non lu");
+			views.setTextColor(R.id.widget_color, R.color.color_text);
+			views.setTextViewText(R.id.widget_next_texte, "0/0");
+			views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
+		}
+	}
+	
 	public void onReceive(Context context, Intent intent) {
 		// v1.5 fix that doesn't call onDelete Action
 		final String action = intent.getAction();
@@ -167,7 +191,7 @@ public class widget_receiver extends AppWidgetProvider {
 				this.onDeleted(context, new int[] { appWidgetId });
 			}
 		} else if (SHOW_CURRENT.equals(action)) {
-			Vector<article> articles = this.get_datas(context)
+			articles = this.get_datas(context)
 					.get_widget_article();
 			int posi = this.get_datas(context).get_widget_posi();
 			intent = new Intent(context, page.class);
@@ -180,7 +204,9 @@ public class widget_receiver extends AppWidgetProvider {
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
 			// On met l'artcile courant lu et on rend visible l'image check
-			views.setViewVisibility(R.id.widget_check, View.VISIBLE);
+			//views.setViewVisibility(R.id.widget_check, View.VISIBLE);
+			this.defined_article(views, context, posi);
+			
 			ComponentName thisWidget = new ComponentName(context,
 					widget_receiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
@@ -189,7 +215,7 @@ public class widget_receiver extends AppWidgetProvider {
 					manager.getAppWidgetIds(thisWidget));
 			manager.updateAppWidget(thisWidget, views);		
 		} else if (SHOW_NEXT.equals(action)) {
-			Vector<article> articles = this.get_datas(context)
+			articles = this.get_datas(context)
 					.get_widget_article();
 			int posi = this.get_datas(context).get_widget_posi();
 
@@ -198,24 +224,25 @@ public class widget_receiver extends AppWidgetProvider {
 			else
 				posi++;
 			Log.d("ASI", "position widget;" + posi);
-			Log.d("ASI", "save_artciles:" + articles.size());
+			Log.d("ASI", "save_articles:" + articles.size());
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
-			views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
-			if (articles.size() != 0) {
-				views.setTextViewText(R.id.widget_message,
-						articles.elementAt(posi).getTitle());
-				// views.setInt(R.id.widget_message, "setBackgroundResource",
-				// Color.parseColor(articles.elementAt(posi).getColor()));
-				views.setTextColor(R.id.widget_color,
-						Color.parseColor(articles.elementAt(posi).getColor()));
-				this.get_datas(context).save_widget_posi(posi);
-				views.setTextViewText(R.id.widget_next_texte, (posi + 1) + "/"
-						+ articles.size());
-				if (this.get_datas(context).contain_articles_lues(
-						articles.elementAt(posi).getUri()))
-					views.setViewVisibility(R.id.widget_check, View.VISIBLE);
-			}
+			this.defined_article(views, context, posi);
+//			views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
+//			if (articles.size() != 0) {
+//				views.setTextViewText(R.id.widget_message,
+//						articles.elementAt(posi).getTitle());
+//				// views.setInt(R.id.widget_message, "setBackgroundResource",
+//				// Color.parseColor(articles.elementAt(posi).getColor()));
+//				views.setTextColor(R.id.widget_color,
+//						Color.parseColor(articles.elementAt(posi).getColor()));
+//				this.get_datas(context).save_widget_posi(posi);
+//				views.setTextViewText(R.id.widget_next_texte, (posi + 1) + "/"
+//						+ articles.size());
+//				if (this.get_datas(context).contain_articles_lues(
+//						articles.elementAt(posi).getUri()))
+//					views.setViewVisibility(R.id.widget_check, View.VISIBLE);
+//			}
 
 			ComponentName thisWidget = new ComponentName(context,
 					widget_receiver.class);
@@ -229,16 +256,18 @@ public class widget_receiver extends AppWidgetProvider {
 			manager.updateAppWidget(thisWidget, views);
 			// appWidgetManager.updateAppWidget(appWidgetId, views);
 		} else if (CHECK_CURRENT.equals(action)) {
-			RemoteViews views = new RemoteViews(context.getPackageName(),
-					R.layout.widget_asi);
-			// On met l'artcile courant lu et on rend visible l'image check
-			views.setViewVisibility(R.id.widget_check, View.VISIBLE);
-			Vector<article> articles = this.get_datas(context)
+			articles = this.get_datas(context)
 					.get_widget_article();
 			int posi = this.get_datas(context).get_widget_posi();
 			if (posi < articles.size())
 				this.get_datas(context).add_articles_lues(
 						articles.elementAt(posi).getUri());
+			RemoteViews views = new RemoteViews(context.getPackageName(),
+					R.layout.widget_asi);
+			// On met l'artcile courant lu et on rend visible l'image check
+			//views.setViewVisibility(R.id.widget_check, View.VISIBLE);
+			this.defined_article(views, context, posi);
+			
 			ComponentName thisWidget = new ComponentName(context,
 					widget_receiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);

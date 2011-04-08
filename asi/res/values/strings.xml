@@ -6,6 +6,7 @@
 	<color name="color_text">#47637f</color>
 	<color name="color_fond">#ACB7C6</color>
 	<color name="color_white">#FFFFFF</color>
+	<color name="color_black">#000000</color>
 	<style name="shadow">
 		<item name="android:shadowColor">#000000</item>
 		<item name="android:shadowRadius">1.5</item>
@@ -22,13 +23,13 @@ L’application a été gracieusement développée par Benoît Valot et publiée
 
 Pour toute question, merci de vous reporter à l’espace Android du site arretsurimages.net ou de nous écrire à android@arretsurimages.net"</string>
 
-<string name="news">"v1.4.0 : Correction de bugs.
+<string name="news">"v1.4.1 : Amélioration de la gestion des téléchargements des vidéos:
 
-Ajout d'un widget donnant accès aux derniers articles du site et des liens direct vers les vidéos/téléchargements.
+Ajout dans le menu 'Paramètres' d'une option pour que les téléchargements se lancent en série ou en parallèle.
 
-Ajout d'un menu 'Paramètres' pour gérer l'autologin.
+Ajout d'un menu 'vidéos de l'article' dans un article pour télécharger l'ensemble des vidéos.
 
-Ajout d'un menu 'Marquer comme lu' dans la liste d'articles pour tous les marquer d'un coup.
+Amélioration du rendu des icones des menus pour android 2.3.
 "</string>
 </resources>
 

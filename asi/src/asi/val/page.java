@@ -39,8 +39,8 @@ public class page extends asi_activity {
 	private String pagedata;
 
 	private String page_title;
-	
-	private ArrayList<video_url> videos;
+
+	protected ArrayList<video_url> videos;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,13 +85,12 @@ public class page extends asi_activity {
 		// titre de la page
 		setPage_title(this.getIntent().getExtras().getString("titre"));
 	}
-	
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		if(!videos.isEmpty()) {
+		if (!videos.isEmpty()) {
 			inflater.inflate(R.layout.emission_menu, menu);
-		}
-		else {
+		} else {
 			inflater.inflate(R.layout.generic_menu, menu);
 		}
 		return true;
@@ -137,14 +136,14 @@ public class page extends asi_activity {
 						intent.setAction(android.content.Intent.ACTION_VIEW);
 						intent.setDataAndType(Uri.parse(url), "audio/*");
 						startActivity(intent);
-					} else if (url.matches(".*arretsurimages\\.net\\/contenu.*")) {
+					} else if (url
+							.matches(".*arretsurimages\\.net\\/contenu.*")) {
 						Log.d("ASI", "Chargement arret sur image");
 						Intent i = new Intent(getApplicationContext(),
 								page.class);
 						i.putExtra("url", url);
 						page.this.startActivity(i);
-					} else if (url
-							.matches(".*arretsurimages\\.net\\/vite.*")) {
+					} else if (url.matches(".*arretsurimages\\.net\\/vite.*")) {
 						Log.d("ASI", "Chargement arret sur image");
 						Intent i = new Intent(getApplicationContext(),
 								page.class);
@@ -153,20 +152,22 @@ public class page extends asi_activity {
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/dossier.*")) {
 						Log.d("ASI", "Dossier lancé");
-						Intent i = new Intent(getApplicationContext(), liste_articles_recherche.class);
+						Intent i = new Intent(getApplicationContext(),
+								liste_articles_recherche.class);
 						i.putExtra("titre", "DOSSIER");
 						i.putExtra("color", "#3399FF");
 						i.putExtra("image", "articles");
 						i.putExtra("url", url);
 						page.this.startActivity(i);
-//						Toast.makeText(
-//								page.this,
-//								"Les liens vers les dossiers ne sont pas pris en charge!",
-//								Toast.LENGTH_LONG).show();
+						// Toast.makeText(
+						// page.this,
+						// "Les liens vers les dossiers ne sont pas pris en charge!",
+						// Toast.LENGTH_LONG).show();
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/recherche.*")) {
 						Log.d("ASI", "recherche lancé");
-						Intent i = new Intent(getApplicationContext(), liste_articles_recherche.class);
+						Intent i = new Intent(getApplicationContext(),
+								liste_articles_recherche.class);
 						i.putExtra("titre", "RECHERCHE");
 						i.putExtra("color", "#ACB7C6");
 						i.putExtra("image", "recherche");
@@ -176,15 +177,15 @@ public class page extends asi_activity {
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/chroniqueur.*")) {
 						Log.d("ASI", "Chronique lancé");
-						Intent i = new Intent(getApplicationContext(), liste_articles_recherche.class);
+						Intent i = new Intent(getApplicationContext(),
+								liste_articles_recherche.class);
 						i.putExtra("titre", "CHRONIQUES");
 						i.putExtra("color", "#FF398E");
 						i.putExtra("image", "kro");
 						i.putExtra("url", url);
 						page.this.startActivity(i);
 
-					} else if (url
-							.matches(".*arretsurimages\\.net\\/media.*")) {
+					} else if (url.matches(".*arretsurimages\\.net\\/media.*")) {
 						Intent i = new Intent(Intent.ACTION_VIEW);
 						Uri u = Uri.parse(url);
 						i.setData(u);
@@ -195,11 +196,11 @@ public class page extends asi_activity {
 								page.this,
 								"Ce lien n'est pas visible sur l'application Android",
 								Toast.LENGTH_LONG).show();
-					}else {
+					} else {
 						Toast.makeText(
-						page.this,
-						"Ce lien n'est pas visible sur l'application Android : Ouverture du navigateur",
-						Toast.LENGTH_LONG).show();
+								page.this,
+								"Ce lien n'est pas visible sur l'application Android : Ouverture du navigateur",
+								Toast.LENGTH_LONG).show();
 						Intent i = new Intent(Intent.ACTION_VIEW);
 						Uri u = Uri.parse(url);
 						i.setData(u);
@@ -231,44 +232,48 @@ public class page extends asi_activity {
 		this.pagedata = pagedata;
 
 	}
-	
+
 	public void telecharger_actes() {
 		final int nb_actes = videos.size();
-		final CharSequence[] items = new CharSequence[nb_actes];
-		final boolean[] items_selected = new boolean[nb_actes];
-		
-		for(int i = 0; i < nb_actes; i++) {
-			items[i] = "Acte " + (i + 1);
-			items_selected[i] = true;
-		}
+		// final CharSequence[] items = new CharSequence[nb_actes];
+		// final boolean[] items_selected = new boolean[nb_actes];
+		//
+		// for(int i = 0; i < nb_actes; i++) {
+		// items[i] = "Acte " + (i + 1);
+		// items_selected[i] = true;
+		// }
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Vidéos de l'article");
-		builder.setMultiChoiceItems(items, items_selected, new DialogInterface.OnMultiChoiceClickListener() {
-			
-			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-				items_selected[which] = isChecked;
-				
-			}
-		});
-		builder.setPositiveButton("Téléchargement", new DialogInterface.OnClickListener() {
-			
-			public void onClick(DialogInterface dialog, int which) {
-				video_url video_selected = null;
-				for(int i = 0;i<nb_actes;i++){
-					if(items_selected[i]) {
-						video_selected = videos.get(i);
-						video_selected.setNumber(i + 1);
-						video_selected.setTitle(page_title);
-						page.this.get_datas().downloadvideo(video_selected);
+		// builder.setMultiChoiceItems(items, items_selected, new
+		// DialogInterface.OnMultiChoiceClickListener() {
+		//
+		// public void onClick(DialogInterface dialog, int which, boolean
+		// isChecked) {
+		// items_selected[which] = isChecked;
+		//
+		// }
+		// });
+		builder.setMessage("Voulez-vous lancer le téléchargement des " + nb_actes
+				+ " vidéos de cette article?");
+		builder.setNegativeButton("Non",null);
+		builder.setPositiveButton("Oui",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						video_url video_selected = null;
+						for (int i = 0; i < nb_actes; i++) {
+							// if(items_selected[i]) {
+							video_selected = videos.get(i);
+							video_selected.setNumber(i + 1);
+							video_selected.setTitle(page_title);
+							page.this.get_datas().downloadvideo(video_selected);
+							// }
+						}
 					}
-				}
-			}
-		});
-		
+				});
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-	
+
 	public void video_choice(final String url) {
 		final CharSequence[] items = { "Visionner", "Télécharger" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -276,10 +281,10 @@ public class page extends asi_activity {
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visionner")) {
-//					Intent i = new Intent(getApplicationContext(),
-//							video_view.class);
-//					i.putExtra("url", url);
-//					startActivity(i);
+					// Intent i = new Intent(getApplicationContext(),
+					// video_view.class);
+					// i.putExtra("url", url);
+					// startActivity(i);
 					new get_video_url().execute(url);
 				} else {
 					video_url vid = new video_url(url);
@@ -294,7 +299,7 @@ public class page extends asi_activity {
 	}
 
 	public String getPagedata() {
-		return pagedata; 
+		return pagedata;
 	}
 
 	private class get_page_content extends AsyncTask<String, Void, String> {
@@ -318,16 +323,14 @@ public class page extends asi_activity {
 			// this.publishProgress("Chargement...");
 			try {
 				page_load page_d = new page_load(args[0]);
-				
-				videos = page_d.getVideos();
-				
-				String mapage = page_d.getContent();
-				page.this.setPagedata(mapage);
-				
+
+				page.this.setPagedata(page_d.getContent());
+				page.this.setVideo(page_d.getVideos());
+
 				page.this.get_datas().add_articles_lues(args[0]);
 			} catch (Exception e) {
-				//String error = e.toString() + "\n" + e.getStackTrace()[0]
-					//	+ "\n" + e.getStackTrace()[1];
+				// String error = e.toString() + "\n" + e.getStackTrace()[0]
+				// + "\n" + e.getStackTrace()[1];
 				String error = e.getMessage();
 				return (error);
 			}
@@ -360,22 +363,27 @@ public class page extends asi_activity {
 		}
 	}
 
+	public void setVideo(ArrayList<video_url> videos2) {
+		// TODO Auto-generated method stub
+		this.videos = videos2;
+	}
+
 	public String getPage_title() {
 		return page_title;
 	}
 
 	private class get_video_url extends AsyncTask<String, Void, String> {
-		private final progress_dialog dialog = new progress_dialog(
-				page.this,this);
+		private final progress_dialog dialog = new progress_dialog(page.this,
+				this);
 		private String valid_url;
 
 		// // can use UI thread here
 		protected void onPreExecute() {
 			this.dialog.setMessage("Recuperation de l'url de la video");
 			this.dialog.show();
-			valid_url="";
+			valid_url = "";
 		}
-		
+
 		protected void onCancelled() {
 			Log.d("ASI", "on cancelled");
 		}
@@ -387,8 +395,8 @@ public class page extends asi_activity {
 				vid.setTitle(page_title);
 				valid_url = vid.get_relink_adress();
 			} catch (Exception e) {
-//				String error = e.toString() + "\n" + e.getStackTrace()[0]
-//						+ "\n" + e.getStackTrace()[1];
+				// String error = e.toString() + "\n" + e.getStackTrace()[0]
+				// + "\n" + e.getStackTrace()[1];
 				String error = e.getMessage();
 				return (error);
 			}
@@ -402,16 +410,16 @@ public class page extends asi_activity {
 			} catch (Exception e) {
 				Log.e("ASI", "Erreur d'arret de la boite de dialog");
 			}
-			if (error == null){
-				Intent intent = new Intent();  
-				intent.setAction(android.content.Intent.ACTION_VIEW);  
+			if (error == null) {
+				Intent intent = new Intent();
+				intent.setAction(android.content.Intent.ACTION_VIEW);
 				intent.setDataAndType(Uri.parse(valid_url), "video/*");
-				startActivity(intent); 
-			}
-			else {
-				new erreur_dialog(page.this,"Récupération de l'url",error).show();
+				startActivity(intent);
+			} else {
+				new erreur_dialog(page.this, "Récupération de l'url", error)
+						.show();
 			}
 		}
 	}
-	
+
 }

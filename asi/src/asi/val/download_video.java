@@ -49,6 +49,8 @@ public class download_video extends AsyncTask<String, Void, String> {
 	public download_video(shared_datas share, video_url v){
 		this.share = share;
 		vid = v;
+		error = null;
+		cancel = false;
 	}
 
 	protected void onPreExecute() {
@@ -58,8 +60,6 @@ public class download_video extends AsyncTask<String, Void, String> {
 		size = 0;
 //		Toast.makeText(share.getContext(), "Démarrage du téléchargement",
 //				Toast.LENGTH_LONG).show();
-		error = null;
-		cancel = false;
 	}
 
 	protected String doInBackground(String... arg) {
@@ -96,7 +96,7 @@ public class download_video extends AsyncTask<String, Void, String> {
 				size += buf.length;
 				// Lancer une erreur quand le thread est stoppper
 				if (cancel)
-					throw new StopException("Stop");		
+					throw new StopException("Stop");
 			} while (true);
 			conn.disconnect();
 			Log.d("ASI", "Final-download=" + size / 1000);
@@ -144,6 +144,7 @@ public class download_video extends AsyncTask<String, Void, String> {
 	public void Stop_download() {
 		Log.d("ASI", "Cancelled_video");
 		cancel = true;
+		this.set_error("Stop");
 	}
 
 	protected void onPostExecute(String er) {
