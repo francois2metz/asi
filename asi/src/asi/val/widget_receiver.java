@@ -204,8 +204,8 @@ public class widget_receiver extends AppWidgetProvider {
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
 			// On met l'artcile courant lu et on rend visible l'image check
-			//views.setViewVisibility(R.id.widget_check, View.VISIBLE);
 			this.defined_article(views, context, posi);
+			views.setViewVisibility(R.id.widget_check, View.VISIBLE);
 			
 			ComponentName thisWidget = new ComponentName(context,
 					widget_receiver.class);
