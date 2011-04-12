@@ -88,7 +88,7 @@ public class page extends asi_activity {
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		if (!videos.isEmpty()) {
+		if (videos!=null && !videos.isEmpty()) {
 			inflater.inflate(R.layout.emission_menu, menu);
 		} else {
 			inflater.inflate(R.layout.generic_menu, menu);
