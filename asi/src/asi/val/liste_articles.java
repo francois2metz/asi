@@ -74,11 +74,11 @@ public class liste_articles extends asi_activity {
 		} else
 			v.setImageResource(R.drawable.toutlesite);
 
-		this.set_content_page();
+		this.load_content();
 
 	}
 
-	protected void set_content_page() {
+	public void load_content() {
 		// TODO Auto-generated method stub
 		// recuperation de l'url des flux rss
 		String url = this.getIntent().getExtras().getString("url");
@@ -312,8 +312,8 @@ public class liste_articles extends asi_activity {
 			if (error == null)
 				liste_articles.this.load_data();
 			else {
-				new erreur_dialog(liste_articles.this,
-						"Chargement des articles", error).show();
+				//new erreur_dialog(liste_articles.this, "Chargement des articles", error).show();
+				liste_articles.this.erreur_loading(error);
 			}
 			// Main.this.output.setText(result);
 		}

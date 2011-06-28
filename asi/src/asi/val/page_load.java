@@ -227,6 +227,9 @@ public class page_load {
 			// <!-- Téléchargement des émissions-->
 			// <!-- fin Téléchargement -->
 			// type="application/x-shockwave-flash"
+			if (sb.toString().equalsIgnoreCase(""))
+				throw new StopException("La page est vide");
+			
 		} catch (java.net.ProtocolException e) {
 			throw new StopException("Probleme de connection");
 		} catch (Exception e) {
@@ -241,8 +244,7 @@ public class page_load {
 			}
 		}
 		if (sb.toString().equalsIgnoreCase(""))
-			return (this
-					.center("Problème de connexion au serveur : Essayez de recharger l'article"));
+			return (this.center("Problème de connexion au serveur : Essayez de recharger l'article"));
 
 		// On retourne le stringBuffer
 		// return

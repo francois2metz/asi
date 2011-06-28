@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,6 +34,31 @@ public class asi_activity extends Activity {
 			return (new shared_datas(this));
 		datas.setContext(this);
 		return datas;
+	}
+	
+	public void load_content() {
+		
+	}
+	
+	protected void erreur_loading(String error){
+		Log.e("ASI",error);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Une erreur réseau s'est produite lors du chargement.")
+				.setCancelable(false)
+				.setPositiveButton("Réessayer",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								asi_activity.this.load_content();
+							}
+						})
+				.setNegativeButton("Annuler",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								asi_activity.this.finish();
+							}
+						});
+		AlertDialog quitte = builder.create();
+		quitte.show();
 	}
 	
 	public void closed_application() {

@@ -45,7 +45,7 @@ public class configuration extends asi_activity {
 		ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> map;
 		// Chargement des catégories
-		int[] liste = new int[] { R.array.conf_autologin, R.array.conf_dlsync};
+		int[] liste = new int[] { R.array.conf_autologin, R.array.conf_dlsync, R.array.conf_zoom};
 
 		Resources res = getResources();
 		for (int i = 0; i < liste.length; i++) {
@@ -80,6 +80,8 @@ public class configuration extends asi_activity {
 					configuration.this.do_on_autologin(map.get("titre"));
 				if (map.get("type").equalsIgnoreCase("dlsync"))
 					configuration.this.do_on_dlsync(map.get("titre"));
+				if (map.get("type").equalsIgnoreCase("zoom"))
+					configuration.this.do_on_zoom(map.get("titre"));
 			}
 		});
 	}
@@ -127,5 +129,28 @@ public class configuration extends asi_activity {
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-
+	
+	private void do_on_zoom(String titre) {
+		final CharSequence[] items = new CharSequence[5];
+		final int[] zoomlevel = new int[5];
+		int posi = 0;
+		for(int i = 0; i<5;i++){
+			int value = (i*10+80);
+			items[i] = value+" %";
+			zoomlevel[i]=value;
+			if(value==this.get_datas().getZoomLevel())
+				posi=i;
+		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(titre);
+		builder.setSingleChoiceItems(items, posi, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int item) {
+		       // Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
+				configuration.this.get_datas().setZoomLevel(zoomlevel[item]);
+				dialog.dismiss();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
 }

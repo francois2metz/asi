@@ -23,13 +23,13 @@ L’application a été gracieusement développée par Benoît Valot et publiée
 
 Pour toute question, merci de vous reporter à l’espace Android du site arretsurimages.net ou de nous écrire à android@arretsurimages.net"</string>
 
-<string name="news">"v1.4.1 : Amélioration de la gestion des téléchargements des vidéos:
+<string name="news">"v1.4.2
 
-Ajout dans le menu 'Paramètres' d'une option pour que les téléchargements se lancent en série ou en parallèle.
+Ajout dans le menu 'Paramètres' d'une option pour définir la taille des polices dans les articles.
 
-Ajout d'un menu 'vidéos de l'article' dans un article pour télécharger l'ensemble des vidéos.
+Amélioration de la gestion des erreurs réseaux.
 
-Amélioration du rendu des icones des menus pour android 2.3.
+Les liens dans les articles pour zoomer sur une image s'ouvrent directement dans l'application.
 "</string>
 </resources>
 

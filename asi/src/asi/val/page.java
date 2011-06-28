@@ -55,8 +55,7 @@ public class page extends asi_activity {
 		if (savedInstanceState != null)
 			Log.d("ASI", "On_create_page_activity_from_old");
 		else
-			new get_page_content().execute(this.getIntent().getExtras()
-					.getString("url"));
+			this.load_content();
 		// titre de la page
 		setPage_title(this.getIntent().getExtras().getString("titre"));
 	}
@@ -79,11 +78,16 @@ public class page extends asi_activity {
 			this.load_page();
 		} else {
 			Log.d("ASI", "Rien a recuperer");
-			new get_page_content().execute(this.getIntent().getExtras()
-					.getString("url"));
+			//new get_page_content().execute(this.getIntent().getExtras().getString("url"));
+			this.load_content();
 		}
 		// titre de la page
 		setPage_title(this.getIntent().getExtras().getString("titre"));
+	}
+	
+	public void load_content(){
+		new get_page_content().execute(this.getIntent().getExtras()
+				.getString("url"));
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,6 +123,8 @@ public class page extends asi_activity {
 			mywebview.loadDataWithBaseURL("http://www.arretsurimages.net",
 					this.pagedata, mimeType, encoding, null);
 			mywebview.setWebViewClient(new myWebViewClient());
+			
+			mywebview.setInitialScale(this.get_datas().getZoomLevel());
 
 		} catch (Exception e) {
 			new erreur_dialog(this, "Chargement de la page", e).show();
@@ -186,10 +192,13 @@ public class page extends asi_activity {
 						page.this.startActivity(i);
 
 					} else if (url.matches(".*arretsurimages\\.net\\/media.*")) {
-						Intent i = new Intent(Intent.ACTION_VIEW);
-						Uri u = Uri.parse(url);
-						i.setData(u);
-						startActivity(i);
+						//Intent i = new Intent(Intent.ACTION_VIEW);
+//						Uri u = Uri.parse(url);
+//						i.setData(u);
+						Intent i = new Intent(getApplicationContext(),
+								pageImage.class);
+						i.putExtra("url", url);
+						page.this.startActivity(i);
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/emission.*")) {
 						Toast.makeText(
@@ -347,8 +356,8 @@ public class page extends asi_activity {
 			if (error == null) {
 				page.this.load_page();
 			} else {
-				new erreur_dialog(page.this, "Chargement de la page", error)
-						.show();
+				//new erreur_dialog(page.this, "Chargement de la page", error).show();
+				page.this.erreur_loading(error);
 			}
 		}
 	}

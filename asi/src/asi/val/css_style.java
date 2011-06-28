@@ -65,7 +65,7 @@ public class css_style {
 		 data.append(".outils-contenu {font-weight:bold;background-color:#fff;min-height:30px;height:30px;margin-left:-25px;padding-left:25px;position:relative;}"+"\n");
 		 data.append(".outils-contenu img {vertical-align:middle;margin-right:3px;}"+"\n");
 		 data.append(".outils-contenu a {margin-right:16px;}"+"\n");
-		 data.append(".contenu-html {padding-top:10px; padding-bottom:20px;font-size:13px;color:#030303;overflow:hidden;text-align:justify;}"+"\n");
+		 data.append(".contenu-html {padding-top:10px; padding-bottom:20px;font-size:14px;color:#030303;overflow:hidden;text-align:justify;}"+"\n");
 		 data.append(".contenu-html td embed, .contenu-html td object, .contenu-html td p {width:320px !important;}"+"\n");
 		 data.append(".contenu-html p {margin:0;padding:7px 0 7px 0;line-height:16px!important;}"+"\n");
 		 data.append(".contenu-html table {margin:0 0 7px 0}"+"\n");
@@ -76,13 +76,13 @@ public class css_style {
 		 data.append(".contenu-html em, .contenu-html em * {font-style:italic;line-height:16px!important;}"+"\n");
 		 data.append(".contenu-html hr {border-bottom:1px dotted #BEC6D1;height:1px;margin:5px 0 5px 0;padding:0;line-height:1px;font-size:1px;}"+"\n");
 		 data.append(".contenu-html strong, .contenu-html strong * {font-weight:bold;line-height:16px!important;}"+"\n");
-		 data.append(".contenu-html a {text-decoration:underline;font-size:13px;font-weight:normal;line-height:16px!important;}"+"\n");
+		 data.append(".contenu-html a {text-decoration:underline;font-size:14px;font-weight:normal;line-height:16px!important;}"+"\n");
 		 data.append(".contenu-html u {text-decoration:underline;line-height:16px!important;}"+"\n");
 		 data.append(".contenu-html .chapeau, .contenu-html .chapeau * {font-size:14px;color:#030303;font-weight:bold;line-height:17px!important;}"+"\n");
 		 data.append(".contenu-html .inter-titre {font-size:14px;color:#030303;font-weight:bold;	text-transform:uppercase;line-height:17px!important;}"+"\n");
-		 data.append(".contenu-html .citation, .contenu-html blockquote {font-size:13px;color:#030303;font-style:italic;line-height:17px!important;}"+"\n");
+		 data.append(".contenu-html .citation, .contenu-html blockquote {font-size:14px;color:#030303;font-style:italic;line-height:17px!important;}"+"\n");
 		 data.append(".contenu-html .surlignage-fluo {background-color:#ffe7a3;line-height:16px!important;}"+"\n");
-		 data.append(".contenu-html .regardez {font-size:13px;color:#b0b0b0;	font-weight:bold;line-height:16px!important;}"+"\n");
+		 data.append(".contenu-html .regardez {font-size:14px;color:#b0b0b0;	font-weight:bold;line-height:16px!important;}"+"\n");
 		 data.append(".contenu-html .texte-barre {text-decoration:line-through;}"+"\n");
 		 data.append(".contenu-html ul {list-style-image: url(/images/puce.gif);padding:5px 20px 5px 20px;}"+"\n");
 		 data.append(".bloc-bande-vite .contenu-html {padding-right:1px;}"+"\n");

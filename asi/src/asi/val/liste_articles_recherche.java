@@ -11,7 +11,7 @@ public class liste_articles_recherche extends liste_articles {
 		super.onCreate(savedInstanceState);
 	}
 
-	protected void set_content_page() {
+	public void load_content() {
 
 		// Etat de la liste view
 		state = null;
@@ -74,8 +74,8 @@ public class liste_articles_recherche extends liste_articles {
 			if (error == null)
 				liste_articles_recherche.this.load_data();
 			else {
-				new erreur_dialog(liste_articles_recherche.this,
-						"Chargement des articles", error).show();
+				//new erreur_dialog(liste_articles_recherche.this,"Chargement des articles", error).show();
+				liste_articles_recherche.this.erreur_loading(error);
 			}
 			// Main.this.output.setText(result);
 		}

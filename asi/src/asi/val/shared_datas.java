@@ -202,7 +202,21 @@ public class shared_datas {
 	public boolean isAutologin() {
 		return autologin;
 	}
+	
+	public void setZoomLevel(int posi) {
+		SharedPreferences settings = activity.getSharedPreferences(PREFERENCE,
+				0);
+		Editor editor = settings.edit();
+		editor.putInt("zoom_level", posi);
+		editor.commit();
+	}
 
+	public int getZoomLevel() {
+		SharedPreferences settings = activity.getSharedPreferences(PREFERENCE,
+				0);
+		return settings.getInt("zoom_level", 90);
+	}
+	
 	protected void stop_all_download() {
 		for (int i = 0; i < downloading.size(); i++) {
 			download_video vid = downloading.elementAt(i);
