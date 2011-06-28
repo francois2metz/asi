@@ -214,7 +214,7 @@ public class shared_datas {
 	public int getZoomLevel() {
 		SharedPreferences settings = activity.getSharedPreferences(PREFERENCE,
 				0);
-		return settings.getInt("zoom_level", 90);
+		return settings.getInt("zoom_level", 100);
 	}
 	
 	protected void stop_all_download() {

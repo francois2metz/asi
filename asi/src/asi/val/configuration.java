@@ -131,10 +131,10 @@ public class configuration extends asi_activity {
 	}
 	
 	private void do_on_zoom(String titre) {
-		final CharSequence[] items = new CharSequence[5];
-		final int[] zoomlevel = new int[5];
+		final CharSequence[] items = new CharSequence[8];
+		final int[] zoomlevel = new int[8];
 		int posi = 0;
-		for(int i = 0; i<5;i++){
+		for(int i = 0; i<8;i++){
 			int value = (i*10+80);
 			items[i] = value+" %";
 			zoomlevel[i]=value;

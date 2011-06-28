@@ -123,8 +123,7 @@ public class page extends asi_activity {
 			mywebview.loadDataWithBaseURL("http://www.arretsurimages.net",
 					this.pagedata, mimeType, encoding, null);
 			mywebview.setWebViewClient(new myWebViewClient());
-			
-			mywebview.setInitialScale(this.get_datas().getZoomLevel());
+			mywebview.setInitialScale((int) (this.get_datas().getZoomLevel()*mywebview.getScale()));
 
 		} catch (Exception e) {
 			new erreur_dialog(this, "Chargement de la page", e).show();
