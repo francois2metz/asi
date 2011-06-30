@@ -9,7 +9,7 @@
 	</string-array>
 	<string-array name="catE">
 		<item>>EMISSIONS</item>
-		<item>"@rrêt sur images, Ligne j@une, D@ns le texte"</item>
+		<item>"@rrêt sur images, Ligne j@une, D@ns le texte;"</item>
 		<item>http://www.arretsurimages.net/emissions.rss</item>
 		<item>subcatE</item>
 		<item>#3A36FF</item>
