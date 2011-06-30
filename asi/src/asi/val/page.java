@@ -74,10 +74,10 @@ public class page extends asi_activity {
 		String name = b.getString("page_data");
 		if (name != null) {
 			this.pagedata = name;
-			Log.d("ASI", "Recuperation du content de la page");
+			Log.d("ASI", "Récupération du contenu de la page");
 			this.load_page();
 		} else {
-			Log.d("ASI", "Rien a recuperer");
+			Log.d("ASI", "Rien a récupérer");
 			//new get_page_content().execute(this.getIntent().getExtras().getString("url"));
 			this.load_content();
 		}
@@ -119,7 +119,7 @@ public class page extends asi_activity {
 			final String mimeType = "text/html";
 			final String encoding = "utf-8";
 
-			// on charge mon code html dans ma webview
+			// on charge le code HTML dans la webview
 			mywebview.loadDataWithBaseURL("http://www.arretsurimages.net",
 					this.pagedata, mimeType, encoding, null);
 			mywebview.setWebViewClient(new myWebViewClient());
@@ -143,13 +143,13 @@ public class page extends asi_activity {
 						startActivity(intent);
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/contenu.*")) {
-						Log.d("ASI", "Chargement arret sur image");
+						Log.d("ASI", "Chargement arrêt sur image");
 						Intent i = new Intent(getApplicationContext(),
 								page.class);
 						i.putExtra("url", url);
 						page.this.startActivity(i);
 					} else if (url.matches(".*arretsurimages\\.net\\/vite.*")) {
-						Log.d("ASI", "Chargement arret sur image");
+						Log.d("ASI", "Chargement arrêt sur image");
 						Intent i = new Intent(getApplicationContext(),
 								page.class);
 						i.putExtra("url", url);
@@ -166,11 +166,11 @@ public class page extends asi_activity {
 						page.this.startActivity(i);
 						// Toast.makeText(
 						// page.this,
-						// "Les liens vers les dossiers ne sont pas pris en charge!",
+						// "Les liens vers les dossiers ne sont pas pris en charge !",
 						// Toast.LENGTH_LONG).show();
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/recherche.*")) {
-						Log.d("ASI", "recherche lancé");
+						Log.d("ASI", "Recherche lancé");
 						Intent i = new Intent(getApplicationContext(),
 								liste_articles_recherche.class);
 						i.putExtra("titre", "RECHERCHE");
@@ -207,7 +207,7 @@ public class page extends asi_activity {
 					} else {
 						Toast.makeText(
 								page.this,
-								"Ce lien n'est pas visible sur l'application Android : Ouverture du navigateur",
+								"Ce lien n'est pas visible sur l'application Android : ouverture du navigateur",
 								Toast.LENGTH_LONG).show();
 						Intent i = new Intent(Intent.ACTION_VIEW);
 						Uri u = Uri.parse(url);
@@ -262,7 +262,7 @@ public class page extends asi_activity {
 		// }
 		// });
 		builder.setMessage("Voulez-vous lancer le téléchargement des " + nb_actes
-				+ " vidéos de cette article?");
+				+ " vidéos de cet article ?");
 		builder.setNegativeButton("Non",null);
 		builder.setPositiveButton("Oui",
 				new DialogInterface.OnClickListener() {
@@ -314,14 +314,14 @@ public class page extends asi_activity {
 		private final progress_dialog dialog = new progress_dialog(page.this,
 				this);
 
-		// // can use UI thread here
+		// can use UI thread here
 		protected void onPreExecute() {
 			this.dialog.setMessage("Chargement...");
 			this.dialog.show();
 		}
 
 		protected void onCancelled() {
-			Log.d("ASI", "On Cancel");
+			Log.d("ASI", "onCancelled");
 		}
 
 		// automatically done on worker thread (separate from UI thread)
@@ -350,7 +350,7 @@ public class page extends asi_activity {
 				if (dialog.isShowing())
 					dialog.dismiss();
 			} catch (Exception e) {
-				Log.e("ASI", "Erreur d'arret de la boite de dialog");
+				Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
 			}
 			if (error == null) {
 				page.this.load_page();
@@ -385,15 +385,15 @@ public class page extends asi_activity {
 				this);
 		private String valid_url;
 
-		// // can use UI thread here
+		// can use UI thread here
 		protected void onPreExecute() {
-			this.dialog.setMessage("Recuperation de l'url de la video");
+			this.dialog.setMessage("Recupération de l'URL de la vidéo");
 			this.dialog.show();
 			valid_url = "";
 		}
 
 		protected void onCancelled() {
-			Log.d("ASI", "on cancelled");
+			Log.d("ASI", "onCancelled");
 		}
 
 		// automatically done on worker thread (separate from UI thread)
@@ -416,7 +416,7 @@ public class page extends asi_activity {
 				if (dialog.isShowing())
 					dialog.dismiss();
 			} catch (Exception e) {
-				Log.e("ASI", "Erreur d'arret de la boite de dialog");
+				Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
 			}
 			if (error == null) {
 				Intent intent = new Intent();
@@ -424,7 +424,7 @@ public class page extends asi_activity {
 				intent.setDataAndType(Uri.parse(valid_url), "video/*");
 				startActivity(intent);
 			} else {
-				new erreur_dialog(page.this, "Récupération de l'url", error)
+				new erreur_dialog(page.this, "Récupération de l'URL", error)
 						.show();
 			}
 		}

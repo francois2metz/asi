@@ -104,7 +104,7 @@ public class video_view extends Activity {
 			video.stopPlayback();
 		}
 		// current_position=video.getCurrentPosition();
-		// Log.d("ASI","Position : "+current_position);
+		// Log.d("ASI","Position : "+current_position);
 		super.onPause();
 		Log.d("ASI", "video_Onpause");
 	}
@@ -136,9 +136,9 @@ public class video_view extends Activity {
 		private final progress_dialog dialog = new progress_dialog(
 				video_view.this,this);
 
-		// // can use UI thread here
+		// can use UI thread here
 		protected void onPreExecute() {
-			this.dialog.setMessage("Recuperation de l'url de la video");
+			this.dialog.setMessage("Recupération de l'URL de la vidéo");
 			this.dialog.show();
 		}
 		
@@ -166,12 +166,12 @@ public class video_view extends Activity {
 				if (dialog.isShowing())
 					dialog.dismiss();
 			} catch (Exception e) {
-				Log.e("ASI", "Erreur d'arret de la boite de dialog");
+				Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
 			}
 			if (error == null)
 				video_view.this.load_video();
 			else {
-				new erreur_dialog(video_view.this,"Récupération de l'url",error).show();
+				new erreur_dialog(video_view.this,"Récupération de l'URL",error).show();
 			}
 		}
 	}
@@ -191,7 +191,7 @@ public class video_view extends Activity {
 				try {
 					this.dialog.dismiss();
 				} catch (Exception e) {
-					Log.e("ASI", "Erreur d'arret de la boite de dialog");
+					Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
 				}
 			}
 		}
@@ -204,7 +204,7 @@ public class video_view extends Activity {
 				while (!vid.isPlaying()) {
 					Thread.sleep(1000L);
 					// this.wait(1000);
-					// on attend la fin de chargement!!
+					// on attend la fin de chargement !!
 				}
 
 			} catch (Exception e) {
@@ -220,7 +220,7 @@ public class video_view extends Activity {
 				try {
 					this.dialog.dismiss();
 				} catch (Exception e) {
-					Log.e("ASI", "Erreur d'arret de la boite de dialog");
+					Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
 				}
 			}
 			if (error != null)

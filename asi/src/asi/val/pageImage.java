@@ -37,7 +37,7 @@ public class pageImage extends asi_activity {
 	private void load_page() {
 		// ac.replaceView(R.layout.pageview);
 		try {
-			// on charge l'url de l'image dans ma webview
+			// on charge l'URL de l'image dans la webview
 			mywebview.loadUrl(this.getIntent().getExtras()
 			.getString("url"));
 			mywebview.getSettings().setBuiltInZoomControls(true);

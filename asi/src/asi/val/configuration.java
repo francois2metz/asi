@@ -64,7 +64,7 @@ public class configuration extends asi_activity {
 		// on ajoute le viewbinder
 		//mSchedule.setViewBinder(new bind_color());
 
-		// On attribut à notre listView l'adapter que l'on vient de créer
+		// On attribue à notre listView l'adapter que l'on vient de créer
 		maListViewPerso.setAdapter(mSchedule);
 
 		// Enfin on met un écouteur d'évènement sur notre listView

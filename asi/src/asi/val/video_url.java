@@ -47,12 +47,12 @@ public class video_url {
 	}
 
 	public String parse_to_url(String asi) {
-		Log.d("ASI","Recherche de video");
+		Log.d("ASI","Recherche de vidéos");
 		Pattern p = Pattern
 				.compile(".*\\<a href\\=\"(http\\:\\/\\/iphone\\.dailymotion\\.com.*)\" title=\"voir.*");
 		Matcher m = p.matcher(asi);
 		if (m.matches()) {
-			Log.d("ASI","Recherche de video trouve");
+			Log.d("ASI","Recherche de vidéos : vidéos trouvées");
 			String s = m.group(1);
 			this.set_dailymotion_url(s);
 
@@ -93,7 +93,7 @@ public class video_url {
 			relink = conn.getURL().toString();
 			conn.disconnect();
 		} catch (java.net.ProtocolException e) {
-			throw new StopException("Probleme de connection");
+			throw new StopException("Problème de connexion");
 		} catch (Exception e) {
 			throw e;
 		}finally {
@@ -131,7 +131,7 @@ public class video_url {
 			}
 			conn.disconnect();
 		} catch (java.net.ProtocolException e) {
-			throw new StopException("Probleme de connection");
+			throw new StopException("Problème de connexion");
 		} catch (Exception e) {
 			throw e;
 		} finally {

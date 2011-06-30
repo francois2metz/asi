@@ -97,8 +97,8 @@ public class recherche_dialog extends AlertDialog.Builder {
 	
 	private String defined_url() throws Exception{
 		if(txt_recherche.getText().toString().equalsIgnoreCase("")){
-			//throw new StopException("Aucun element à rechercher");
-			Log.d("ASI","rien d'écris");
+			//throw new StopException("Aucun élément à rechercher");
+			Log.d("ASI","rien d'écrit");
 			txt_recherche.setText("valot");
 		}
 		StringBuilder donnees = new StringBuilder("http://www.arretsurimages.net/recherche.php");

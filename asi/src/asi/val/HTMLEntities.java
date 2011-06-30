@@ -329,7 +329,7 @@ public class HTMLEntities {
 			initializeEntitiesTables();
 		}
 		
-		StringBuffer buf = new StringBuffer(); //the otput string buffer
+		StringBuffer buf = new StringBuffer(); //the output string buffer
 		
 		for (int i = 0; i < str.length(); ++i) {
 			char ch = str.charAt(i);
@@ -356,7 +356,7 @@ public class HTMLEntities {
 	 */
 	public String unhtmlentities(String str) {
 		
-		//initialize html translation maps table the first time is called
+		//initialize html translation maps table the first time it is called
 		if (htmlentities_map.isEmpty()) {
 			initializeEntitiesTables();
 		}

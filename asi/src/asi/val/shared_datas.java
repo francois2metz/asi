@@ -119,9 +119,9 @@ public class shared_datas {
 			Toast.makeText(activity, "Création du fichier de sauvegarde",
 					Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
-			new erreur_dialog(this.activity, "ACCES aux donnees partagé", e)
+			new erreur_dialog(this.activity, "ACCÈS aux données partagées", e)
 					.show();
-			Log.e("ASI", "ACCES aux donnees partagé " + e.getMessage());
+			Log.e("ASI", "ACCÈS aux données partagées " + e.getMessage());
 		}
 	}
 
@@ -142,9 +142,9 @@ public class shared_datas {
 				this.articles_lues = temp;
 			}
 		} catch (Exception e) {
-			new erreur_dialog(this.activity, "ACCES aux donnees partagé", e)
+			new erreur_dialog(this.activity, "ACCÈS aux données partagées", e)
 					.show();
-			Log.e("ASI", "ACCES aux donnees partagé " + e.getMessage());
+			Log.e("ASI", "ACCÈS aux données partagées " + e.getMessage());
 		}
 	}
 
@@ -160,9 +160,9 @@ public class shared_datas {
 				fos.close();
 			}
 		} catch (Exception e) {
-			new erreur_dialog(this.activity, "ACCES aux donnees partagé", e)
+			new erreur_dialog(this.activity, "ACCÈS aux données partagées", e)
 					.show();
-			Log.e("ASI", "ACCES aux donnees partagé " + e.getMessage());
+			Log.e("ASI", "ACCÈS aux données partagées " + e.getMessage());
 		}
 		// Log.d("ASI","add_url_lu="+url_article);
 	}
@@ -254,11 +254,11 @@ public class shared_datas {
 			fos.flush();
 			fos.close();
 		} catch (java.io.FileNotFoundException e) {
-			Log.d("ASI", "sauver donner partager" + e.getMessage());
+			Log.d("ASI", "sauver données partagées" + e.getMessage());
 		} catch (Exception e) {
-			new erreur_dialog(this.activity, "ACCES aux donnees partagé", e)
+			new erreur_dialog(this.activity, "ACCÈS aux données partagées", e)
 					.show();
-			Log.e("ASI", "ACCES aux donnees partagé " + e.getMessage());
+			Log.e("ASI", "ACCES aux données partagées " + e.getMessage());
 		}
 	}
 
@@ -289,11 +289,11 @@ public class shared_datas {
 			fos.close();
 			this.test_length_article_lu();
 		} catch (java.io.FileNotFoundException e) {
-			Log.d("ASI", "sauver donner partager" + e.getMessage());
+			Log.d("ASI", "sauver données partagées" + e.getMessage());
 		} catch (Exception e) {
-			new erreur_dialog(this.activity, "ACCES aux donnees partagé", e)
+			new erreur_dialog(this.activity, "ACCÈS aux données partagées", e)
 					.show();
-			Log.e("ASI", "ACCES aux donnees partagé " + e.getMessage());
+			Log.e("ASI", "ACCÈS aux données partagées " + e.getMessage());
 		} finally {
 			return (temp);
 		}

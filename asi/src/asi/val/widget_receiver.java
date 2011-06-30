@@ -37,10 +37,10 @@ public class widget_receiver extends AppWidgetProvider {
 		for (int i = 0; i < N; i++) {
 			Log.d("ASI", "Widget update:" + appWidgetIds[i]);
 			int appWidgetId = appWidgetIds[i];
-			// Lien vers la page courante d'asi
+			// Lien vers la page courante d'ASI
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
-			// On defini les action sur les elements du widget
+			// On définit les actions sur les éléments du widget
 			this.defined_intent(context, views, appWidgetIds);
 
 			views.setTextViewText(R.id.widget_message, "Mise à jour en cours");
@@ -53,17 +53,17 @@ public class widget_receiver extends AppWidgetProvider {
 
 			try {
 				rss_download d = new rss_download(url);
-				Log.d("ASI", "widget telechargement");
+				Log.d("ASI", "widget téléchargement");
 				if (i == 0) {
 					d.get_rss_articles();
 					articles = d.getArticles();
-					// on rcherche si ils sont déjà lus
+					// on recherche si ils sont déjà lus
 					articles = this.get_new_articles(articles, context);
-					Log.d("ASI", "download_artciles:" + articles.size());
+					Log.d("ASI", "download_articles:" + articles.size());
 				} else
 					articles = this.get_datas(context).get_widget_article();
 				if (articles.size() == 0)
-					throw new StopException("Pas de nouveau article");
+					throw new StopException("Pas de nouvel article");
 				views.setTextViewText(R.id.widget_message, articles
 						.elementAt(0).getTitle());
 				// views.setInt(R.id.widget_message, "setBackgroundResource",
@@ -117,7 +117,7 @@ public class widget_receiver extends AppWidgetProvider {
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		views.setOnClickPendingIntent(R.id.widget_art, pendingIntent);
 
-		// lien vers la page des téléchargement
+		// lien vers la page des téléchargements
 		intent = new Intent(context, SD_video_view.class);
 		pendingIntent = PendingIntent.getActivity(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
@@ -203,14 +203,14 @@ public class widget_receiver extends AppWidgetProvider {
 			}
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
-			// On met l'artcile courant lu et on rend visible l'image check
+			// On met l'article courant lu et on rend visible l'image check
 			this.defined_article(views, context, posi);
 			views.setViewVisibility(R.id.widget_check, View.VISIBLE);
 			
 			ComponentName thisWidget = new ComponentName(context,
 					widget_receiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
-			// On redefini les action sur les elements du widget
+			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
 					manager.getAppWidgetIds(thisWidget));
 			manager.updateAppWidget(thisWidget, views);		
@@ -247,7 +247,7 @@ public class widget_receiver extends AppWidgetProvider {
 			ComponentName thisWidget = new ComponentName(context,
 					widget_receiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
-			// On redefini les action sur les elements du widget
+			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
 					manager.getAppWidgetIds(thisWidget));
 			// int[] temp = manager.getAppWidgetIds(thisWidget);
@@ -264,14 +264,14 @@ public class widget_receiver extends AppWidgetProvider {
 						articles.elementAt(posi).getUri());
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
-			// On met l'artcile courant lu et on rend visible l'image check
+			// On met l'article courant lu et on rend visible l'image check
 			//views.setViewVisibility(R.id.widget_check, View.VISIBLE);
 			this.defined_article(views, context, posi);
 			
 			ComponentName thisWidget = new ComponentName(context,
 					widget_receiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
-			// On redefini les action sur les elements du widget
+			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
 					manager.getAppWidgetIds(thisWidget));
 			manager.updateAppWidget(thisWidget, views);

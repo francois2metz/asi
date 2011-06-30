@@ -64,7 +64,7 @@ public class liste_articles extends asi_activity {
 		this.color = this.getIntent().getExtras().getString("color");
 		text.setBackgroundColor(Color.parseColor(color));
 
-		// recuperation de l'image
+		// récupération de l'image
 		image = this.getResources().getIdentifier(
 				this.getIntent().getExtras().getString("image"), "drawable",
 				this.getPackageName());
@@ -80,10 +80,10 @@ public class liste_articles extends asi_activity {
 
 	public void load_content() {
 		// TODO Auto-generated method stub
-		// recuperation de l'url des flux rss
+		// récupération de l'URL des flux RSS
 		String url = this.getIntent().getExtras().getString("url");
 		new get_rss_url().execute(url);
-		// Etat de la liste view
+		// État de la liste view
 		state = null;
 	}
 
@@ -128,7 +128,7 @@ public class liste_articles extends asi_activity {
 
 	public void load_data() {
 
-		// Création de la ArrayList qui nous permettra de remplire la listView
+		// Création de la ArrayList qui nous permettra de remplir la listView
 		ArrayList<HashMap<String, String>> listItem = this.get_listitem();
 
 		// Création d'un SimpleAdapter qui se chargera de mettre les items
@@ -145,7 +145,7 @@ public class liste_articles extends asi_activity {
 		//on sauve
 		state = maListViewPerso.onSaveInstanceState();
 
-		// On attribut à notre listView l'adapter que l'on vient de créer
+		// On attribue à notre listView l'adapter que l'on vient de créer
 		maListViewPerso.setAdapter(mSchedule);
 
 		// Enfin on met un écouteur d'évènement sur notre listView
@@ -208,7 +208,7 @@ public class liste_articles extends asi_activity {
 	}
 	
 	protected void do_on_recherche_item(String url){
-		//a faire uniquement dans les recherches
+		//à faire uniquement dans les recherches
 	}
 
 	private void partage(String url, String titre) {
@@ -216,7 +216,7 @@ public class liste_articles extends asi_activity {
 		try {
 			Intent emailIntent = new Intent(Intent.ACTION_SEND);
 			emailIntent.putExtra(Intent.EXTRA_TEXT,
-					"Un article interessant sur le site arretsurimage.net:\n"
+					"Un article interessant sur le site arretsurimage.net :\n"
 							+ titre + "\n" + url);
 			emailIntent.setType("text/plain");
 			// emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -306,7 +306,7 @@ public class liste_articles extends asi_activity {
 				try {
 					this.dialog.dismiss();
 				} catch (Exception e) {
-					Log.e("ASI", "Erreur d'arret de la boite de dialog");
+					Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
 				}
 			}
 			if (error == null)

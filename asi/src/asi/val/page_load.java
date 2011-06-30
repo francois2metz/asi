@@ -118,7 +118,7 @@ public class page_load {
 					data = false;
 				
 				if (data) {
-					// on arrete de prendre les contenus typos
+					// on arrête de prendre les contenus typos
 					if (start) {
 						start = false;
 						// sb.append("<div style=\"text-align:justify;\">\n");
@@ -130,12 +130,12 @@ public class page_load {
 					ligneCodeHTML = ligneCodeHTML.replaceAll("<td.*?>", "<p>");
 					ligneCodeHTML = ligneCodeHTML.replaceAll("</td>", "</p>");
 
-					// on remplace le lien daylimotion vers celui de l'iphone
+					// on remplace le lien dailymotion vers celui pour l'iphone
 					ligneCodeHTML = ligneCodeHTML.replaceAll(
 							"www.dailymotion.com/video",
 							"iphone.dailymotion.com/video");
 
-					// on enleve les animation flash et recupère les video
+					// on enlève les animations flash et recupère les vidéos
 					// iphone
 					if (ligneCodeHTML.matches(".*iphone\\.dailymotion\\.com.*")) {
 						video_url video = new video_url();
@@ -143,7 +143,7 @@ public class page_load {
 						if (s == null)
 							;
 						// ligneCodeHTML = this
-						// .center("<span\">&gt; Problème de lecture de la balise video &lt;</span>");
+						// .center("<span\">&gt; Problème de lecture de la balise vidéo &lt;</span>");
 						else {
 							video_count++;
 							video.setNumber(video_count);
@@ -152,7 +152,7 @@ public class page_load {
 						}
 					}
 					// on cherche les fichiers mp3
-					// on enleve la video flash
+					// on enlève la vidéo flash
 					// <object type="application/x-shockwave-flash" </object>
 					if (ligneCodeHTML.matches(".*\\<object.*\\<\\/object\\>.*")) {
 						// lecture des extraits audios
@@ -164,7 +164,7 @@ public class page_load {
 							ligneCodeHTML = this
 									.center("<a href=\""
 											+ mp3
-											+ "\" target=\"_blank\">&gt; Ecouter l'extrait audio &lt;</a>");
+											+ "\" target=\"_blank\">&gt; Écouter l'extrait audio &lt;</a>");
 						} else {
 							// Pattern p2 = Pattern
 							// .compile(".*src\\=\"(.*?www.youtube.com.*?)\".*");
@@ -176,32 +176,32 @@ public class page_load {
 							// + m2.group(1)
 							// +
 							// "\" target=\"_blank\">&gt; Regarder la vidéo Youtube &lt;</a>");
-							// //
+							//
 							// value="http://www.youtube.com/v/XkRRdth8AHc?fs=1&amp;hl=fr_FR">
 							// } else
 							ligneCodeHTML = this
-									.center("<span>&gt; Cette vidéo n'est pas visible sur android &lt;</span>");
+									.center("<span>&gt; Cette vidéo n'est pas visible sur Android &lt;</span>");
 						}
 
 					}
 
-					// on enleve le bouton telecharger
+					// on enlève le bouton télécharger
 					if (ligneCodeHTML
 							.matches(".*boutons\\/bouton-telecharger\\.png.*"))
 						ligneCodeHTML = "";
 
-					// on reduit la fenetre vide video flash<object width="480"
+					// on réduit la fenêtre vide vidéo flash<object width="480"
 					// height="360"><param name="movie"
 					ligneCodeHTML = ligneCodeHTML.replaceAll(
 							"width=\"680\" height=\"\\d+\"",
 							"width=\"20\" height=\"20\"");
-					// onn indique que la video de l'emission est en acte
+					// on indique que la vidéo de l'émission est en acte
 					// <a href="/faq.php?id=7#7" target="_blank">nos
 					// conseils</a>.</em></p>
 					if (ligneCodeHTML.matches(".*faq\\.php.*nos conseils.*"))
 						ligneCodeHTML = this
 								.center("&gt; La vidéo de l'émission est accessible en actes en bas de l'article &lt;");
-					// On enleve les grosses flèches et la structure des tables
+					// On enlève les grosses flèches et la structure des tables
 					ligneCodeHTML = ligneCodeHTML.replaceAll(
 							"<span class=\"regardez.*</span>", "");
 					ligneCodeHTML = ligneCodeHTML.replaceAll(
@@ -231,7 +231,7 @@ public class page_load {
 				throw new StopException("La page est vide");
 			
 		} catch (java.net.ProtocolException e) {
-			throw new StopException("Probleme de connection");
+			throw new StopException("Problème de connexion");
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -244,7 +244,7 @@ public class page_load {
 			}
 		}
 		if (sb.toString().equalsIgnoreCase(""))
-			return (this.center("Problème de connexion au serveur : Essayez de recharger l'article"));
+			return (this.center("Problème de connexion au serveur : essayez de recharger l'article"));
 
 		// On retourne le stringBuffer
 		// return

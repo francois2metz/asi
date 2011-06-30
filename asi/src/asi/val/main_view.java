@@ -58,7 +58,7 @@ public class main_view extends asi_activity {
 
 	private void load_data() {
 
-		// Création de la ArrayList qui nous permettra de remplire la listView
+		// Création de la ArrayList qui nous permettra de remplir la listView
 		ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> map;
 		// Chargement des catégories
@@ -84,14 +84,14 @@ public class main_view extends asi_activity {
 		}
 
 		// Création d'un SimpleAdapter qui se chargera de mettre les items
-		// présent dans notre list (listItem) dans la vue affichageitem
+		// présents dans notre list (listItem) dans la vue affichageitem
 		SimpleAdapter mSchedule = new SimpleAdapter(this.getBaseContext(),
 				listItem, R.layout.categorie_listes, new String[] { "color","titre" },
 				new int[] { R.id.cat_color, R.id.cat_title });
 		//on ajoute le viewbinder 
 		mSchedule.setViewBinder(new bind_color());
 
-		// On attribut à notre listView l'adapter que l'on vient de créer
+		// On attribue à notre listView l'adapter que l'on vient de créer
 		maListViewPerso.setAdapter(mSchedule);
 
 		// Enfin on met un écouteur d'évènement sur notre listView

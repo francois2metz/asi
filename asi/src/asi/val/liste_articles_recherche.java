@@ -13,16 +13,16 @@ public class liste_articles_recherche extends liste_articles {
 
 	public void load_content() {
 
-		// Etat de la liste view
+		// État de la liste view
 		state = null;
 
-		// recuperation des artciles via l'url
+		// récuperation des articles via l'URL
 		String url = this.getIntent().getExtras().getString("url");
 		new get_recherche_url().execute(url);
 	}
 
 	protected void do_on_recherche_item(String url) {
-		// a faire uniquement dans les recherches
+		// à faire uniquement dans les recherches
 		new get_recherche_url().execute(url);
 	}
 
@@ -68,7 +68,7 @@ public class liste_articles_recherche extends liste_articles {
 				try {
 					this.dialog.dismiss();
 				} catch (Exception e) {
-					Log.e("ASI", "Erreur d'arret de la boite de dialog");
+					Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
 				}
 			}
 			if (error == null)

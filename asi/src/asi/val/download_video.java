@@ -65,7 +65,7 @@ public class download_video extends AsyncTask<String, Void, String> {
 	protected String doInBackground(String... arg) {
 		// TODO Auto-generated method stub
 		try {
-			// on vérifie que l'on peux enregistrer
+			// on vérifie que l'on peut enregistrer
 			String state = Environment.getExternalStorageState();
 			if (!Environment.MEDIA_MOUNTED.equals(state))
 				throw new StopException(
@@ -92,16 +92,16 @@ public class download_video extends AsyncTask<String, Void, String> {
 				if (numread <= 0)
 					break;
 				out.write(buf, 0, numread);
-				// comptage du nombre de byte
+				// comptage du nombre de bytes
 				size += buf.length;
-				// Lancer une erreur quand le thread est stoppper
+				// Lancer une erreur quand le thread est stoppé
 				if (cancel)
 					throw new StopException("Stop");
 			} while (true);
 			conn.disconnect();
 			Log.d("ASI", "Final-download=" + size / 1000);
 
-			// Ajout de la video au systeme de lecture
+			// Ajout de la vidéo au système de lecture
 			try {
 				MediaScannerConnection medconn = new MediaScannerConnection(
 						share.getContext(), null);
@@ -110,7 +110,7 @@ public class download_video extends AsyncTask<String, Void, String> {
 						null);
 				medconn.disconnect();
 			} catch (Exception e) {
-				Log.e("ASI", "ERREUR d'ajout de la video\n" + e.toString());
+				Log.e("ASI", "ERREUR d'ajout de la vidéo\n" + e.toString());
 			}
 
 		} catch (StopException e) {
@@ -151,19 +151,19 @@ public class download_video extends AsyncTask<String, Void, String> {
 		share.download_next_video();
 		this.set_error(er);
 		if (error == null) {
-			String text = "Téléchargement terminé de :\n" + vid.getTitle()
+			String text = "Téléchargement terminé de :\n" + vid.getTitle()
 					+ " - " + vid.getNumber();
 			Toast.makeText(share.getContext(), text, Toast.LENGTH_LONG).show();
-			Log.d("ASI", "Telechargement termine avec succes");
+			Log.d("ASI", "Téléchargement terminé avec succes");
 
 		} else {
-			Log.e("ASI", "Probleme de telechargement \n" + error);
+			Log.e("ASI", "Problème de téléchargement \n" + error);
 			Toast.makeText(
 					share.getContext(),
-					"Problème de téléchargement de :\n" + vid.getTitle()
+					"Problème de téléchargement de :\n" + vid.getTitle()
 							+ " - " + vid.getNumber(), Toast.LENGTH_LONG)
 					.show();
-			// effacer le fichier contenant des erreurs de telechargement
+			// effacer le fichier contenant des erreurs de téléchargement
 			File down = this.get_download_path();
 			if (down.exists())
 				down.delete();

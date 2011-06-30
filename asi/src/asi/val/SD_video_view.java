@@ -68,16 +68,16 @@ public class SD_video_view extends reload_activity {
 		// } catch (Exception e) {
 		//
 		// }
-		// on vide la liste de vidéo
+		// on vide la liste de vidéos
 		video_sd.clear();
 
 		try {
-			// on vérifie que l'on peux enregistrer
+			// on vérifie que l'on peut enregistrer
 			String state = Environment.getExternalStorageState();
 			if (!Environment.MEDIA_MOUNTED.equals(state))
 				throw new StopException("La carte SD n'est pas montée");
 
-			// recuperation de la liste de vidéo du dossier
+			// recupération de la liste de vidéos dans le dossier
 			if (path.exists()) {
 				File[] liste = path.listFiles();
 				for (int i = 0; i < liste.length; i++) {
@@ -94,7 +94,7 @@ public class SD_video_view extends reload_activity {
 			this.update.stop_update();
 		}
 
-		// Création de la ArrayList qui nous permettra de remplire la listView
+		// Création de la ArrayList qui nous permettra de remplir la listView
 		ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> map;
 		File dvid;
@@ -108,7 +108,7 @@ public class SD_video_view extends reload_activity {
 			listItem.add(map);
 
 		}
-		// Si aucune vidéo sur la carte sd, on ajoute un message
+		// Si aucune vidéo sur la carte SD, on ajoute un message
 		if (video_sd.size() == 0) {
 			map = new HashMap<String, String>();
 			map.put("titre", "Aucune vidéo téléchargée sur la carte SD");
@@ -121,13 +121,13 @@ public class SD_video_view extends reload_activity {
 		Parcelable state = maListViewPerso.onSaveInstanceState();
 
 		// Création d'un SimpleAdapter qui se chargera de mettre les items
-		// présent dans notre list (listItem) dans la vue affichageitem
+		// présents dans notre list (listItem) dans la vue affichageitem
 		SimpleAdapter mSchedule = new SimpleAdapter(this.getBaseContext(),
 				listItem, R.layout.listview, new String[] { "titre",
 						"description" }, new int[] { R.id.titre,
 						R.id.description });
 
-		// On attribut à notre listView l'adapter que l'on vient de créer
+		// On attribue à notre listView l'adapter que l'on vient de créer
 		maListViewPerso.setAdapter(mSchedule);
 
 		// Enfin on met un écouteur d'évènement sur notre listView
@@ -155,7 +155,7 @@ public class SD_video_view extends reload_activity {
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visualiser")) {
-					// demarrer la video
+					// démarrer la video
 					Intent intent = new Intent();
 					intent.setAction(android.content.Intent.ACTION_VIEW);
 					intent.setDataAndType(Uri.fromFile(vid), "video/*");

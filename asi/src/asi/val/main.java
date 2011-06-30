@@ -66,7 +66,7 @@ public class main extends asi_activity {
 
 		txt_password = (EditText) findViewById(R.id.txt_password);
 
-		// recuperation des preferences
+		// récupération des préférences
 		SharedPreferences settings = getSharedPreferences(PREFERENCE, 0);
 		txt_username.setText(settings.getString("user", ""));
 		txt_password.setText(settings.getString("pass", ""));
@@ -79,7 +79,7 @@ public class main extends asi_activity {
 		// autologin activé
 		this.autologin = this.get_datas().isAutologin();
 
-		// on recupere l'ancien cookie
+		// on récupère l'ancien cookie
 		//Cookies = settings.getString("cookies", "");
 
 		// on teste la version de l'application, si mise à jour, alors ajout
@@ -110,7 +110,7 @@ public class main extends asi_activity {
 
 	public void onStart() {
 		super.onStart();
-		// demarage de l'autologin
+		// démarrage de l'autologin
 		if (!this.get_datas().getCookies().equals("phorum_session_v5=deleted") && this.autologin) {
 			//this.get_datas().setCookies(Cookies);
 			this.load_page(false);
@@ -146,7 +146,7 @@ public class main extends asi_activity {
 	}
 
 	protected void save_login_password(String cookies) {
-		// on sauve les preferences car le login/pass ok
+		// on sauve les préférences car le login/pass ok
 		SharedPreferences settings = getSharedPreferences(PREFERENCE, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString("user", txt_username.getText().toString());
@@ -165,7 +165,7 @@ public class main extends asi_activity {
 		private BufferedReader in;
 		private OutputStreamWriter out;
 
-		// // can use UI thread here
+		// can use UI thread here
 		protected void onPreExecute() {
 			in = null;
 			out = null;
@@ -191,7 +191,7 @@ public class main extends asi_activity {
 				in = new BufferedReader(new InputStreamReader(
 						connection.getInputStream()));
 				// sb.append("<p>"+connection.getHeaderField("Location")+"</p>");
-				// recuperation des cookies
+				// récuperation des cookies
 				String cookies = connection.getHeaderField("Set-Cookie");
 				if (cookies == null)
 					throw new StopException("Problème de cookies");
@@ -248,7 +248,7 @@ public class main extends asi_activity {
 				if (dialog.isShowing())
 					dialog.dismiss();
 			} catch (Exception e) {
-				Log.e("ASI", "Erreur d'arret de la boite de dialog");
+				Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
 			}
 			if (mess.matches(".*phorum_session_v5.*")) {
 				//main.this.setCookies(mess);

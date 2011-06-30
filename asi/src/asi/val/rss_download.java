@@ -45,11 +45,11 @@ public class rss_download {
 	}
 
 	public void get_rss_articles() throws Exception {
-		// Recuparation de la page en dom
+		// Récupération de la page en dom
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		dom = db.parse(new InputSource(url.openStream()));
-		// //on parcourt les items
+		// on parcourt les items
 		NodeList items = dom.getElementsByTagName("item");
 		for (int i = 0; i < items.getLength(); i++) {
 			article ar = new article();

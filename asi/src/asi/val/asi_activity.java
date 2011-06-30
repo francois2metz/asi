@@ -63,7 +63,7 @@ public class asi_activity extends Activity {
 	
 	public void closed_application() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Quitter?");
+		builder.setTitle("Quitter ?");
 		builder.setMessage("Tous les téléchargements en cours seront arrêtés")
 				.setCancelable(false)
 				.setPositiveButton("Oui",

@@ -52,7 +52,7 @@ public class download_view extends reload_activity {
 		TextView text = (TextView) findViewById(R.id.list_text);
 
 		text.setText("Téléchargements en cours");
-		// recuperation de la liste de telechargement
+		// récuperation de la liste de téléchargements
 		this.video_download = this.get_datas().get_download_video();
 
 		//this.load_data();
@@ -64,21 +64,21 @@ public class download_view extends reload_activity {
 		// } catch (Exception e) {
 		//
 		// }
-		// Création de la ArrayList qui nous permettra de remplire la listView
+		// Création de la ArrayList qui nous permettra de remplir la listView
 		ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> map;
 		download_video dvid;
 		//
-		// //teste de remplissage
+		// teste de remplissage
 		// for(int j=0;j<10;j++){
 		// map = new HashMap<String, String>();
 		// map.put("titre", "Coucou");
-		// map.put("description", "bizarre telechargement ");
+		// map.put("description", "bizarre téléchargement ");
 		// listItem.add(map);
 		// }
 
 		for (int i = 0; i < video_download.size(); i++) {
-			// les vidéos finis de télécharger sont cachées
+			// les vidéos téléchargées sont cachées
 			boolean visible = true;
 			dvid = video_download.elementAt(i);
 			map = new HashMap<String, String>();
@@ -109,7 +109,7 @@ public class download_view extends reload_activity {
 				listItem.add(map);
 		}
 
-		// Si tout les téléchargements sont terminés ou aucun de lancé
+		// Si tous les téléchargements sont terminés ou aucun n'est lancé
 		if (listItem.size() == 0) {
 			map = new HashMap<String, String>();
 			if (video_download.size() == 0){
@@ -117,8 +117,8 @@ public class download_view extends reload_activity {
 				map.put("description", "");
 			}
 			else{
-				map.put("titre", "Tout les téléchargements sont terminés");
-				map.put("description", "Accédé aux vidéos via le menu <Vidéos téléchargées>");
+				map.put("titre", "Tous les téléchargements sont terminés");
+				map.put("description", "Accéder aux vidéos via le menu <Vidéos téléchargées>");
 			}
 			map.put("int", "null");
 			listItem.add(map);
@@ -128,13 +128,13 @@ public class download_view extends reload_activity {
 		Parcelable state = maListViewPerso.onSaveInstanceState();
 
 		// Création d'un SimpleAdapter qui se chargera de mettre les items
-		// présent dans notre list (listItem) dans la vue affichageitem
+		// présents dans notre list (listItem) dans la vue affichageitem
 		SimpleAdapter mSchedule = new SimpleAdapter(this.getBaseContext(),
 				listItem, R.layout.listview, new String[] { "titre",
 						"description" }, new int[] { R.id.titre,
 						R.id.description });
 
-		// On attribut à notre listView l'adapter que l'on vient de créer
+		// On attribue à notre listView l'adapter que l'on vient de créer
 		maListViewPerso.setAdapter(mSchedule);
 
 		// Enfin on met un écouteur d'évènement sur notre listView
@@ -180,7 +180,7 @@ public class download_view extends reload_activity {
 	private void do_on_video_running(final download_video vid) throws Exception {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(vid.get_download_video().getTitle_and_number());
-		builder.setMessage("Arrêter le téléchargement en cours?")
+		builder.setMessage("Arrêter le téléchargement en cours ?")
 				.setCancelable(false)
 				.setPositiveButton("Oui",
 						new DialogInterface.OnClickListener() {
@@ -206,7 +206,7 @@ public class download_view extends reload_activity {
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visualiser")) {
-					// demarrer la video
+					// démarrer la video
 					Intent intent = new Intent();
 					intent.setAction(android.content.Intent.ACTION_VIEW);
 					intent.setDataAndType(
@@ -238,7 +238,7 @@ public class download_view extends reload_activity {
 				else
 					this.do_on_video_finished(vid);
 			} else {
-				// proposer d'arreter le thread
+				// proposer d'arrêter le thread
 				this.do_on_video_running(vid);
 			}
 

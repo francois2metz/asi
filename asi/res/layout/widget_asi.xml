@@ -49,7 +49,7 @@
 			<TextView android:id="@+id/widget_message"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:textSize="12sp" android:textColor="@color/color_text"
-				android:text="Un example d'article" android:layout_marginLeft="1dp"
+				android:text="Un exemple d'article" android:layout_marginLeft="1dp"
 				android:layout_gravity="center_vertical" />
 		</LinearLayout>
 		<ImageView android:id="@+id/widget_check"
