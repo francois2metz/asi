@@ -106,7 +106,7 @@ public class asi_activity extends Activity {
 			return true;
 		case R.id.info_item:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("A propos");
+			builder.setTitle("À propos");
 			builder.setMessage(R.string.apropos);
 
 			builder.setPositiveButton("ok",
