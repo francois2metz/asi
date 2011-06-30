@@ -16,9 +16,10 @@
 	</string-array>
 	<string-array name="catC">
 		<item>>CHRONIQUES</item>
-		<item>"Le making of, Chez les matinautes, Chez Judith Bernard, Chez
-			Alain Korkos, Chez Sherlock Com', Chez Daniel Schneidermann, Chez
-			Anne-Sophie Jacques, Chez les mômes"</item>
+		<item>"Chez Daniel, Chez Judith, Chez Alain,
+			Chez les matinautes, Chez Anne-Sophie,
+			Chez Sherlock Com', Chez Rafik, Chez Didier,
+			Chez la Parisienne, Chez les Sarkosis, Chez nous"</item>
 		<item>http://www.arretsurimages.net/chroniques.rss</item>
 		<item>subcatC</item>
 		<item>#FF398E</item>
