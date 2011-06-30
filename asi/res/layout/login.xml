@@ -11,7 +11,7 @@
 		android:textSize="18sp" android:paddingBottom="5dp"
 		android:paddingTop="5dp" />
 
-	<TextView android:id="@+id/username_text" android:text="Courriel:"
+	<TextView android:id="@+id/username_text" android:text="Courriel :"
 		android:layout_gravity="center_horizontal" android:layout_width="wrap_content"
 		android:textSize="16sp" android:layout_height="wrap_content" />
 
@@ -19,7 +19,7 @@
 		android:layout_height="wrap_content" android:layout_width="fill_parent"
 		android:layout_gravity="center_horizontal" android:singleLine="true" />
 
-	<TextView android:id="@+id/password_text" android:text="Mot de passe:"
+	<TextView android:id="@+id/password_text" android:text="Mot de passe :"
 		android:layout_gravity="center_horizontal" android:layout_width="wrap_content"
 		android:textSize="16sp" android:layout_height="wrap_content" />
 
