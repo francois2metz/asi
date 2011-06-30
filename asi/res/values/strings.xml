@@ -13,7 +13,7 @@
 		<item name="android:shadowDx">1</item>
 		<item name="android:shadowDy">1</item>
 	</style>
-	<string name="apropos">"Bienvenue sur l’application officielle du site arretsurimages.net
+	<string name="apropos">"Bienvenue sur l’application officielle d’@rrêt sur images
 
 L’appli permet de visionner les derniers contenus produits par le site : émissions, chroniques, articles de la rédaction et vite-dits.
 
@@ -21,7 +21,7 @@ Pour consulter l’ensemble des contenus, il faut être abonné au site. Les non
 
 L’application a été gracieusement développée par Benoît Valot et publiée sous licence GPL.
 
-Pour toute question, merci de vous reporter à l’espace Android du site arretsurimages.net ou de nous écrire à android@arretsurimages.net"</string>
+Pour toute question, merci de vous reporter à l’espace Android du site www.arretsurimages.net ou de nous écrire à android@arretsurimages.net"</string>
 
 <string name="news">"v1.4.2
 

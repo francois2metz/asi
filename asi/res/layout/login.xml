@@ -41,7 +41,7 @@
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal" android:textSize="16sp" />
 
-	<Button android:id="@+id/abonnement_button" android:text="S'abonner à arretsurimages.net"
+	<Button android:id="@+id/abonnement_button" android:text="S'abonner à @rrêt sur images"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal" android:textSize="14sp" />
 
