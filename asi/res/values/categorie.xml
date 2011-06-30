@@ -19,7 +19,7 @@
 		<item>"Chez Daniel, Chez Judith, Chez Alain,
 			Chez les matinautes, Chez Anne-Sophie,
 			Chez Sherlock Com', Chez Rafik, Chez Didier,
-			Chez la Parisienne, Chez les Sarkosis, Chez nous"</item>
+			Chez la Parisienne, Chez les sarkosis, Chez Nous"</item>
 		<item>http://www.arretsurimages.net/chroniques.rss</item>
 		<item>subcatC</item>
 		<item>#FF398E</item>
@@ -104,10 +104,10 @@
 		<item>Chez la Parisienne</item>
 		<item>http://www.arretsurimages.net/chroniqueur.24.rss</item>
 		<item>kro_parisienne</item>
-		<item>Chez les Sarkosis</item>
+		<item>Chez les sarkosis</item>
 		<item>http://www.arretsurimages.net/chroniqueur.23.rss</item>
 		<item>kro_sarkozi</item>
-		<item>Chez nous</item>
+		<item>Chez Nous</item>
 		<item>http://www.arretsurimages.net/chroniqueur.1.rss</item>
 		<item>kro</item>
 	</string-array>
