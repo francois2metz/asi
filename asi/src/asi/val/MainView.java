@@ -93,6 +93,7 @@ public class MainView extends AsiActivity {
 					// has subcat ?
 					Cursor subcats = getContentResolver().query(Category.CATEGORIES_URI, null, Category.PARENT_NAME+"="+id, null, null);
 					if (subcats.getCount() == 0) {
+						subcats.close();
 						loadPage(id);
 					} else {
 						openSubCategories(subcats, title);
@@ -141,8 +142,8 @@ public class MainView extends AsiActivity {
 			public void onClick(DialogInterface dialog, int item) {
 				subcategories.moveToPosition(item);
 				int id = subcategories.getInt(subcategories.getColumnIndex(BaseColumns._ID));
-				MainView.this.loadPage(id);
 				subcategories.close();
+				MainView.this.loadPage(id);
 			}
 		});
 
