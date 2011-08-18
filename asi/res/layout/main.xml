@@ -24,13 +24,15 @@
         android:layout_height="wrap_content" android:id="@+id/progress">
         
 	    <ProgressBar android:indeterminate="true" 
-	                 android:layout_width="fill_parent"
-	                 android:layout_height="fill_parent"
+	                 android:layout_width="wrap_content"
+	                 android:layout_height="wrap_content"
 	                 android:background="#FFFFFF" />
 	     <TextView android:id="@android:id/empty"
                android:layout_width="fill_parent"
                android:layout_height="fill_parent"
+               android:layout_marginLeft="5dp"
                android:background="#FFFFFF"
-               android:text="Chargement"/>
+               android:gravity="center_vertical"
+               android:text="Chargement..."/>
     </LinearLayout>
 </LinearLayout>
