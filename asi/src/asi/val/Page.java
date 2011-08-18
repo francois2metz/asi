@@ -89,8 +89,6 @@ public class Page extends AsiActivity {
 	public void loadContent(){
 	    final android.app.ProgressDialog pg = android.app.ProgressDialog.show(this, "", "Chargement...", true, true);
 
-		final String url = this.getIntent().getExtras().getString("url");
-		Log.d("ASI", "load page with url "+ url);
 		Uri queryUri = getCurrentUri();
 		
 		final Cursor c = managedQuery(queryUri, null, null, null, null);
@@ -102,10 +100,10 @@ public class Page extends AsiActivity {
 				 * because an asynchronous request will be triggered to update the content
 				 */
 				c.requery();
-				renderCursor(c, url, pg);
+				renderCursor(c, pg);
 			}
 		});
-		renderCursor(c, url, pg);
+		renderCursor(c, pg);
 	}
 	
 	/**
@@ -122,7 +120,7 @@ public class Page extends AsiActivity {
 	    getContentResolver().update(getCurrentUri(), values, null, null);
 	}
 
-	private void renderCursor(Cursor c, String url, android.app.ProgressDialog pg) {
+	private void renderCursor(Cursor c, android.app.ProgressDialog pg) {
 		// probably a bug is getCount() return an integer > 1
 		// TODO: videos ...
 		if (c.getCount() > 0) {

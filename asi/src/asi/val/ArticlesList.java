@@ -131,10 +131,9 @@ public class ArticlesList extends AsiActivity {
 				SimpleCursorAdapter adapter = (SimpleCursorAdapter) maListViewPerso.getAdapter();
 				Cursor c = adapter.getCursor();
 				c.moveToPosition(position);
-				String url = c.getString(c.getColumnIndex(Article.URL_NAME));
 				String title = c.getString(c.getColumnIndex(Article.TITLE_NAME));
 				long id = c.getLong(c.getColumnIndex(BaseColumns._ID));
-				ArticlesList.this.loadPage(id, url, title);
+				ArticlesList.this.loadPage(id, title);
 			}
 		});
 		maListViewPerso
@@ -175,7 +174,7 @@ public class ArticlesList extends AsiActivity {
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visualiser")) {
-					ArticlesList.this.loadPage(id, url, title);
+					ArticlesList.this.loadPage(id, title);
 				} else if (items[item].equals("Partager")) {
 					ArticlesList.this.share(url, title);
 				} else {
@@ -201,11 +200,10 @@ public class ArticlesList extends AsiActivity {
 		}
 	}
 
-	private void loadPage(long id, String url, String titre) {
+	private void loadPage(long id, String titre) {
 		try {
 			Intent i = new Intent(this, Page.class);
 			i.putExtra("id", id);
-			i.putExtra("url", url);
 			i.putExtra("titre", titre);
 			this.startActivity(i);
 		} catch (Exception e) {
