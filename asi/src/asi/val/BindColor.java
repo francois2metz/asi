@@ -22,8 +22,6 @@ import android.widget.SimpleAdapter.ViewBinder;
 public class BindColor implements ViewBinder {
 
 	public boolean setViewValue(View arg0, Object arg1, String arg2) {
-		// TODO Auto-generated method stub
-		
 		if (arg2.matches("#\\w+")) {
 			arg0.setBackgroundColor(Color.parseColor(arg2));
 			return (true);

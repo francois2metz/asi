@@ -63,7 +63,6 @@ public class DownloadVideo extends AsyncTask<String, Void, String> {
 	}
 
 	protected String doInBackground(String... arg) {
-		// TODO Auto-generated method stub
 		try {
 			// on vérifie que l'on peut enregistrer
 			String state = Environment.getExternalStorageState();

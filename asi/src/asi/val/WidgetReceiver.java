@@ -300,7 +300,6 @@ public class WidgetReceiver extends AppWidgetProvider {
 
 	private Vector<Article> get_new_articles(Vector<Article> articles2,
 			Context c) {
-		// TODO Auto-generated method stub
 		Vector<Article> ar = new Vector<Article>();
 		for (int i = 0; i < articles2.size(); i++) {
 			if (!this.get_datas(c).containArticlesRead(

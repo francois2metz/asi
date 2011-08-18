@@ -22,7 +22,6 @@ import android.widget.SimpleAdapter.ViewBinder;
 public class BindImage implements ViewBinder {
 
 	public boolean setViewValue(View arg0, Object arg1, String arg2) {
-		// TODO Auto-generated method stub	
 		if(arg2.contains("png-")){
 			//Log.d("ASI","bind_image_arg"+" "+arg2);
 			ImageView vi = (ImageView) arg0;

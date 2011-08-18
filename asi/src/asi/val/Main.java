@@ -95,7 +95,6 @@ public class Main extends AsiActivity {
 	}
 
 	private void show_news_dialog() {
-		// TODO Auto-generated method stub
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Nouveautés");
 		builder.setMessage(R.string.news);
@@ -338,7 +337,6 @@ public class Main extends AsiActivity {
 	}
 
 	public void is_autologin(boolean b) {
-		// TODO Auto-generated method stub
 		this.autologin = b;
 	}
 }

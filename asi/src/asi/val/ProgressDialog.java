@@ -33,7 +33,6 @@ public class ProgressDialog extends android.app.ProgressDialog {
 						async.cancel(true);
 					return true;
 				}
-				// TODO Auto-generated method stub
 				return false;
 			}
 			

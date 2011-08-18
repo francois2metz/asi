@@ -303,7 +303,6 @@ public class Page extends AsiActivity {
 		});
 		AlertDialog alert = builder.create();
 		alert.show();
-		// TODO Auto-generated method stub
 	}
 
 	public String getPagedata() {
@@ -372,7 +371,6 @@ public class Page extends AsiActivity {
 	}
 
 	public void setVideo(ArrayList<VideoUrl> videos2) {
-		// TODO Auto-generated method stub
 		this.videos = videos2;
 	}
 

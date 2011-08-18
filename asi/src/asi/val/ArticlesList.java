@@ -79,7 +79,6 @@ public class ArticlesList extends AsiActivity {
 	}
 
 	public void loadContent() {
-		// TODO Auto-generated method stub
 		// récupération de l'URL des flux RSS
 		String url = this.getIntent().getExtras().getString("url");
 		new RssUrl().execute(url);
@@ -170,7 +169,6 @@ public class ArticlesList extends AsiActivity {
 					@SuppressWarnings("unchecked")
 					public boolean onItemLongClick(AdapterView<?> a, View v,
 							int position, long id) {
-						// TODO Auto-generated method stub
 						HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 								.getItemAtPosition(position);
 						if (map.get("url").contains("recherche.php"))
@@ -212,7 +210,6 @@ public class ArticlesList extends AsiActivity {
 	}
 
 	private void share(String url, String titre) {
-		// TODO Auto-generated method stub
 		try {
 			Intent emailIntent = new Intent(Intent.ACTION_SEND);
 			emailIntent.putExtra(Intent.EXTRA_TEXT,

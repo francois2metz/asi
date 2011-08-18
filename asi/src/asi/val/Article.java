@@ -72,7 +72,6 @@ public class Article {
 	}
 
 	private void determined_color(String title) {
-		// TODO Auto-generated method stub
 		//Log.d("ASI","cat= "+title);
 		if(title.contains("Vite dit"))
 			this.color="#FEC763";

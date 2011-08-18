@@ -53,8 +53,6 @@ public class ReloadActivity extends AsiActivity {
 	}
 
 	protected void loadData() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	class auto_updated extends Thread {
