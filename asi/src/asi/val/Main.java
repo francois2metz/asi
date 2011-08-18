@@ -309,14 +309,6 @@ public class Main extends AsiActivity {
 		});
 	}
 
-//	public void setCookies(String cookies) {
-//		Cookies = cookies;
-//	}
-//
-//	public String getCookies() {
-//		return Cookies;
-//	}
-
 	// public void onBackPressed(){
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
