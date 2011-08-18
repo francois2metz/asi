@@ -15,6 +15,10 @@
 
 package asi.val;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import android.content.ContentUris;
 import android.net.Uri;
 
 public class Article {
@@ -22,18 +26,25 @@ public class Article {
 	public static final Uri ARTICLE_URI =
             Uri.parse("content://"+ ArticleProvider.AUTHORITY +"/article");
 
-	public static final Uri ARTICLES_URI =
-            Uri.parse("content://"+ ArticleProvider.AUTHORITY +"/articles");
-
-	public static final String URL_PARAM_NAME = "url";
+	public static final Uri ARTICLES_URI = Uri.parse("content://"+ ArticleProvider.AUTHORITY +"/articles");
 
 	/**
 	 * Title of the article
 	 */
 	public static final String TITLE_NAME = "name";
+	
+	/**
+	 * Color of the article
+	 */
+	public static final String COLOR_NAME = "color";
+	
+	/**
+	 * Date of the article
+	 */
+	public static final String DATE_NAME = "date";
 
 	/**
-	 * Sample/description of the content. Provided by the ress
+	 * Sample/description of the content. Provided by the RSS feed.
 	 */
 	public static final String DESCRIPTION_NAME = "description";
 
@@ -46,6 +57,11 @@ public class Article {
 	 * URL of this article
 	 */
 	public static final String URL_NAME = "url";
+	
+	/**
+	 * Read/unread
+	 */
+	public static final String READ_NAME = "read";
 
 	private String title;
 
@@ -83,10 +99,43 @@ public class Article {
 	public String getDescription() {
 		return description;
 	}
+	
+	public static Uri createUriFor(long id) {
+        return ContentUris.withAppendedId(Article.ARTICLE_URI, id);
+	}
+	
+	public static Uri createUriFor(String url) {
+		long id = Integer.parseInt(Uri.parse(url).getQueryParameter("id"));
+		return createUriFor(id);
+	}
+	
+	public static String parseDescription(String des) {
+		des = des.replaceAll("\n", "");
+		String[] parse = des.split("<br />");
+		if(parse.length > 1) {
+			//this.determined_color(parse[0]);
+			des = parse[1];
+		}
+		int fin = des.length();
+		if (fin > 100)
+			fin = 100;
+		des = des.substring(0, fin);
+		des = des.replaceFirst(" \\w+$", "");
+		des = des + " ...";
+		return des;
+	}
+	
+	public static String parseColor(String des) {
+		des = des.replaceAll("\n", "");
+		String[] parse = des.split("<br />");
+		if(parse.length > 1) {
+			return determinedColor(parse[0]);
+		}
+		return null;
+	}
 
 	public void setDescription(String des) {
 		des = des.replaceAll("\n", "");
-		//des = des.replaceAll("<br />", "");
 		String[] parse = des.split("<br />");
 		if(parse.length>1){
 			this.determined_color(parse[0]);
@@ -100,17 +149,21 @@ public class Article {
 		des = des + " ...";
 		this.description = des;
 	}
+	
+	public static String determinedColor(String title) {
+		if(title.contains("Vite dit"))
+			return "#FEC763";
+		else if(title.contains("chronique"))
+			return "#FF398E";
+		else if(title.contains("mission"))
+			return "#3A36FF";
+		else if(title.contains("Article"))
+			return "#3399FF";
+		return null;
+	}
 
 	private void determined_color(String title) {
-		//Log.d("ASI","cat= "+title);
-		if(title.contains("Vite dit"))
-			this.color="#FEC763";
-		else if(title.contains("chronique"))
-			this.color="#FF398E";
-		else if(title.contains("mission"))
-			this.color="#3A36FF";
-		else if(title.contains("Article"))
-			this.color="#3399FF";
+		this.color = Article.determinedColor(title);
 	}
 
 	public void setDescription_on_recherche(String html) {
@@ -132,6 +185,17 @@ public class Article {
 
 	public void setUri(String uri) {
 		this.uri = uri;
+	}
+	
+	public static long parseDate(String date) {
+		// <pubDate>Tue, 31 Aug 2010 19:37:08 +0200</pubDate>
+		SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+		try {
+			return formatter.parse(date).getTime();
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	public void setDate(String dat) {

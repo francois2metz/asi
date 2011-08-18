@@ -18,19 +18,31 @@ package asi.val;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.finchframework.finch.rest.RESTfulContentProvider;
 import com.finchframework.finch.rest.ResponseHandler;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
@@ -43,11 +55,19 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	private static final String ARTICLES_TABLE_NAME = "articles";
 
-    private static final int ARTICLE = 1;
+	private static final String CATEGORIES_TABLE_NAME = "categories";
 
-    private static final int ARTICLES = 2;
+	private static final String CATEGORIES_ARTICLES_TABLE_NAME = "articles_categories";
 
-    static int DATABASE_VERSION = 2;
+	private static final int ARTICLE = 1;
+
+	private static final int ARTICLES_BY_CATEGORY = 2;
+
+	private static final int CATEGORIES = 3;
+
+	private static final int CATEGORY_ID = 4;
+
+	static int DATABASE_VERSION = 11;
 
 	private static final UriMatcher sUriMatcher;
 
@@ -56,9 +76,10 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	static {
 		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		sUriMatcher.addURI(AUTHORITY, "article", ARTICLE);
-		sUriMatcher.addURI(AUTHORITY, "articles", ARTICLES);
-
+		sUriMatcher.addURI(AUTHORITY, "article/#", ARTICLE);
+		sUriMatcher.addURI(AUTHORITY, "articles/#", ARTICLES_BY_CATEGORY);
+		sUriMatcher.addURI(AUTHORITY, "categories", CATEGORIES);
+		sUriMatcher.addURI(AUTHORITY, "categories/#", CATEGORY_ID);
 	}
 
 	@Override
@@ -74,34 +95,29 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	@Override
 	public int delete(Uri arg0, String arg1, String[] arg2) {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public String getType(Uri arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 		if (sUriMatcher.match(uri) != ARTICLE) {
 			throw new IllegalArgumentException("Unknown URI " + uri); }
-
-		String url = values.get(Article.URL_NAME).toString();
-		String id = Uri.parse(url).getQueryParameter("id");
-		Log.d("ArticleProvider", "id "+ id);
-		values.put(BaseColumns._ID, id);
-
-        long rowId = mDb.insert(ARTICLES_TABLE_NAME, null, values);
-        if (rowId > 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
-            return uri;
-        } else {
-        	Log.d("ASI", "cannot insert "+ uri);
-			return null;
+		long rowId = getIdFor(values.getAsString(Article.URL_NAME));
+		if (rowId == -1) {
+			rowId = mDb.insert(ARTICLES_TABLE_NAME, null, values);
+		} else {
+			mDb.update(ARTICLES_TABLE_NAME, values, Article.URL_NAME +" = ?", 
+     			   new String[] { values.getAsString(Article.URL_NAME) });
 		}
+		// put the id for later usage
+    	values.put(BaseColumns._ID, rowId);
+        getContext().getContentResolver().notifyChange(ContentUris.withAppendedId(Article.ARTICLE_URI, rowId), null);
+		return uri;
 	}
 
 	@Override
@@ -111,30 +127,17 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	    int match = sUriMatcher.match(uri);
 	    switch (match) {
+	    	case CATEGORIES:
+	    		queryCursor = queryCategories(projection, where, whereArgs, sortOrder);
+	    		break;
+	    	case CATEGORY_ID:
+	    		queryCursor = queryCategory(uri, projection, whereArgs, sortOrder);
+	    		break;
+	    	case ARTICLES_BY_CATEGORY:
+	    		queryCursor = queryArticlesByCategory(uri, sortOrder);
+	    		break;
 	        case ARTICLE:
-	        	// extract the requested url
-	            String articleUrl = uri.
-	                    getQueryParameter(Article.URL_PARAM_NAME);
-
-	            // Part 1: get the cached version on the database
-	            String select = Article.URL_NAME+
-	                    " = '" +  articleUrl + "'";
-
-	            Log.d("ArticleProvider", "url "+ articleUrl);
-
-	            // quickly return already matching data
-	            queryCursor =
-	                    mDb.query(ARTICLES_TABLE_NAME, projection,
-	                            select,
-	                            whereArgs,
-	                            null,
-	                            null, sortOrder);
-
-	            // make the cursor observe the requested query
-	            queryCursor.setNotificationUri(
-	                    getContext().getContentResolver(), uri);
-	            // Part 2: get the latest version
-	            asyncQueryRequest("article", articleUrl);
+	        	queryCursor = queryArticle(uri, projection, whereArgs, sortOrder);
 	            break;
 	        default:
 	            throw new IllegalArgumentException("unsupported uri: " + uri);
@@ -142,21 +145,143 @@ public class ArticleProvider extends RESTfulContentProvider {
 		return queryCursor;
 	}
 
-	@Override
-	public int update(Uri arg0, ContentValues arg1, String arg2, String[] arg3) {
-		// TODO Auto-generated method stub
-		return 0;
+	private Cursor queryArticle(Uri uri, String[] projection,
+			String[] whereArgs, String sortOrder) {
+		String articleId = uri.getPathSegments().get(1);
+		// extract the requested URL
+		String articleUrl = getArticleUrl(Integer.parseInt(articleId));
+
+		// Part 1: get the cached version on the database
+		String select = Article.URL_NAME+
+		        " = '" +  articleUrl + "'";
+
+		Log.d("ArticleProvider", "url "+ articleUrl);
+
+		// quickly return already matching data
+		Cursor queryCursor =
+		        mDb.query(ARTICLES_TABLE_NAME, projection,
+		                select,
+		                whereArgs,
+		                null,
+		                null, sortOrder);
+
+		// make the cursor observe the requested query
+		queryCursor.setNotificationUri(
+		        getContext().getContentResolver(), uri);
+		// Part 2: get the latest version
+		asyncQueryRequest("article", articleUrl);
+		return queryCursor;
 	}
 
+	private Cursor queryArticlesByCategory(Uri uri, String sortOrder) {
+		String catId = uri.getPathSegments().get(1);
+		String select2 = "SELECT a."+ BaseColumns._ID +", a."+ 
+		        		Article.TITLE_NAME +", a."+
+		        		Article.DESCRIPTION_NAME +", a."+
+		        		Article.DATE_NAME + ", a."+ 
+		        		Article.COLOR_NAME + ", a."+
+		        		Article.URL_NAME +
+		        		" FROM " + ARTICLES_TABLE_NAME + " as a JOIN "+
+		         CATEGORIES_ARTICLES_TABLE_NAME + " as c ON c.article = a._id WHERE c.category=?";
+		if (sortOrder != null)
+			select2 += " ORDER BY a."+ sortOrder;
+		Cursor queryCursor = mDb.rawQuery(select2, new String[] { catId });
+		// make the cursor observe the requested query
+		queryCursor.setNotificationUri(
+		        getContext().getContentResolver(), uri);
+		// Part 2: get the latest version
+		asyncQueryRequest(catId, getCategoryUrl(Integer.parseInt(catId)));
+		return queryCursor;
+	}
+
+	private Cursor queryCategory(Uri uri, String[] projection,
+			String[] whereArgs, String sortOrder) {
+		String where = BaseColumns._ID + " = " + uri.getPathSegments().get(1);
+		return mDb.query(CATEGORIES_TABLE_NAME, projection,
+				where, whereArgs, where, null, sortOrder);
+	}
+
+	private Cursor queryCategories(String[] projection, String where,
+			String[] whereArgs, String sortOrder) {
+		return mDb.query(CATEGORIES_TABLE_NAME, projection,
+		        where,
+		        whereArgs,
+		        null,
+		        null, sortOrder);
+	}
+
+	@Override
+	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void insertEntryForCategory(ArrayList<ContentValues> values, long catId) {
+		ContentValues categoryArticle;
+		for (ContentValues value: values) {
+			categoryArticle = new ContentValues();
+			categoryArticle.put("category", catId);
+			categoryArticle.put("article", value.getAsInteger(BaseColumns._ID));
+			try {
+				mDb.insertOrThrow(CATEGORIES_ARTICLES_TABLE_NAME, null, categoryArticle);
+			} catch (SQLException e) {
+				// do nothing
+			}
+		}
+		// notify cursor
+        getContext().getContentResolver().notifyChange(ContentUris.withAppendedId(Article.ARTICLES_URI, catId), null);
+	}
+	
+	/**
+	 * Return the URL of the category
+	 */
+	protected String getCategoryUrl(int id) {
+		String where = BaseColumns._ID +" = "+ id;
+		Cursor c = mDb.query(CATEGORIES_TABLE_NAME, null, where, null, null, null, null);
+		c.moveToFirst();
+		String url = c.getString(c.getColumnIndex(Category.URL_NAME));
+		c.close();
+		return url;
+	}
+	
+	/**
+	 * Return the URL of the article
+	 */
+	protected String getArticleUrl(int id) {
+		String where = BaseColumns._ID +" = "+ id;
+		Cursor c = mDb.query(ARTICLES_TABLE_NAME, null, where, null, null, null, null);
+		c.moveToFirst();
+		String url = c.getString(c.getColumnIndex(Article.URL_NAME));
+		c.close();
+		return url;
+	}
+	
+	/**
+	 * Return the id
+	 */
+	private long getIdFor(String url) {
+		String where = Article.URL_NAME +" = ?";
+		Cursor c = mDb.query(ARTICLES_TABLE_NAME, null, where, new String[] { url }, null, null, null);
+		if (c.getCount() == 0) {
+			c.close();
+			return -1;
+		}
+		c.moveToFirst();
+		long id = c.getLong(c.getColumnIndex(BaseColumns._ID));
+		c.close();
+		return id;
+	}
+	
 	/**
 	 * Simple Helper to manipulate the database.
 	 * This is mostly a boilerplate
 	 */
 	 private static class DatabaseHelper extends SQLiteOpenHelper {
+		 	private Context context;
 	        private DatabaseHelper(Context context, String name,
 	                                    SQLiteDatabase.CursorFactory factory)
 	        {
 	            super(context, name, factory, DATABASE_VERSION);
+	        	this.context = context;
 	        }
 
 	        @Override
@@ -165,42 +290,140 @@ public class ArticleProvider extends RESTfulContentProvider {
 	        }
 
 	        private void createTable(SQLiteDatabase sqLiteDatabase) {
-	            String qs = "CREATE TABLE " + ARTICLES_TABLE_NAME + " (" +
-	                    BaseColumns._ID +
-	                    " INTEGER PRIMARY KEY, " +
+	        	// articles table
+	        	String qs = "CREATE TABLE " + ARTICLES_TABLE_NAME + " (" +
+	                    BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 	                    Article.TITLE_NAME + " TEXT, " +
 	                    Article.DESCRIPTION_NAME + " TEXT, " +
 	                    Article.CONTENT_NAME + " TEXT, " +
-	                    Article.URL_NAME + " TEXT);";
+	                    Article.DATE_NAME + " INT, " +
+	                    Article.COLOR_NAME + " TEXT, " +
+	                    Article.READ_NAME + " INT, " +
+	                    Article.URL_NAME + " TEXT, UNIQUE("+ Article.URL_NAME +"));";
 	            sqLiteDatabase.execSQL(qs);
+	            // categories table
+	            qs = "CREATE TABLE " + CATEGORIES_TABLE_NAME + " (" +
+	                    BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+	                    Category.TITLE_NAME + " TEXT, " +
+	                    Category.IMAGE_NAME + " TEXT, " +
+	                    Category.URL_NAME + " TEXT, " +
+	                    Category.COLOR_NAME + " TEXT, " +
+	                    Category.FREE_NAME + " INTEGER, " +
+	                    Category.SUB_CAT + " TEXT);";
+	             sqLiteDatabase.execSQL(qs);
+	             qs = "CREATE TABLE "+ CATEGORIES_ARTICLES_TABLE_NAME +" ("+
+	            		 "category INT, article INT, UNIQUE (category, article));";
+	             sqLiteDatabase.execSQL(qs);
+	             insertCategories(sqLiteDatabase);
 	        }
 
 	        @Override
 	        public void onUpgrade(SQLiteDatabase sqLiteDatabase,
 	                              int oldv, int newv)
 	        {
-	            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " +
-	                    ARTICLES_TABLE_NAME + ";");
+	        	Log.d("ASI", "upgrade table");
+	        	String[] tables = new String[] { ARTICLES_TABLE_NAME, CATEGORIES_TABLE_NAME,
+	        				CATEGORIES_ARTICLES_TABLE_NAME };
+	        	for (String table: tables) {
+	        		sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ table + ";");   
+	        	}
 	            createTable(sqLiteDatabase);
+	        }
+	        
+	        private void insertCategories(SQLiteDatabase sqLiteDatabase) {
+	        	// TODO: some work need to be done ...
+	        	int[] list = new int[] { R.array.catT, R.array.catE, R.array.catD,
+	        							 R.array.catC, R.array.catV, R.array.catR };
+	        	Resources res = this.context.getResources();
+	        	String[] category;
+	        	ContentValues values;
+	        	for (int i = 0; i < list.length; i++) {
+	    			category = res.getStringArray(list[i]);
+	    			values = new ContentValues();
+	    			values.put(Category.TITLE_NAME, category[0]);
+	    			values.put(Category.IMAGE_NAME, category[1]);
+	    			values.put(Category.URL_NAME, category[2]);
+	    			values.put(Category.SUB_CAT, category[3]);
+	    			values.put(Category.COLOR_NAME, category[4]);
+		            sqLiteDatabase.insert(CATEGORIES_TABLE_NAME, null, values);
+	    		}
 	        }
 	    }
 
 	@Override
 	public Uri insert(Uri uri, ContentValues cv, SQLiteDatabase db) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected ResponseHandler newResponseHandler(String url) {
-		return new AsiHandler(this, url);
+	protected ResponseHandler newResponseHandler(String queryTag) {
+		if ("article".equals(queryTag)) {
+			return new ArticleHandler(this);
+		} else {
+			return new RssHandler(this, queryTag);
+		}
+	}
+	
+	class RssHandler implements ResponseHandler {
+		private ArticleProvider provider;
+
+		private long catId;
+		
+		public RssHandler(RESTfulContentProvider restfulProvider, String queryTag) {
+			this.provider = (ArticleProvider) restfulProvider;
+			this.catId = Integer.parseInt(queryTag);
+		}
+
+		public void handleResponse(HttpResponse response, Uri uri)
+				throws IOException {
+			try {
+				Log.d("ASI", "handle rss response "+ uri);
+				ArrayList<ContentValues> values = parseContent(response.getEntity());
+				for (ContentValues value: values) {
+					provider.insert(Article.createUriFor(value.getAsString(Article.URL_NAME)), value);
+				}
+				provider.insertEntryForCategory(values, catId);
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e("ASI", "ERROR "+ e.toString());
+			}
+		}
+		
+		protected ArrayList<ContentValues> parseContent(HttpEntity entity) throws ParserConfigurationException, IllegalStateException, SAXException, IOException {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document dom = db.parse(entity.getContent());
+			NodeList items = dom.getElementsByTagName("item");
+			ArrayList<ContentValues> values = new ArrayList<ContentValues>();
+			ContentValues value;
+			for (int i = 0; i < items.getLength(); i++) {
+				value = new ContentValues();
+				Node item = items.item(i);
+				NodeList artis = item.getChildNodes();
+				for (int j = 0; j < artis.getLength(); j++) {
+					Node arti = artis.item(j);
+					if (arti.getNodeName().equalsIgnoreCase("title"))
+						value.put(Article.TITLE_NAME, arti.getFirstChild().getNodeValue());
+					if (arti.getNodeName().equalsIgnoreCase("description")) {
+						value.put(Article.DESCRIPTION_NAME, Article.parseDescription(arti.getFirstChild().getNodeValue()));
+						value.put(Article.COLOR_NAME, Article.determinedColor(arti.getFirstChild().getNodeValue()));
+					}
+					if (arti.getNodeName().equalsIgnoreCase("link"))
+						value.put(Article.URL_NAME, arti.getFirstChild().getNodeValue());
+					if (arti.getNodeName().equalsIgnoreCase("pubDate"))
+						value.put(Article.DATE_NAME, Article.parseDate(arti.getFirstChild().getNodeValue()));
+				}
+				values.add(value);
+			}
+			return values;
+		}
 	}
 
-	class AsiHandler implements ResponseHandler {
+	class ArticleHandler implements ResponseHandler {
 
 		private RESTfulContentProvider provider;
 
-		public AsiHandler(RESTfulContentProvider restfulProvider, String url) {
+		public ArticleHandler(RESTfulContentProvider restfulProvider) {
 			this.provider = restfulProvider;
 		}
 
@@ -209,14 +432,8 @@ public class ArticleProvider extends RESTfulContentProvider {
 			Log.d("ArticleProvider", "handle response "+ uri);
 			// parse the result
             String content = parseContent(response.getEntity());
-            // insert in the database
-            String queryString = Article.URL_PARAM_NAME + "=" +
-                    Uri.encode(uri.toString());
-            Uri queryUri =
-                Uri.parse(Article.ARTICLE_URI + "?" +
-                    queryString);
+            Uri queryUri = Article.createUriFor(uri.toString());
 			ContentValues c = new ContentValues();
-			// TODO: add title, description, date and more ...
 			c.put(Article.CONTENT_NAME, content);
 			c.put(Article.URL_NAME, uri.toString());
 			provider.insert(queryUri, c);
@@ -288,7 +505,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 						ligneCodeHTML = ligneCodeHTML.replaceAll("<td.*?>", "<p>");
 						ligneCodeHTML = ligneCodeHTML.replaceAll("</td>", "</p>");
 
-						// on remplace le lien dailymotion vers celui pour l'iphone
+						// on remplace le lien dailymotion par celui pour l'iphone
 						ligneCodeHTML = ligneCodeHTML.replaceAll(
 								"www.dailymotion.com/video",
 								"iphone.dailymotion.com/video");

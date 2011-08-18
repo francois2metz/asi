@@ -49,7 +49,7 @@ public class VideoViewSD extends ReloadActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		// Récupération de la listview créée dans le fichier main.xml
-		maListViewPerso = (ListView) findViewById(R.id.listviewperso);
+		maListViewPerso = (ListView) findViewById(R.id.listview);
 
 		TextView text = (TextView) findViewById(R.id.list_text);
 		// Ajout de l'image

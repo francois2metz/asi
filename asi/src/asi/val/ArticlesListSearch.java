@@ -26,18 +26,6 @@ public class ArticlesListSearch extends ArticlesList {
 		new SearchUrl().execute(url);
 	}
 
-	public void setArticles(Vector<Article> art) {
-		if (articles == null)
-			this.articles = art;
-		else {
-			if (articles.size() > 0)
-				this.articles.removeElementAt(articles.size() - 1);
-			for (int i = 0; i < art.size(); i++) {
-				articles.add(art.elementAt(i));
-			}
-		}
-	}
-
 	private class SearchUrl extends AsyncTask<String, Void, String> {
 		private final ProgressDialog dialog = new ProgressDialog(
 				ArticlesListSearch.this, this);
@@ -54,7 +42,7 @@ public class ArticlesListSearch extends ArticlesList {
 			// Main.this.application.getDataHelper().selectAll();
 			try {
 				SearchPage re = new SearchPage(args[0]);
-				ArticlesListSearch.this.setArticles(re.getArticles());
+				//ArticlesListSearch.this.setArticles(re.getArticles());
 			} catch (Exception e) {
 				String error = e.toString() + "\n" + e.getStackTrace()[0]
 						+ "\n" + e.getStackTrace()[1];
@@ -72,7 +60,7 @@ public class ArticlesListSearch extends ArticlesList {
 				}
 			}
 			if (error == null)
-				ArticlesListSearch.this.loadData();
+				ArticlesListSearch.this.loadContent();
 			else {
 				//new erreur_dialog(liste_articles_recherche.this,"Chargement des articles", error).show();
 				ArticlesListSearch.this.onLoadError(error);

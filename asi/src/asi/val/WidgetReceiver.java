@@ -61,7 +61,7 @@ public class WidgetReceiver extends AppWidgetProvider {
 					articles = this.get_new_articles(articles, context);
 					Log.d("ASI", "download_articles:" + articles.size());
 				} else
-					articles = this.get_datas(context).get_widget_article();
+					articles = this.getData(context).get_widget_article();
 				if (articles.size() == 0)
 					throw new StopException("Pas de nouvel article");
 				views.setTextViewText(R.id.widget_message, articles
@@ -92,8 +92,8 @@ public class WidgetReceiver extends AppWidgetProvider {
 				if (articles == null) {
 					articles = new Vector<Article>();
 				}
-				this.get_datas(context).save_widget_article(articles);
-				this.get_datas(context).save_widget_posi(0);
+				this.getData(context).save_widget_article(articles);
+				this.getData(context).save_widget_posi(0);
 			}
 		}
 	}
@@ -162,10 +162,10 @@ public class WidgetReceiver extends AppWidgetProvider {
 			// Color.parseColor(articles.elementAt(posi).getColor()));
 			views.setTextColor(R.id.widget_color,
 					Color.parseColor(articles.elementAt(posi).getColor()));
-			this.get_datas(context).save_widget_posi(posi);
+			this.getData(context).save_widget_posi(posi);
 			views.setTextViewText(R.id.widget_next_texte, (posi + 1) + "/"
 					+ articles.size());
-			if (this.get_datas(context).containArticlesRead(
+			if (this.getData(context).containArticlesRead(
 					articles.elementAt(posi).getUri()))
 				views.setViewVisibility(R.id.widget_check, View.VISIBLE);
 			else
@@ -191,9 +191,9 @@ public class WidgetReceiver extends AppWidgetProvider {
 				this.onDeleted(context, new int[] { appWidgetId });
 			}
 		} else if (SHOW_CURRENT.equals(action)) {
-			articles = this.get_datas(context)
+			articles = this.getData(context)
 					.get_widget_article();
-			int posi = this.get_datas(context).get_widget_posi();
+			int posi = this.getData(context).get_widget_posi();
 			intent = new Intent(context, Page.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			if (posi < articles.size()) {
@@ -215,9 +215,9 @@ public class WidgetReceiver extends AppWidgetProvider {
 					manager.getAppWidgetIds(thisWidget));
 			manager.updateAppWidget(thisWidget, views);		
 		} else if (SHOW_NEXT.equals(action)) {
-			articles = this.get_datas(context)
+			articles = this.getData(context)
 					.get_widget_article();
-			int posi = this.get_datas(context).get_widget_posi();
+			int posi = this.getData(context).get_widget_posi();
 
 			if ((posi + 1) == articles.size())
 				posi = 0;
@@ -228,21 +228,6 @@ public class WidgetReceiver extends AppWidgetProvider {
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
 			this.defined_article(views, context, posi);
-//			views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
-//			if (articles.size() != 0) {
-//				views.setTextViewText(R.id.widget_message,
-//						articles.elementAt(posi).getTitle());
-//				// views.setInt(R.id.widget_message, "setBackgroundResource",
-//				// Color.parseColor(articles.elementAt(posi).getColor()));
-//				views.setTextColor(R.id.widget_color,
-//						Color.parseColor(articles.elementAt(posi).getColor()));
-//				this.get_datas(context).save_widget_posi(posi);
-//				views.setTextViewText(R.id.widget_next_texte, (posi + 1) + "/"
-//						+ articles.size());
-//				if (this.get_datas(context).contain_articles_lues(
-//						articles.elementAt(posi).getUri()))
-//					views.setViewVisibility(R.id.widget_check, View.VISIBLE);
-//			}
 
 			ComponentName thisWidget = new ComponentName(context,
 					WidgetReceiver.class);
@@ -256,11 +241,11 @@ public class WidgetReceiver extends AppWidgetProvider {
 			manager.updateAppWidget(thisWidget, views);
 			// appWidgetManager.updateAppWidget(appWidgetId, views);
 		} else if (CHECK_CURRENT.equals(action)) {
-			articles = this.get_datas(context)
+			articles = this.getData(context)
 					.get_widget_article();
-			int posi = this.get_datas(context).get_widget_posi();
+			int posi = this.getData(context).get_widget_posi();
 			if (posi < articles.size())
-				this.get_datas(context).addArticlesRead(
+				this.getData(context).addArticlesRead(
 						articles.elementAt(posi).getUri());
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
@@ -283,38 +268,23 @@ public class WidgetReceiver extends AppWidgetProvider {
 		}
 	}
 
-	public void onDisabled(Context context) {
-		super.onDisabled(context);
-		Log.d("ASI", "disabled widget");
-	}
-
-	public void onEnabled(Context context) {
-		super.onEnabled(context);
-		Log.d("ASI", "enabled widget");
-	}
-
-	public void onDeleted(Context context, int[] appWidgetIds) {
-		super.onDeleted(context, appWidgetIds);
-		Log.d("ASI", "deleted widget");
-	}
-
 	private Vector<Article> get_new_articles(Vector<Article> articles2,
 			Context c) {
 		Vector<Article> ar = new Vector<Article>();
 		for (int i = 0; i < articles2.size(); i++) {
-			if (!this.get_datas(c).containArticlesRead(
+			if (!this.getData(c).containArticlesRead(
 					articles2.elementAt(i).getUri()))
 				ar.add(articles2.elementAt(i));
 		}
 		return (ar);
 	}
 
-	public SharedData get_datas(Context c) {
-		SharedData datas = SharedData.shared;
-		if (datas == null)
+	public SharedData getData(Context c) {
+		SharedData data = SharedData.shared;
+		if (data == null)
 			return (new SharedData(c));
-		datas.setContext(c);
-		return datas;
+		data.setContext(c);
+		return data;
 	}
 
 }

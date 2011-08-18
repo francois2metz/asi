@@ -27,7 +27,7 @@ public class Configuration extends AsiActivity {
 		setContentView(R.layout.main);
 
 		// Récupération de la listview créée dans le fichier main.xml
-		maListViewPerso = (ListView) findViewById(R.id.listviewperso);
+		maListViewPerso = (ListView) findViewById(R.id.listview);
 
 		// gratuit = this.getIntent().getExtras().getBoolean("gratuit");
 		TextView text = (TextView) findViewById(R.id.list_text);

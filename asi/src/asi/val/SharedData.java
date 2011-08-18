@@ -112,7 +112,6 @@ public class SharedData {
 			while ((strLine = objBufferReader.readLine()) != null) {
 				this.articles_lues.add(strLine);
 			}
-			;
 			fos.close();
 			this.testLengthArticleRead();
 		} catch (java.io.FileNotFoundException e) {

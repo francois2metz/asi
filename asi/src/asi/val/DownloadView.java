@@ -44,7 +44,7 @@ public class DownloadView extends ReloadActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		// Récupération de la listview créée dans le fichier main.xml
-		maListViewPerso = (ListView) findViewById(R.id.listviewperso);
+		maListViewPerso = (ListView) findViewById(R.id.listview);
 
 		ImageView v = (ImageView) findViewById(R.id.cat_image);
 		v.setImageResource(R.drawable.telechargement);

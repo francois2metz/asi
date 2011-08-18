@@ -18,6 +18,7 @@ package asi.val;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -87,13 +88,11 @@ public class Page extends AsiActivity {
 	public void loadContent(){
 	    final android.app.ProgressDialog pg = android.app.ProgressDialog.show(this, "", "Chargement...", true, true);
 
+	    final long id = this.getIntent().getExtras().getLong("id");
 		final String url = this.getIntent().getExtras().getString("url");
+		Log.d("ASI", "load page with url "+ url);
+		Uri queryUri = ContentUris.withAppendedId(Article.ARTICLE_URI, id);
 		
-		String queryString = Article.URL_PARAM_NAME + "=" +
-		        Uri.encode(url);
-		Uri queryUri =
-		    Uri.parse(Article.ARTICLE_URI + "?" +
-		        queryString);
 		final Cursor c = managedQuery(queryUri, null, null, null, null);
 		c.registerContentObserver(new ContentObserver(null) {
 			@Override
@@ -111,13 +110,16 @@ public class Page extends AsiActivity {
 
 	private void renderCursor(Cursor c, String url, android.app.ProgressDialog pg) {
 		// probably a bug is getCount() return an integer > 1
+		// TODO: videos ...
 		if (c.getCount() > 0) {
 			c.moveToFirst();
 		    String content = c.getString(c.getColumnIndex(Article.CONTENT_NAME));
-		    this.setPagedata(this.getStyle() + content);
-			this.getData().addArticlesRead(url);
-		    this.loadPage();
-		    pg.dismiss();
+		    if (content != null) {
+			    this.setPagedata(this.getStyle() + content);
+				//this.getData().addArticlesRead(url);
+			    this.loadPage();
+			    pg.dismiss();
+		    }
 		}
 	}
 	
@@ -131,7 +133,7 @@ public class Page extends AsiActivity {
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		if (videos!=null && !videos.isEmpty()) {
+		if (videos != null && !videos.isEmpty()) {
 			inflater.inflate(R.layout.emission_menu, menu);
 		} else {
 			inflater.inflate(R.layout.generic_menu, menu);
@@ -143,7 +145,7 @@ public class Page extends AsiActivity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.item5:
-			telecharger_actes();
+			downloadActs();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -269,7 +271,7 @@ public class Page extends AsiActivity {
 
 	}
 
-	public void telecharger_actes() {
+	public void downloadActs() {
 		final int nb_actes = videos.size();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Vidéos de l'article");
