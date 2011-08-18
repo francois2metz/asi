@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.ContentObserver;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,8 +51,6 @@ public class Page extends AsiActivity {
 
 		// Récupération de la listview créée dans le fichier main.xml
 		mywebview = (WebView) this.findViewById(R.id.WebViewperso);
-		// String data = savedInstanceState.getString("page_data");
-		// this.onRestoreInstanceState(savedInstanceState);
 		Log.d("ASI", "On_create_page_activity");
 		if (savedInstanceState != null)
 			Log.d("ASI", "On_create_page_activity_from_old");
@@ -75,10 +75,9 @@ public class Page extends AsiActivity {
 		if (name != null) {
 			this.pagedata = name;
 			Log.d("ASI", "Récupération du contenu de la page");
-			this.load_page();
+			this.loadPage();
 		} else {
 			Log.d("ASI", "Rien a récupérer");
-			//new get_page_content().execute(this.getIntent().getExtras().getString("url"));
 			this.loadContent();
 		}
 		// titre de la page
@@ -86,8 +85,39 @@ public class Page extends AsiActivity {
 	}
 	
 	public void loadContent(){
-		new get_page_content().execute(this.getIntent().getExtras()
-				.getString("url"));
+		String url = this.getIntent().getExtras().getString("url");
+		
+		String queryString = Article.URL_PARAM_NAME + "=" +
+		        Uri.encode(url);
+		Uri queryUri =
+		    Uri.parse(Article.ARTICLE_URI + "?" +
+		        queryString);
+		Cursor c = managedQuery(queryUri, null, null, null, null);
+		c.registerContentObserver(new ContentObserver(null) {
+			@Override
+			public void onChange(boolean selfChange) {
+				Log.d("ASI", "cursor have changed, please refresh." + selfChange);
+				// TODO Auto-generated method stub
+				super.onChange(selfChange);
+			}
+		});
+		c.moveToFirst();
+		while (c.isAfterLast() == false) {
+		    String content = c.getString(c.getColumnIndex(Article.CONTENT_NAME));
+		    this.setPagedata(this.getStyle() + content);
+			this.get_datas().addArticlesRead(url);
+		    this.loadPage();
+		    c.moveToNext();
+		}
+		c.close();
+	}
+	
+	public String getStyle() {
+		StringBuffer sb2 = new StringBuffer("");
+		sb2.append("<style type=\"text/css\">");
+		sb2.append(new CssStyle().getCssData());
+		sb2.append("</style>");
+		return (sb2.toString());
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,10 +141,8 @@ public class Page extends AsiActivity {
 		}
 	}
 
-	private void load_page() {
-		// ac.replaceView(R.layout.pageview);
+	private void loadPage() {
 		try {
-
 			// les définitions de type mime et de l'encodage
 			final String mimeType = "text/html";
 			final String encoding = "utf-8";
@@ -164,10 +192,6 @@ public class Page extends AsiActivity {
 						i.putExtra("image", "articles");
 						i.putExtra("url", url);
 						Page.this.startActivity(i);
-						// Toast.makeText(
-						// page.this,
-						// "Les liens vers les dossiers ne sont pas pris en charge !",
-						// Toast.LENGTH_LONG).show();
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/recherche.*")) {
 						Log.d("ASI", "Recherche lancé");
@@ -191,9 +215,6 @@ public class Page extends AsiActivity {
 						Page.this.startActivity(i);
 
 					} else if (url.matches(".*arretsurimages\\.net\\/media.*")) {
-						//Intent i = new Intent(Intent.ACTION_VIEW);
-//						Uri u = Uri.parse(url);
-//						i.setData(u);
 						Intent i = new Intent(getApplicationContext(),
 								PageImage.class);
 						i.putExtra("url", url);
@@ -235,32 +256,14 @@ public class Page extends AsiActivity {
 	};
 
 	public void setPagedata(String pagedata) {
-		// this.pagedata = "<h2>" + page.this.getPage_title() + "</h2>" + "\n"
-		// + pagedata;
 		this.pagedata = pagedata;
 
 	}
 
 	public void telecharger_actes() {
 		final int nb_actes = videos.size();
-		// final CharSequence[] items = new CharSequence[nb_actes];
-		// final boolean[] items_selected = new boolean[nb_actes];
-		//
-		// for(int i = 0; i < nb_actes; i++) {
-		// items[i] = "Acte " + (i + 1);
-		// items_selected[i] = true;
-		// }
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Vidéos de l'article");
-		// builder.setMultiChoiceItems(items, items_selected, new
-		// DialogInterface.OnMultiChoiceClickListener() {
-		//
-		// public void onClick(DialogInterface dialog, int which, boolean
-		// isChecked) {
-		// items_selected[which] = isChecked;
-		//
-		// }
-		// });
 		builder.setMessage("Voulez-vous lancer le téléchargement des " + nb_actes
 				+ " vidéos de cet article ?");
 		builder.setNegativeButton("Non",null);
@@ -269,12 +272,10 @@ public class Page extends AsiActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						VideoUrl video_selected = null;
 						for (int i = 0; i < nb_actes; i++) {
-							// if(items_selected[i]) {
 							video_selected = videos.get(i);
 							video_selected.setNumber(i + 1);
 							video_selected.setTitle(page_title);
 							Page.this.get_datas().downloadvideo(video_selected);
-							// }
 						}
 					}
 				});
@@ -289,10 +290,6 @@ public class Page extends AsiActivity {
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visionner")) {
-					// Intent i = new Intent(getApplicationContext(),
-					// video_view.class);
-					// i.putExtra("url", url);
-					// startActivity(i);
 					new get_video_url().execute(url);
 				} else {
 					VideoUrl vid = new VideoUrl(url);
@@ -325,9 +322,6 @@ public class Page extends AsiActivity {
 
 		// automatically done on worker thread (separate from UI thread)
 		protected String doInBackground(String... args) {
-			// List<String> names =
-			// Main.this.application.getDataHelper().selectAll();
-			// this.publishProgress("Chargement...");
 			try {
 				PageLoad page_d = new PageLoad(args[0]);
 
@@ -336,8 +330,6 @@ public class Page extends AsiActivity {
 
 				Page.this.get_datas().addArticlesRead(args[0]);
 			} catch (Exception e) {
-				// String error = e.toString() + "\n" + e.getStackTrace()[0]
-				// + "\n" + e.getStackTrace()[1];
 				String error = e.getMessage();
 				return (error);
 			}
@@ -352,7 +344,7 @@ public class Page extends AsiActivity {
 				Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
 			}
 			if (error == null) {
-				Page.this.load_page();
+				Page.this.loadPage();
 			} else {
 				//new erreur_dialog(page.this, "Chargement de la page", error).show();
 				Page.this.onLoadError(error);
@@ -401,8 +393,6 @@ public class Page extends AsiActivity {
 				vid.setTitle(page_title);
 				valid_url = vid.getRelinkAdress();
 			} catch (Exception e) {
-				// String error = e.toString() + "\n" + e.getStackTrace()[0]
-				// + "\n" + e.getStackTrace()[1];
 				String error = e.getMessage();
 				return (error);
 			}

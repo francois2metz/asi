@@ -15,7 +15,37 @@
 
 package asi.val;
 
+import android.net.Uri;
+
 public class Article {
+
+	public static final Uri ARTICLE_URI =
+            Uri.parse("content://"+ ArticleProvider.AUTHORITY +"/article");
+
+	public static final Uri ARTICLES_URI =
+            Uri.parse("content://"+ ArticleProvider.AUTHORITY +"/articles");
+
+	public static final String URL_PARAM_NAME = "url";
+
+	/**
+	 * Title of the article
+	 */
+	public static final String TITLE_NAME = "name";
+
+	/**
+	 * Sample/description of the content. Provided by the ress
+	 */
+	public static final String DESCRIPTION_NAME = "description";
+
+	/**
+	 * Article content
+	 */
+	public static final String CONTENT_NAME = "content";
+
+	/**
+	 * URL of this article
+	 */
+	public static final String URL_NAME = "url";
 
 	private String title;
 
@@ -82,7 +112,7 @@ public class Article {
 		else if(title.contains("Article"))
 			this.color="#3399FF";
 	}
-	
+
 	public void setDescription_on_recherche(String html) {
 		html = html.replaceAll("\n", "");
 		html = html.replaceAll("\\s+", " ");
@@ -120,20 +150,20 @@ public class Article {
 	}
 
 	public String getColor() {
-		if(this.color==null)
+		if(this.color == null)
 			return("#ACB7C6");
 		return color;
 	}
 
 	public void setColorFromSearch(String rec) {
 		if(rec.contains("vite"))
-			this.color="#FEC763";
+			this.color = "#FEC763";
 		else if(rec.contains("chro"))
-			this.color="#FF398E";
+			this.color = "#FF398E";
 		else if(rec.contains("emi"))
-			this.color="#3A36FF";
+			this.color = "#3A36FF";
 		else if(rec.contains("doss"))
-			this.color="#3399FF";
+			this.color = "#3399FF";
 	}
 
 }
