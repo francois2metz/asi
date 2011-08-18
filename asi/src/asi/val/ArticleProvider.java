@@ -49,6 +49,10 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+/**
+ * ContentProvider for Articles and categories
+ * TODO: cap number of articles
+ */
 public class ArticleProvider extends RESTfulContentProvider {
 
 	public static final String AUTHORITY = "asi.val.articleprovider";
@@ -67,7 +71,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	private static final int CATEGORY_ID = 4;
 
-	static int DATABASE_VERSION = 11;
+	static int DATABASE_VERSION = 12;
 
 	private static final UriMatcher sUriMatcher;
 
@@ -175,12 +179,13 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	private Cursor queryArticlesByCategory(Uri uri, String sortOrder) {
 		String catId = uri.getPathSegments().get(1);
-		String select2 = "SELECT a."+ BaseColumns._ID +", a."+ 
+		String select2 = "SELECT a."+ BaseColumns._ID +", a."+
 		        		Article.TITLE_NAME +", a."+
 		        		Article.DESCRIPTION_NAME +", a."+
-		        		Article.DATE_NAME + ", a."+ 
+		        		Article.DATE_NAME + ", a."+
 		        		Article.COLOR_NAME + ", a."+
-		        		Article.URL_NAME +
+		        		Article.URL_NAME + ", a."+
+		        		Article.READ_NAME +
 		        		" FROM " + ARTICLES_TABLE_NAME + " as a JOIN "+
 		         CATEGORIES_ARTICLES_TABLE_NAME + " as c ON c.article = a._id WHERE c.category=?";
 		if (sortOrder != null)
@@ -212,7 +217,8 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-		throw new UnsupportedOperationException();
+		String articleId = uri.getPathSegments().get(1);
+		return mDb.update(ARTICLES_TABLE_NAME, values, BaseColumns._ID +" = "+ articleId, null);
 	}
 	
 	public void insertEntryForCategory(ArrayList<ContentValues> values, long catId) {

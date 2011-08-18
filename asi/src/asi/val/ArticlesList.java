@@ -17,10 +17,10 @@ package asi.val;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -60,6 +60,7 @@ public class ArticlesList extends AsiActivity {
 		
 		int catId = this.getIntent().getExtras().getInt("id");
 		
+		// get the category
 		Uri catUri = ContentUris.withAppendedId(Category.CATEGORIES_URI, catId);
 		Cursor category = getContentResolver().query(catUri, null, null, null, null);
 
@@ -97,6 +98,13 @@ public class ArticlesList extends AsiActivity {
 				SimpleDateFormat format = new SimpleDateFormat("E dd/MM kk:mm");
 			    ((TextView) view).setText(format.format(date));
 				return true;
+			} else if (columnIndex == cursor.getColumnIndex(Article.DESCRIPTION_NAME)) {
+				int color = R.color.unread;
+				if (cursor.getInt(cursor.getColumnIndex(Article.READ_NAME)) == 1) {
+					color = R.color.read;
+				}
+				((View) view.getParent()).setBackgroundResource(color);
+				return false;
 			}
 			return false;
 		}
@@ -111,7 +119,6 @@ public class ArticlesList extends AsiActivity {
 							   Article.DESCRIPTION_NAME, Article.DATE_NAME },
 				new int[] { R.id.color, R.id.titre, R.id.description,
 							R.id.date });
-
 		// on ajoute le binder
 		adapter.setViewBinder(new ArticleViewBinder());
 		//on sauve
@@ -130,21 +137,17 @@ public class ArticlesList extends AsiActivity {
 				ArticlesList.this.loadPage(id, url, title);
 			}
 		});
-			
 		maListViewPerso
 				.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-					@SuppressWarnings("unchecked")
 					public boolean onItemLongClick(AdapterView<?> a, View v,
-							int position, long id) {
-						HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
-								.getItemAtPosition(position);
-						if (map.get("url").contains("recherche.php"))
-							ArticlesList.this.onSearchItem(map.get("url"));
-						else
-							ArticlesList.this.choice_action_item(
-									map.get("url"), map.get("titre"));
-
+							int position, long arg3) {
+						SimpleCursorAdapter adapter = (SimpleCursorAdapter) maListViewPerso.getAdapter();
+						Cursor c = adapter.getCursor();
+						c.moveToPosition(position);
+						String url = c.getString(c.getColumnIndex(Article.URL_NAME));
+						String title = c.getString(c.getColumnIndex(Article.TITLE_NAME));
+						long id = c.getLong(c.getColumnIndex(BaseColumns._ID));
+						ArticlesList.this.menuItem(id, url, title);
 						return false;
 					}
 
@@ -164,28 +167,24 @@ public class ArticlesList extends AsiActivity {
 		super.onSaveInstanceState(b);
 	}
 
-	private void choice_action_item(final String url, final String titre) {
+	private void menuItem(final long id, final String url, final String title) {
 		final CharSequence[] items = { "Visualiser", "Partager",
 				"Marquer comme lu" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(titre);
+		builder.setTitle(title);
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visualiser")) {
-					//ArticlesList.this.loadPage(url, titre);
+					ArticlesList.this.loadPage(id, url, title);
 				} else if (items[item].equals("Partager")) {
-					ArticlesList.this.share(url, titre);
+					ArticlesList.this.share(url, title);
 				} else {
-					ArticlesList.this.markAsRead(url);
+					ArticlesList.this.markAsRead(id);
 				}
 			}
 		});
 		AlertDialog alert = builder.create();
 		alert.show();
-	}
-	
-	protected void onSearchItem(String url){
-		//à faire uniquement dans les recherches
 	}
 
 	private void share(String url, String titre) {
@@ -195,24 +194,11 @@ public class ArticlesList extends AsiActivity {
 					"Un article interessant sur le site arretsurimage.net :\n"
 							+ titre + "\n" + url);
 			emailIntent.setType("text/plain");
-			// emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(Intent.createChooser(emailIntent,
 					"Partager cet article"));
 		} catch (Exception e) {
 			new ErrorDialog(this, "Chargement de la page", e).show();
 		}
-	}
-
-	private void markAsRead(String url) {
-		try {
-			this.getData().addArticlesRead(url);
-			state = maListViewPerso.onSaveInstanceState();
-			this.loadContent();
-			maListViewPerso.onRestoreInstanceState(state);
-		} catch (Exception e) {
-			new ErrorDialog(this, "Chargement de la page", e).show();
-		}
-		// new page(main.this);
 	}
 
 	private void loadPage(long id, String url, String titre) {
@@ -225,10 +211,8 @@ public class ArticlesList extends AsiActivity {
 		} catch (Exception e) {
 			new ErrorDialog(this, "Chargement de la page", e).show();
 		}
-		// new page(main.this);
 	}
 
-	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.layout.liste_article_menu, menu);
@@ -239,13 +223,25 @@ public class ArticlesList extends AsiActivity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.item4:
-			//for(int i =0;i<articles.size();i++)
-			//	this.getData().addArticlesRead(articles.elementAt(i).getUri());
-			//if(articles.size()>0)
-			//	this.markAsRead(articles.elementAt(0).getUri());
+			SimpleCursorAdapter adapter = (SimpleCursorAdapter) maListViewPerso.getAdapter();
+			Cursor c = adapter.getCursor();
+			c.moveToFirst();
+			for(int i = 0; i < c.getCount(); i++) {
+				c.moveToPosition(i);
+				this.markAsRead(c.getLong(c.getColumnIndex(BaseColumns._ID)));
+			}
+			// reload content
+			c.requery();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+	
+	protected void markAsRead(long id) {
+		Uri uri = ContentUris.withAppendedId(Article.ARTICLE_URI, id);
+		ContentValues values = new ContentValues();
+		values.put(Article.READ_NAME, 1);
+	    getContentResolver().update(uri, values, null, null);
 	}
 }

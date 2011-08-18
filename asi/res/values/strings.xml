@@ -31,6 +31,8 @@ Amélioration de la gestion des erreurs réseaux.
 
 Les liens dans les articles pour zoomer sur une image s'ouvrent directement dans l'application.
 "</string>
+<color name="read">#e7e7e7</color>
+<color name="unread">#FFFFFF</color>
 </resources>
 
 

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -88,10 +89,9 @@ public class Page extends AsiActivity {
 	public void loadContent(){
 	    final android.app.ProgressDialog pg = android.app.ProgressDialog.show(this, "", "Chargement...", true, true);
 
-	    final long id = this.getIntent().getExtras().getLong("id");
 		final String url = this.getIntent().getExtras().getString("url");
 		Log.d("ASI", "load page with url "+ url);
-		Uri queryUri = ContentUris.withAppendedId(Article.ARTICLE_URI, id);
+		Uri queryUri = getCurrentUri();
 		
 		final Cursor c = managedQuery(queryUri, null, null, null, null);
 		c.registerContentObserver(new ContentObserver(null) {
@@ -107,6 +107,20 @@ public class Page extends AsiActivity {
 		});
 		renderCursor(c, url, pg);
 	}
+	
+	/**
+	 * Return the current URI of this article
+	 */
+	protected Uri getCurrentUri() {
+		final long id = this.getIntent().getExtras().getLong("id");
+		return ContentUris.withAppendedId(Article.ARTICLE_URI, id);
+	}
+	
+	protected void markAsRead() {
+		ContentValues values = new ContentValues();
+		values.put(Article.READ_NAME, 1);
+	    getContentResolver().update(getCurrentUri(), values, null, null);
+	}
 
 	private void renderCursor(Cursor c, String url, android.app.ProgressDialog pg) {
 		// probably a bug is getCount() return an integer > 1
@@ -116,7 +130,7 @@ public class Page extends AsiActivity {
 		    String content = c.getString(c.getColumnIndex(Article.CONTENT_NAME));
 		    if (content != null) {
 			    this.setPagedata(this.getStyle() + content);
-				//this.getData().addArticlesRead(url);
+			    this.markAsRead();
 			    this.loadPage();
 			    pg.dismiss();
 		    }

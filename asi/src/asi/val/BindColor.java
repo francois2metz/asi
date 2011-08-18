@@ -29,25 +29,4 @@ public class BindColor implements ViewBinder {
 		}
 		return false;
 	}
-	
-	public static class BindColor2 implements android.widget.SimpleAdapter.ViewBinder {
-
-		public boolean setViewValue(View arg0, Object arg1, String arg2) {
-			if (arg2.matches("#\\w+")) {
-				arg0.setBackgroundColor(Color.parseColor(arg2));
-				return (true);
-			} else if (arg2.contains("enabled-")) {
-				//Log.d("ASI","bind_color_enabled"+" "+arg2);
-				if (arg2.contains("true")){
-					//Log.d("ASI","bind_color_enabled"+" "+arg2);
-					arg0.setBackgroundColor(Color.parseColor("#e7e7e7"));
-				}
-				else {
-					arg0.setBackgroundColor(Color.parseColor("#ffffff"));
-	            }
-				return (true);
-			}
-			return false;
-		}
-	}
 }

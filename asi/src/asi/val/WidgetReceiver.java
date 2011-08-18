@@ -165,11 +165,12 @@ public class WidgetReceiver extends AppWidgetProvider {
 			this.getData(context).save_widget_posi(posi);
 			views.setTextViewText(R.id.widget_next_texte, (posi + 1) + "/"
 					+ articles.size());
-			if (this.getData(context).containArticlesRead(
-					articles.elementAt(posi).getUri()))
-				views.setViewVisibility(R.id.widget_check, View.VISIBLE);
-			else
-				views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
+			// FIXME: use the READ_NAME column in ArticleProvider
+			//if (this.getData(context).containArticlesRead(
+			//		articles.elementAt(posi).getUri()))
+			//	views.setViewVisibility(R.id.widget_check, View.VISIBLE);
+			//else
+			//	views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
 		}else{
 			views.setTextViewText(R.id.widget_message,"Aucun article non lu");
 			views.setTextColor(R.id.widget_color, R.color.color_text);
@@ -244,9 +245,9 @@ public class WidgetReceiver extends AppWidgetProvider {
 			articles = this.getData(context)
 					.get_widget_article();
 			int posi = this.getData(context).get_widget_posi();
-			if (posi < articles.size())
-				this.getData(context).addArticlesRead(
-						articles.elementAt(posi).getUri());
+			//if (posi < articles.size())
+			//	this.getData(context).addArticlesRead(
+			//			articles.elementAt(posi).getUri());
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
 			// On met l'article courant lu et on rend visible l'image check
@@ -272,8 +273,9 @@ public class WidgetReceiver extends AppWidgetProvider {
 			Context c) {
 		Vector<Article> ar = new Vector<Article>();
 		for (int i = 0; i < articles2.size(); i++) {
-			if (!this.getData(c).containArticlesRead(
-					articles2.elementAt(i).getUri()))
+			// FIXME: use the READ_NAME column in ArticleProvider
+			//if (!this.getData(c).containArticlesRead(
+			//		articles2.elementAt(i).getUri()))
 				ar.add(articles2.elementAt(i));
 		}
 		return (ar);
