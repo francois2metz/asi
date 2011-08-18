@@ -249,10 +249,10 @@ public class Main extends AsiActivity {
 		this.loadPage(true);
 	}
 
-	private void loadPage(boolean gratuit) {
+	private void loadPage(boolean free) {
 		try {
 			Intent i = new Intent(this, MainView.class);
-			i.putExtra("gratuit", gratuit);
+			i.putExtra("free", free);
 			this.startActivity(i);
 			if(this.data.isAutologin())
 				this.finish();

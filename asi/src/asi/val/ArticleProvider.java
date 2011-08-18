@@ -32,6 +32,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import com.finchframework.finch.rest.RESTfulContentProvider;
 import com.finchframework.finch.rest.ResponseHandler;
@@ -40,7 +42,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
-import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -71,7 +73,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	private static final int CATEGORY_ID = 4;
 
-	static int DATABASE_VERSION = 12;
+	static int DATABASE_VERSION = 18;
 
 	private static final UriMatcher sUriMatcher;
 
@@ -318,7 +320,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 	                    Category.URL_NAME + " TEXT, " +
 	                    Category.COLOR_NAME + " TEXT, " +
 	                    Category.FREE_NAME + " INTEGER, " +
-	                    Category.SUB_CAT + " TEXT);";
+	                    Category.PARENT_NAME + " TEXT);";
 	             sqLiteDatabase.execSQL(qs);
 	             qs = "CREATE TABLE "+ CATEGORIES_ARTICLES_TABLE_NAME +" ("+
 	            		 "category INT, article INT, UNIQUE (category, article));";
@@ -338,24 +340,78 @@ public class ArticleProvider extends RESTfulContentProvider {
 	        	}
 	            createTable(sqLiteDatabase);
 	        }
-	        
+	        /**
+	         * Parse the XML file categories.xml and then insert in the database
+	         */
 	        private void insertCategories(SQLiteDatabase sqLiteDatabase) {
-	        	// TODO: some work need to be done ...
-	        	int[] list = new int[] { R.array.catT, R.array.catE, R.array.catD,
-	        							 R.array.catC, R.array.catV, R.array.catR };
-	        	Resources res = this.context.getResources();
-	        	String[] category;
-	        	ContentValues values;
-	        	for (int i = 0; i < list.length; i++) {
-	    			category = res.getStringArray(list[i]);
-	    			values = new ContentValues();
-	    			values.put(Category.TITLE_NAME, category[0]);
-	    			values.put(Category.IMAGE_NAME, category[1]);
-	    			values.put(Category.URL_NAME, category[2]);
-	    			values.put(Category.SUB_CAT, category[3]);
-	    			values.put(Category.COLOR_NAME, category[4]);
-		            sqLiteDatabase.insert(CATEGORIES_TABLE_NAME, null, values);
-	    		}
+				XmlResourceParser xpp = this.context.getResources().getXml(R.xml.categories);
+				int eventType;
+				ContentValues category = null;
+				ArrayList<ContentValues> subcategories = null;
+				ContentValues subcategory = null;
+				boolean inSubcategory = false;
+				String name;
+				String type = null;
+				try {
+					eventType = xpp.getEventType();
+					do {
+						if (eventType == XmlPullParser.START_TAG) {
+							name = xpp.getName();
+							if ("categories".equals(name)) {
+								// nothing
+							} else if ("category".equals(name)) {
+								category = new ContentValues();
+								subcategories = new ArrayList<ContentValues>();
+							} else if ("subcategory".equals(name)) {
+								inSubcategory = true;
+								subcategory = new ContentValues();
+							} else if ("name".equals(name)) {
+								type = Category.TITLE_NAME;
+							} else if ("url".equals(name)) {
+								type = Category.URL_NAME;
+							} else if ("color".equals(name)) {
+								type = Category.COLOR_NAME;
+							} else if ("image".equals(name)) {
+								type = Category.IMAGE_NAME;
+							} else if ("free".equals(name)) {
+								type = Category.FREE_NAME;
+							} else {
+								Log.w("ASI", "unknow tag "+ name +" in categories.xml");
+							}
+						} else if(eventType == XmlPullParser.END_TAG) {
+							name = xpp.getName();
+							if ("subcategory".equals(name)) {
+								inSubcategory = false;
+								subcategories.add(subcategory);
+								subcategory = null;
+							} else if ("category".equals(name)) {
+								long id = sqLiteDatabase.insert(CATEGORIES_TABLE_NAME, null, category);
+								for (ContentValues c: subcategories) {
+									c.put(Category.PARENT_NAME, id);
+									c.put(Category.COLOR_NAME, category.getAsString(Category.COLOR_NAME));
+									sqLiteDatabase.insert(CATEGORIES_TABLE_NAME, null, c);
+								}
+								category = null;
+								subcategories = null;
+							}
+						} else if (eventType == XmlPullParser.TEXT) {
+							ContentValues v;
+							if (inSubcategory)
+								v = subcategory;
+							else
+								v = category;
+							if (type == Category.FREE_NAME)
+								v.put(type, Integer.parseInt(xpp.getText()));
+							else
+								v.put(type, xpp.getText());
+						}
+					    eventType = xpp.next();
+					} while (eventType != XmlPullParser.END_DOCUMENT);
+				} catch (XmlPullParserException e) {
+					Log.e("ASI", "Error when parsing categories.xml "+ e.getMessage());
+				} catch (IOException e) {
+					Log.e("ASI", "IO error when reading categories.xml "+ e.getMessage());
+				}
 	        }
 	    }
 
@@ -457,9 +513,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 			c.put(Article.URL_NAME, uri.toString());
 			provider.insert(queryUri, c);
 		}
-		/**
-		 * TODO: Copy all the mess of PageLoad
-		 */
+
 		private String parseContent(HttpEntity entity) {
 			StringBuffer sb = new StringBuffer();
 			BufferedReader in = null;

@@ -15,25 +15,19 @@
 
 package asi.val;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
+import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -41,14 +35,14 @@ public class MainView extends AsiActivity {
 
 	private ListView listView;
 	
-	private boolean gratuit;
+	private boolean free;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		listView = (ListView) findViewById(R.id.listview);
 		
-		gratuit = this.getIntent().getExtras().getBoolean("gratuit");
+		free = this.getIntent().getExtras().getBoolean("free");
 		TextView text = (TextView) findViewById(R.id.list_text);
 		text.setText("Choix des catégories");
 
@@ -59,16 +53,14 @@ public class MainView extends AsiActivity {
 	}
 
 	private void loadData() {
-		// Chargement des catégories
-        Cursor c = managedQuery(Category.CATEGORIES_URI, null, null, null, null);
-		int[] liste = null;
-		if (!gratuit) {
-			liste = new int[] { R.array.catT, R.array.catE, R.array.catD,
-					R.array.catC, R.array.catV, R.array.catR};
+		// load categories
+		String selection = Category.PARENT_NAME+" IS NULL";
+		if (free) {
+			selection += " and "+ Category.FREE_NAME +"!=2";
 		} else {
-			liste = new int[] { R.array.catT, R.array.catE, R.array.catD,
-					R.array.catC, R.array.catG, R.array.catR};
+			selection += " and "+ Category.FREE_NAME +"!=1";
 		}
+		Cursor c = managedQuery(Category.CATEGORIES_URI, null, selection, null, null);
 		// Création d'un SimpleAdapter qui se chargera de mettre les items
 		// présents dans notre list (listItem) dans la vue affichageitem
 		SimpleCursorAdapter mSchedule = new SimpleCursorAdapter(this,
@@ -91,18 +83,21 @@ public class MainView extends AsiActivity {
 				
 				String title = c.getString(c.getColumnIndex(Category.TITLE_NAME));
 				String color = c.getString(c.getColumnIndex(Category.COLOR_NAME));
-				String image = c.getString(c.getColumnIndex(Category.IMAGE_NAME));
 				String url = c.getString(c.getColumnIndex(Category.URL_NAME));
-				String subcat = c.getString(c.getColumnIndex(Category.SUB_CAT));
 				int id = c.getInt(c.getColumnIndex(BaseColumns._ID));
 				
-				if(url.equalsIgnoreCase("recherche"))
+				if("recherche".equalsIgnoreCase(url)) {
+					String image = c.getString(c.getColumnIndex(Category.IMAGE_NAME));
 					doSearch(title, color, image);
-				else if (subcat.equalsIgnoreCase("no"))
-					loadPage(id);
-				else
-					onLongClick(subcat, title, color);
-				
+				} else {
+					// has subcat ?
+					Cursor subcats = getContentResolver().query(Category.CATEGORIES_URI, null, Category.PARENT_NAME+"="+id, null, null);
+					if (subcats.getCount() == 0) {
+						loadPage(id);
+					} else {
+						openSubCategories(subcats, title);
+					}
+				}
 			}
 		});
 	}
@@ -112,50 +107,44 @@ public class MainView extends AsiActivity {
 	}
 
 	private void loadPage(int idCat) {
-		try {
-			Intent i = new Intent(this, ArticlesList.class);
-			i.putExtra("id", idCat);
-			this.startActivity(i);
-		} catch (Exception e) {
-			new ErrorDialog(this, "Chargement de la liste des articles", e)
-					.show();
+		Intent i = new Intent(this, ArticlesList.class);
+		i.putExtra("id", idCat);
+		this.startActivity(i);
+	}
+
+	private class BindSubCategoryImage implements ViewBinder {
+		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+			if (columnIndex == cursor.getColumnIndex(Category.IMAGE_NAME)) {
+				ImageView vi = (ImageView) view;
+				String value = cursor.getString(columnIndex);
+				if (value != null) {
+					vi.setImageResource(getResources().getIdentifier(value, "drawable", "asi.val"));
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 
-	private void onLongClick(String subid, String titre, String color) {
-		Resources res = getResources();
-		// int id = res.getIdentifier(subid, null, null);
-		Log.d("ASI", subid);
-		Log.d("ASI", this.getPackageName());
-		int id = res.getIdentifier(subid, "array", this.getPackageName());
-		final String color_fin = color;
-		
-		ArrayList<HashMap<String, String>> subcatitem = new ArrayList<HashMap<String, String>>();
-		HashMap<String, String> map;
-		
-		final String[] subcategorie = res.getStringArray(id);
-		for (int i = 0; i < subcategorie.length; i += 3) {
-			map = new HashMap<String, String>();
-			map.put("titre", subcategorie[i]);
-			map.put("logo", "png-"+res.getIdentifier(subcategorie[i+2], "drawable", this.getPackageName()));	
-			//map.put("logo", subcategorie[i+2]);
-			map.put("url", subcategorie[i+1]);				
-			subcatitem.add(map);
-		}		
-		
-		SimpleAdapter mSchedule2 = new SimpleAdapter(this.getBaseContext(),
-				subcatitem, R.layout.subcategorie, new String[] { "logo","titre" },
-				new int[] { R.id.subcat_image,R.id.subcat_title });
-		mSchedule2.setViewBinder(new BindImage());
+	private void openSubCategories(final Cursor subcategories, String title) {
+		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+				R.layout.subcategorie,
+				subcategories,
+				new String[] { Category.IMAGE_NAME, Category.TITLE_NAME },
+				new int[] { R.id.subcat_image, R.id.subcat_title });
+		adapter.setViewBinder(new BindSubCategoryImage());
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(titre.replace(">", ""));
+		builder.setTitle(title);
 
-		builder.setAdapter(mSchedule2, new DialogInterface.OnClickListener() {
+		builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
-				MainView.this.loadPage(1);
+				subcategories.moveToPosition(item);
+				int id = subcategories.getInt(subcategories.getColumnIndex(BaseColumns._ID));
+				MainView.this.loadPage(id);
+				subcategories.close();
 			}
-			});
+		});
 
 		AlertDialog alert = builder.create();
 		alert.show();
@@ -167,10 +156,7 @@ public class MainView extends AsiActivity {
 				this.finish();
 				return true;
 			}
-			//main.group.is_autologin(false);
-			//return true;
 		}
-
 		return super.onKeyDown(keyCode, event);
 	}
 

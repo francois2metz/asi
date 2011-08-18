@@ -24,16 +24,34 @@ public class Category {
 	 */
 	public static final Uri CATEGORIES_URI =
             Uri.parse("content://"+ ArticleProvider.AUTHORITY +"/categories");
-	
+
+	/**
+	 * Title/name of the category
+	 */
 	public static final String TITLE_NAME = "title";
-	
+
+	/**
+	 * Is this category available for free users
+	 */
 	public static final String FREE_NAME = "free";
-	
+
+	/**
+	 * Image associated to the category
+	 */
 	public static final String IMAGE_NAME = "image";
-	
+
+	/**
+	 * RSS URL of the category
+	 */
 	public static final String URL_NAME = "url";
-	
-	public static final String SUB_CAT = "subcat";
-	
+
+	/**
+	 * Parent ID of the category
+	 */
+	public static final String PARENT_NAME = "parent";
+
+	/**
+	 * Color of the category
+	 */
 	public static final String COLOR_NAME = "color";
 }

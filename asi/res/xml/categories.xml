@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<categories>
+	<category>
+		<name>TOUT LE SITE</name>
+		<image>toutlesite</image>
+		<url>http://www.arretsurimages.net/tous-les-contenus.rss</url>
+		<color>#ACB7C6</color>
+		<free>0</free>
+	</category>
+	<category>
+		<name>EMISSIONS</name>
+		<color>#3A36FF</color>
+		<free>0</free>
+
+		<subcategory>
+			<name>Toutes les émissions</name>
+			<url>http://www.arretsurimages.net/emissions.rss</url>
+			<image>pola_asi</image>
+		</subcategory>
+		<subcategory>
+			<name>@rrêt sur images</name>
+			<url>http://www.arretsurimages.net/emissions-asi.rss</url>
+			<image>pola_asi</image>
+		</subcategory>
+		<subcategory>
+			<name>Ligne j@une</name>
+			<url>http://www.arretsurimages.net/emissions-lj.rss</url>
+			<image>pola_lj</image>
+		</subcategory>
+		<subcategory>
+			<name>D@ns le texte;</name>
+			<url>http://www.arretsurimages.net/emissions-dlt.rss</url>
+			<image>pola_dt</image>
+		</subcategory>
+	</category>
+	<category>
+		<name>CHRONIQUES</name>
+		<color>#FF398E</color>
+		<free>0</free>
+
+		<subcategory>
+			<name>Toutes les chroniques</name>
+			<url>http://www.arretsurimages.net/chroniques.rss</url>
+			<image>kro</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez Daniel</name>
+			<url>http://www.arretsurimages.net/chroniqueur.2.rss</url>
+			<image>kro_daniel</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez Judith</name>
+			<url>http://www.arretsurimages.net/chroniqueur.5.rss</url>
+			<image>kro_judith</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez Alain</name>
+			<url>http://www.arretsurimages.net/chroniqueur.8.rss</url>
+			<image>kro_korkos</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez les matinautes</name>
+			<url>http://www.arretsurimages.net/chroniqueur.12.rss</url>
+			<image>kro_neuf_quinze</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez Anne-Sophie</name>
+			<url>http://www.arretsurimages.net/chroniqueur.14.rss</url>
+			<image>kro_anso</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez Sherlock Com'</name>
+			<url>http://www.arretsurimages.net/chroniqueur.17.rss</url>
+			<image>kro_sherlock</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez Rafik</name>
+			<url>http://www.arretsurimages.net/chroniqueur.20.rss</url>
+			<image>kro_rafik</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez Didier</name>
+			<url>http://www.arretsurimages.net/chroniqueur.21.rss</url>
+			<image>kro_didier</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez la Parisienne</name>
+			<url>http://www.arretsurimages.net/chroniqueur.24.rss</url>
+			<image>kro_parisienne</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez les sarkosis</name>
+			<url>http://www.arretsurimages.net/chroniqueur.23.rss</url>
+			<image>kro_sarkozi</image>
+		</subcategory>
+		<subcategory>
+			<name>Chez Nous</name>
+			<url>http://www.arretsurimages.net/chroniqueur.1.rss</url>
+			<image>kro</image>
+		</subcategory>
+	</category>
+	<category>
+		<name>ARTICLES DE LA REDACTION</name>
+		<image>articles</image>
+		<url>http://www.arretsurimages.net/dossiers.rss</url>
+		<color>#3399FF</color>
+		<free>0</free>
+	</category>
+	<category>
+		<name>GRATUIT AUJOURD'HUI</name>
+		<image>gratuit</image>
+		<url>http://www.arretsurimages.net/gratuit.rss</url>
+		<color>#FEC763</color>
+		<!-- free=1 only free users will see it -->
+		<free>1</free>
+	</category>
+	<category>
+		<name>VITE DIT</name>
+		<image>vite</image>
+		<url>http://www.arretsurimages.net/vite-dit.rss</url>
+		<color>#FEC763</color>
+		<!-- free=2 only members will see it -->
+		<free>2</free>
+	</category>
+	<category>
+		<name>RECHERCHE</name>
+		<image>recherche</image>
+		<url>recherche</url>
+		<color>#ACB7C6</color>
+		<free>0</free>
+	</category>
+</categories>

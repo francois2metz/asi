@@ -57,7 +57,7 @@ public class ArticlesList extends AsiActivity {
 		setContentView(R.layout.main);
 		// Récupération de la listview créée dans le fichier main.xml
 		maListViewPerso = (ListView) findViewById(R.id.listview);
-		
+
 		int catId = this.getIntent().getExtras().getInt("id");
 		
 		// get the category
@@ -71,7 +71,7 @@ public class ArticlesList extends AsiActivity {
 		category.close();
 				
 		TextView text = (TextView) findViewById(R.id.list_text);
-		text.setText(title.replaceFirst(">", ""));
+		text.setText(title);
 		this.color = color;
 		text.setBackgroundColor(Color.parseColor(color));
 
