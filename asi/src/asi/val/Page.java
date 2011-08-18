@@ -175,7 +175,8 @@ public class Page extends AsiActivity {
 					this.pagedata, mimeType, encoding, null);
 			mywebview.setWebViewClient(new myWebViewClient());
 			mywebview.setInitialScale((int) (this.getData().getZoomLevel()*mywebview.getScale()));
-
+			mywebview.getSettings().setSupportZoom(true);
+			mywebview.getSettings().setBuiltInZoomControls(true);
 		} catch (Exception e) {
 			new ErrorDialog(this, "Chargement de la page", e).show();
 		}
