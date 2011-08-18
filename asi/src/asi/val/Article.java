@@ -23,9 +23,15 @@ import android.net.Uri;
 
 public class Article {
 
+	/**
+	 * Get one article by id
+	 */
 	public static final Uri ARTICLE_URI =
             Uri.parse("content://"+ ArticleProvider.AUTHORITY +"/article");
 
+	/**
+	 * Get articles by category
+	 */
 	public static final Uri ARTICLES_URI = Uri.parse("content://"+ ArticleProvider.AUTHORITY +"/articles");
 
 	/**
