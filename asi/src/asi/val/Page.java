@@ -57,7 +57,7 @@ public class Page extends AsiActivity {
 		else
 			this.loadContent();
 		// titre de la page
-		setPage_title(this.getIntent().getExtras().getString("titre"));
+		setPageTitle(this.getIntent().getExtras().getString("titre"));
 	}
 
 	public void onSaveInstanceState(final Bundle b) {
@@ -81,7 +81,7 @@ public class Page extends AsiActivity {
 			this.loadContent();
 		}
 		// titre de la page
-		setPage_title(this.getIntent().getExtras().getString("titre"));
+		setPageTitle(this.getIntent().getExtras().getString("titre"));
 	}
 	
 	public void loadContent(){
@@ -352,7 +352,7 @@ public class Page extends AsiActivity {
 		}
 	}
 
-	public void setPage_title(String page_title) {
+	public void setPageTitle(String page_title) {
 		if (page_title != null) {
 			this.page_title = page_title;
 			Log.d("ASI", this.page_title);
