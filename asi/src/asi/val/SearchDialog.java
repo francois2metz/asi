@@ -27,7 +27,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-public class recherche_dialog extends AlertDialog.Builder {
+public class SearchDialog extends AlertDialog.Builder {
 	
 	private String color;
 	
@@ -44,7 +44,7 @@ public class recherche_dialog extends AlertDialog.Builder {
 	
 	private Context mContext;
 
-	public recherche_dialog(Context arg0, String titre, String color,String image ) {
+	public SearchDialog(Context arg0, String titre, String color,String image ) {
 		super(arg0);
 		// TODO Auto-generated constructor stub
 		this.color=color;
@@ -69,9 +69,9 @@ public class recherche_dialog extends AlertDialog.Builder {
 		this.setPositiveButton("Lancer", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				try {
-					String url = recherche_dialog.this.defined_url();
+					String url = SearchDialog.this.defined_url();
 					Log.d("ASI","url-"+url);
-					Intent i = new Intent(mContext, liste_articles_recherche.class);
+					Intent i = new Intent(mContext, ArticlesListSearch.class);
 					i.putExtra("titre", titre);
 					i.putExtra("color", color);
 					i.putExtra("image", image);
@@ -79,7 +79,7 @@ public class recherche_dialog extends AlertDialog.Builder {
 					mContext.startActivity(i);
 
 				} catch (Exception e) {
-					new erreur_dialog(mContext, "Chargement de la recherche d'articles", e)
+					new ErrorDialog(mContext, "Chargement de la recherche d'articles", e)
 							.show();
 					dialog.cancel();
 				}

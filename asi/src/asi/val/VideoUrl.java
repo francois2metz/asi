@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 import android.util.Log;
 
-public class video_url {
+public class VideoUrl {
 
 	private String dailymotion;
 	 
@@ -35,18 +35,18 @@ public class video_url {
 	
 	private String image;
 	
-	public video_url(String url) {
-		this.set_dailymotion_url(url);
+	public VideoUrl(String url) {
+		this.setDailymotionUrl(url);
 		this.image="";
 	}
 
-	public video_url() {
+	public VideoUrl() {
 		this.dailymotion = "";
 		this.title = "ASI";
 		this.image="";
 	}
 
-	public String parse_to_url(String asi) {
+	public String parseToUrl(String asi) {
 		Log.d("ASI","Recherche de vidéos");
 		Pattern p = Pattern
 				.compile(".*\\<a href\\=\"(http\\:\\/\\/iphone\\.dailymotion\\.com.*)\" title=\"voir.*");
@@ -54,7 +54,7 @@ public class video_url {
 		if (m.matches()) {
 			Log.d("ASI","Recherche de vidéos : vidéos trouvées");
 			String s = m.group(1);
-			this.set_dailymotion_url(s);
+			this.setDailymotionUrl(s);
 
 			Pattern p2 = Pattern.compile(".*\\<img src\\=\"(\\/media.*)\" alt=\"voir.*");
 			Matcher m2= p2.matcher(asi);
@@ -68,7 +68,7 @@ public class video_url {
 			return (null);
 	}
 
-	public String get_href_link_url() throws Exception {
+	public String getHrefLinkUrl() throws Exception {
 		//String link = this.get_relink_adress();
 		//String link = this.get_download_url();
 		String href = "<p style=\"text-align: center;\"><a href=\"" + dailymotion+ "&vidnum="+number
@@ -79,12 +79,12 @@ public class video_url {
 		return (href);
 	}
 
-	public String get_relink_adress() throws Exception {
+	public String getRelinkAdress() throws Exception {
 	BufferedReader in = null;
 	String relink = "";
 		try {
 			HttpURLConnection.getFollowRedirects();
-			URL url = new URL(this.get_download_url());
+			URL url = new URL(this.getDownloadUrl());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 			//conn.setRequestProperty("User-agent", "iPhone");
@@ -108,7 +108,7 @@ public class video_url {
 		return(relink);
 	}
 
-	public String get_download_url() throws Exception {
+	public String getDownloadUrl() throws Exception {
 		StringBuffer sb = new StringBuffer("");
 		BufferedReader in = null;
 		try {
@@ -147,7 +147,7 @@ public class video_url {
 		return sb.toString();
 	}
 
-	public void set_dailymotion_url(String url) {
+	public void setDailymotionUrl(String url) {
 		String[] parse = url.split("&vidnum=");
 		if(parse.length>1){
 			this.setNumber(Integer.parseInt(parse[1]));
@@ -175,7 +175,7 @@ public class video_url {
 	public int getNumber() {
 		return number;
 	}
-	public String getTitle_and_number(){
+	public String getTitleAndNumber(){
 		return(title+" - "+number);
 	}
 	

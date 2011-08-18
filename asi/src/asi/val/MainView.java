@@ -33,7 +33,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class main_view extends asi_activity {
+public class MainView extends AsiActivity {
 	private ListView maListViewPerso;
 
 	private boolean gratuit;
@@ -52,11 +52,11 @@ public class main_view extends asi_activity {
 		ImageView v = (ImageView) findViewById(R.id.cat_image);
 		v.setImageResource(R.drawable.toutlesite);
 		
-		this.load_data();
+		this.loadData();
 
 	}
 
-	private void load_data() {
+	private void loadData() {
 
 		// Création de la ArrayList qui nous permettra de remplir la listView
 		ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
@@ -89,7 +89,7 @@ public class main_view extends asi_activity {
 				listItem, R.layout.categorie_listes, new String[] { "color","titre" },
 				new int[] { R.id.cat_color, R.id.cat_title });
 		//on ajoute le viewbinder 
-		mSchedule.setViewBinder(new bind_color());
+		mSchedule.setViewBinder(new BindColor());
 
 		// On attribue à notre listView l'adapter que l'on vient de créer
 		maListViewPerso.setAdapter(mSchedule);
@@ -104,27 +104,27 @@ public class main_view extends asi_activity {
 				HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 						.getItemAtPosition(position);
 				if(map.get("url").equalsIgnoreCase("recherche"))
-					main_view.this.do_recherche(map.get("titre"),
+					MainView.this.doSearch(map.get("titre"),
 							map.get("color"),map.get("image"));
 				else if (map.get("subcat").equalsIgnoreCase("no"))
-					main_view.this.load_page(map.get("url"), map.get("titre"),
+					MainView.this.loadPage(map.get("url"), map.get("titre"),
 							map.get("color"),map.get("image"));
 				else
-					main_view.this.do_on_long_clic(map.get("subcat"), map
+					MainView.this.onLongClick(map.get("subcat"), map
 							.get("titre"),map.get("color"));
 			}
 		});
 	}
 
-	protected void do_recherche(String titre, String color, String image) {
-		new recherche_dialog(this, titre,color,image)
+	protected void doSearch(String titre, String color, String image) {
+		new SearchDialog(this, titre,color,image)
 		.show();
 		
 	}
 
-	private void load_page(String url, String titre, String color, String image) {
+	private void loadPage(String url, String titre, String color, String image) {
 		try {
-			Intent i = new Intent(this, liste_articles.class);
+			Intent i = new Intent(this, ArticlesList.class);
 			i.putExtra("url", url);
 			i.putExtra("titre", titre);
 			i.putExtra("color", color);
@@ -132,12 +132,12 @@ public class main_view extends asi_activity {
 			this.startActivity(i);
 
 		} catch (Exception e) {
-			new erreur_dialog(this, "Chargement de la liste des articles", e)
+			new ErrorDialog(this, "Chargement de la liste des articles", e)
 					.show();
 		}
 	}
 
-	private void do_on_long_clic(String subid, String titre, String color) {
+	private void onLongClick(String subid, String titre, String color) {
 		Resources res = getResources();
 		// int id = res.getIdentifier(subid, null, null);
 		Log.d("ASI", subid);
@@ -161,7 +161,7 @@ public class main_view extends asi_activity {
 		SimpleAdapter mSchedule2 = new SimpleAdapter(this.getBaseContext(),
 				subcatitem, R.layout.subcategorie, new String[] { "logo","titre" },
 				new int[] { R.id.subcat_image,R.id.subcat_title });
-		mSchedule2.setViewBinder(new bind_image());
+		mSchedule2.setViewBinder(new BindImage());
 		
 //		final CharSequence[] subcate = new CharSequence[subcategorie.length / 3];
 //		for (int i = 0; i < subcategorie.length; i += 3) {
@@ -172,7 +172,7 @@ public class main_view extends asi_activity {
 		
 		builder.setAdapter(mSchedule2, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
-				main_view.this.load_page(subcategorie[item * 3 + 1],
+				MainView.this.loadPage(subcategorie[item * 3 + 1],
 						subcategorie[item * 3], color_fin,subcategorie[item * 3 + 2]);
 			}
 			});

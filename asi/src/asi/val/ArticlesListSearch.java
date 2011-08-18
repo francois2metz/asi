@@ -5,28 +5,28 @@ import java.util.Vector;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-public class liste_articles_recherche extends liste_articles {
+public class ArticlesListSearch extends ArticlesList {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
 
-	public void load_content() {
+	public void loadContent() {
 
 		// État de la liste view
 		state = null;
 
 		// récuperation des articles via l'URL
 		String url = this.getIntent().getExtras().getString("url");
-		new get_recherche_url().execute(url);
+		new SearchUrl().execute(url);
 	}
 
-	protected void do_on_recherche_item(String url) {
+	protected void onSearchItem(String url) {
 		// à faire uniquement dans les recherches
-		new get_recherche_url().execute(url);
+		new SearchUrl().execute(url);
 	}
 
-	public void set_articles(Vector<article> art) {
+	public void setArticles(Vector<Article> art) {
 		if (articles == null)
 			this.articles = art;
 		else {
@@ -38,9 +38,9 @@ public class liste_articles_recherche extends liste_articles {
 		}
 	}
 
-	private class get_recherche_url extends AsyncTask<String, Void, String> {
-		private final progress_dialog dialog = new progress_dialog(
-				liste_articles_recherche.this, this);
+	private class SearchUrl extends AsyncTask<String, Void, String> {
+		private final ProgressDialog dialog = new ProgressDialog(
+				ArticlesListSearch.this, this);
 
 		// can use UI thread here
 		protected void onPreExecute() {
@@ -53,8 +53,8 @@ public class liste_articles_recherche extends liste_articles {
 			// List<String> names =
 			// Main.this.application.getDataHelper().selectAll();
 			try {
-				page_recherche re = new page_recherche(args[0]);
-				liste_articles_recherche.this.set_articles(re.getArticles());
+				SearchPage re = new SearchPage(args[0]);
+				ArticlesListSearch.this.setArticles(re.getArticles());
 			} catch (Exception e) {
 				String error = e.toString() + "\n" + e.getStackTrace()[0]
 						+ "\n" + e.getStackTrace()[1];
@@ -72,10 +72,10 @@ public class liste_articles_recherche extends liste_articles {
 				}
 			}
 			if (error == null)
-				liste_articles_recherche.this.load_data();
+				ArticlesListSearch.this.loadData();
 			else {
 				//new erreur_dialog(liste_articles_recherche.this,"Chargement des articles", error).show();
-				liste_articles_recherche.this.erreur_loading(error);
+				ArticlesListSearch.this.onLoadError(error);
 			}
 			// Main.this.output.setText(result);
 		}

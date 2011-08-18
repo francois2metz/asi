@@ -15,29 +15,38 @@
 
 package asi.val;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.AsyncTask;
-import android.view.KeyEvent;
+import android.os.Bundle;
+import android.webkit.WebView;
 
-public class progress_dialog extends ProgressDialog{
-	
-	public progress_dialog(Context arg0,final AsyncTask<?, ?, ?> async) {
-		super(arg0);
-		this.setOnKeyListener(new OnKeyListener(){
-			public boolean onKey(DialogInterface arg0, int arg1,
-					KeyEvent arg2) {
-				if (arg1 == KeyEvent.KEYCODE_BACK && arg2.getRepeatCount() == 0) {
-					arg0.dismiss();
-					if((async!=null)&&(!async.getStatus().toString().equals("FINISHED")))
-						async.cancel(true);
-					return true;
-				}
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-		});
+public class PageImage extends AsiActivity {
+	/** Called when the activity is first created. */
+
+	private WebView mywebview;
+
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.pageview);
+
+		// Récupération de la listview créée dans le fichier main.xml
+		mywebview = (WebView) this.findViewById(R.id.WebViewperso);
+		
+		this.loadPage();
 	}
+
+	private void loadPage() {
+		// ac.replaceView(R.layout.pageview);
+		try {
+			// on charge l'URL de l'image dans la webview
+			mywebview.loadUrl(this.getIntent().getExtras()
+			.getString("url"));
+			mywebview.getSettings().setBuiltInZoomControls(true);
+
+		} catch (Exception e) {
+			new ErrorDialog(this, "Chargement de l'image", e).show();
+		}
+
+	}
+
+
 }

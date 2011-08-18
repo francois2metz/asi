@@ -26,25 +26,25 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-public class rss_download {
+public class RssDownload {
 
 	private URL url;
 
 	private Document dom;
 
-	private Vector<article> articles;
+	private Vector<Article> articles;
 
-	public rss_download(String rss_url) throws Exception {
+	public RssDownload(String rss_url) throws Exception {
 
 		if (rss_url == null)
 			url = new URL("http://www.arretsurimages.net/tous-les-contenus.rss");
 		else
 			url = new URL(rss_url);
 
-		articles = new Vector<article>();
+		articles = new Vector<Article>();
 	}
 
-	public void get_rss_articles() throws Exception {
+	public void getRssArticles() throws Exception {
 		// Récupération de la page en dom
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
@@ -52,7 +52,7 @@ public class rss_download {
 		// on parcourt les items
 		NodeList items = dom.getElementsByTagName("item");
 		for (int i = 0; i < items.getLength(); i++) {
-			article ar = new article();
+			Article ar = new Article();
 			Node item = items.item(i);
 			NodeList artis = item.getChildNodes();
 			for (int j = 0; j < artis.getLength(); j++) {
@@ -71,11 +71,11 @@ public class rss_download {
 		}
 	}
 
-	public void setArticles(Vector<article> articles) {
+	public void setArticles(Vector<Article> articles) {
 		this.articles = articles;
 	}
 
-	public Vector<article> getArticles() {
+	public Vector<Article> getArticles() {
 		return articles;
 	}
 

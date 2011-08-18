@@ -41,7 +41,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class main extends asi_activity {
+public class Main extends AsiActivity {
 
 	//private String Cookies;
 
@@ -138,10 +138,10 @@ public class main extends asi_activity {
 			String donneeStr = donnees.toString();
 			new get_cookies_value().execute(donneeStr);
 		} catch (StopException e) {
-			new erreur_dialog(main.this, "Connexion au site", e.toString())
+			new ErrorDialog(Main.this, "Connexion au site", e.toString())
 					.show();
 		} catch (Exception e) {
-			new erreur_dialog(main.this, "Connexion au site", e).show();
+			new ErrorDialog(Main.this, "Connexion au site", e).show();
 		}
 	}
 
@@ -159,7 +159,7 @@ public class main extends asi_activity {
 	}
 
 	private class get_cookies_value extends AsyncTask<String, Void, String> {
-		private final progress_dialog dialog = new progress_dialog(main.this,
+		private final ProgressDialog dialog = new ProgressDialog(Main.this,
 				this);
 
 		private BufferedReader in;
@@ -252,10 +252,10 @@ public class main extends asi_activity {
 			}
 			if (mess.matches(".*phorum_session_v5.*")) {
 				//main.this.setCookies(mess);
-				main.this.save_login_password(mess);
-				main.this.load_page(false);
+				Main.this.save_login_password(mess);
+				Main.this.load_page(false);
 			} else {
-				new erreur_dialog(main.this, "Connexion au site", mess).show();
+				new ErrorDialog(Main.this, "Connexion au site", mess).show();
 			}
 		}
 	};
@@ -268,14 +268,14 @@ public class main extends asi_activity {
 
 	private void load_page(boolean gratuit) {
 		try {
-			Intent i = new Intent(this, main_view.class);
+			Intent i = new Intent(this, MainView.class);
 			i.putExtra("gratuit", gratuit);
 			this.startActivity(i);
 			if(this.datas.isAutologin())
 				this.finish();
 
 		} catch (Exception e) {
-			new erreur_dialog(main.this, "Chargement des catégories", e).show();
+			new ErrorDialog(Main.this, "Chargement des catégories", e).show();
 		}
 		// new page(main.this);
 	}
@@ -285,7 +285,7 @@ public class main extends asi_activity {
 		// this is the action listener
 		button_login.setOnClickListener(new OnClickListener() {
 			public void onClick(View viewParam) {
-				main.this.connect_to_abonne();
+				Main.this.connect_to_abonne();
 			}
 		}); // end of launch.setOnclickListener
 
@@ -293,7 +293,7 @@ public class main extends asi_activity {
 
 		button_gratuit.setOnClickListener(new OnClickListener() {
 			public void onClick(View viewParam) {
-				main.this.connect_to_gratuit();
+				Main.this.connect_to_gratuit();
 			}
 		});
 

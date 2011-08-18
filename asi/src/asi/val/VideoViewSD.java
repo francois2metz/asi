@@ -37,7 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class SD_video_view extends reload_activity {
+public class VideoViewSD extends ReloadActivity {
 	private ListView maListViewPerso;
 
 	private Vector<File> video_sd;
@@ -62,7 +62,7 @@ public class SD_video_view extends reload_activity {
 		//this.load_data();
 	}
 
-	protected void load_data() {
+	protected void loadData() {
 		// try {
 		// Thread.sleep(100);
 		// } catch (Exception e) {
@@ -86,11 +86,11 @@ public class SD_video_view extends reload_activity {
 				}
 			}
 		} catch (StopException e) {
-			new erreur_dialog(this, "Lecture de la carte SD", e.toString())
+			new ErrorDialog(this, "Lecture de la carte SD", e.toString())
 					.show();
 			this.update.stop_update();
 		} catch (Exception e) {
-			new erreur_dialog(this, "Lecture de la carte SD", e).show();
+			new ErrorDialog(this, "Lecture de la carte SD", e).show();
 			this.update.stop_update();
 		}
 
@@ -140,7 +140,7 @@ public class SD_video_view extends reload_activity {
 				HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 						.getItemAtPosition(position);
 				if (!map.get("int").equals("null"))
-					SD_video_view.this.traitement_video(map.get("int"));
+					VideoViewSD.this.traitement_video(map.get("int"));
 			}
 		});
 
@@ -159,11 +159,11 @@ public class SD_video_view extends reload_activity {
 					Intent intent = new Intent();
 					intent.setAction(android.content.Intent.ACTION_VIEW);
 					intent.setDataAndType(Uri.fromFile(vid), "video/*");
-					SD_video_view.this.startActivity(intent);
+					VideoViewSD.this.startActivity(intent);
 				} else if (items[item].equals("Supprimer")) {
 					if (vid.exists())
 						vid.delete();
-					Toast.makeText(SD_video_view.this, "Fichier supprimé",
+					Toast.makeText(VideoViewSD.this, "Fichier supprimé",
 							Toast.LENGTH_SHORT).show();
 				}
 				// SD_video_view.this.load_data();
@@ -180,7 +180,7 @@ public class SD_video_view extends reload_activity {
 			this.do_on_video(vid);
 
 		} catch (Exception e) {
-			new erreur_dialog(this, "Traitement de la vidéo", e).show();
+			new ErrorDialog(this, "Traitement de la vidéo", e).show();
 		}
 
 	}

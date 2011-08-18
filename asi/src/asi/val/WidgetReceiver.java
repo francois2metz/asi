@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-public class widget_receiver extends AppWidgetProvider {
+public class WidgetReceiver extends AppWidgetProvider {
 
 	public static final String PREFERENCE = "asi_pref";
 
@@ -26,7 +26,7 @@ public class widget_receiver extends AppWidgetProvider {
 
 	public static final String UPDATE_WIDGET = "asi.val.action.UPDATE_WIDGET";
 
-	private Vector<article> articles;
+	private Vector<Article> articles;
 
 	private String url = "http://www.arretsurimages.net/tous-les-contenus.rss";
 
@@ -52,10 +52,10 @@ public class widget_receiver extends AppWidgetProvider {
 			appWidgetManager.updateAppWidget(appWidgetId, views);
 
 			try {
-				rss_download d = new rss_download(url);
+				RssDownload d = new RssDownload(url);
 				Log.d("ASI", "widget téléchargement");
 				if (i == 0) {
-					d.get_rss_articles();
+					d.getRssArticles();
 					articles = d.getArticles();
 					// on recherche si ils sont déjà lus
 					articles = this.get_new_articles(articles, context);
@@ -90,7 +90,7 @@ public class widget_receiver extends AppWidgetProvider {
 				Log.e("ASI", "Error widget " + e.getMessage());
 			} finally {
 				if (articles == null) {
-					articles = new Vector<article>();
+					articles = new Vector<Article>();
 				}
 				this.get_datas(context).save_widget_article(articles);
 				this.get_datas(context).save_widget_posi(0);
@@ -101,7 +101,7 @@ public class widget_receiver extends AppWidgetProvider {
 	private void defined_intent(Context context, RemoteViews views,
 			int[] appWidgetIds) {
 		// Create an Intent to launch asi main
-		Intent intent = new Intent(context, main.class);
+		Intent intent = new Intent(context, Main.class);
 		intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		intent.setAction(Intent.ACTION_MAIN);
 		intent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
@@ -112,19 +112,19 @@ public class widget_receiver extends AppWidgetProvider {
 		views.setOnClickPendingIntent(R.id.widget_asi, pendingIntent);
 
 		// lien vers la page des vidéos
-		intent = new Intent(context, download_view.class);
+		intent = new Intent(context, DownloadView.class);
 		pendingIntent = PendingIntent.getActivity(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		views.setOnClickPendingIntent(R.id.widget_art, pendingIntent);
 
 		// lien vers la page des téléchargements
-		intent = new Intent(context, SD_video_view.class);
+		intent = new Intent(context, VideoViewSD.class);
 		pendingIntent = PendingIntent.getActivity(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		views.setOnClickPendingIntent(R.id.widget_emi, pendingIntent);
 
 		// update du widget
-		intent = new Intent(context, widget_receiver.class);
+		intent = new Intent(context, WidgetReceiver.class);
 		// intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 		// intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
 		intent.setAction(UPDATE_WIDGET);
@@ -135,19 +135,19 @@ public class widget_receiver extends AppWidgetProvider {
 		views.setOnClickPendingIntent(R.id.widget_chro, pendingIntent);
 
 		// Check de l'article en cours
-		intent = new Intent(context, widget_receiver.class);
+		intent = new Intent(context, WidgetReceiver.class);
 		intent.setAction(CHECK_CURRENT);
 		pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		views.setOnClickPendingIntent(R.id.widget_vite, pendingIntent);
 
-		intent = new Intent(context, widget_receiver.class);
+		intent = new Intent(context, WidgetReceiver.class);
 		intent.setAction(SHOW_CURRENT);
 		pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		views.setOnClickPendingIntent(R.id.widget_mes, pendingIntent);
 
-		intent = new Intent(context, widget_receiver.class);
+		intent = new Intent(context, WidgetReceiver.class);
 		intent.setAction(SHOW_NEXT);
 		pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
@@ -165,7 +165,7 @@ public class widget_receiver extends AppWidgetProvider {
 			this.get_datas(context).save_widget_posi(posi);
 			views.setTextViewText(R.id.widget_next_texte, (posi + 1) + "/"
 					+ articles.size());
-			if (this.get_datas(context).contain_articles_lues(
+			if (this.get_datas(context).containArticlesRead(
 					articles.elementAt(posi).getUri()))
 				views.setViewVisibility(R.id.widget_check, View.VISIBLE);
 			else
@@ -194,7 +194,7 @@ public class widget_receiver extends AppWidgetProvider {
 			articles = this.get_datas(context)
 					.get_widget_article();
 			int posi = this.get_datas(context).get_widget_posi();
-			intent = new Intent(context, page.class);
+			intent = new Intent(context, Page.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			if (posi < articles.size()) {
 				intent.putExtra("url", articles.elementAt(posi).getUri());
@@ -208,7 +208,7 @@ public class widget_receiver extends AppWidgetProvider {
 			views.setViewVisibility(R.id.widget_check, View.VISIBLE);
 			
 			ComponentName thisWidget = new ComponentName(context,
-					widget_receiver.class);
+					WidgetReceiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
 			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
@@ -245,7 +245,7 @@ public class widget_receiver extends AppWidgetProvider {
 //			}
 
 			ComponentName thisWidget = new ComponentName(context,
-					widget_receiver.class);
+					WidgetReceiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
 			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
@@ -260,7 +260,7 @@ public class widget_receiver extends AppWidgetProvider {
 					.get_widget_article();
 			int posi = this.get_datas(context).get_widget_posi();
 			if (posi < articles.size())
-				this.get_datas(context).add_articles_lues(
+				this.get_datas(context).addArticlesRead(
 						articles.elementAt(posi).getUri());
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
@@ -269,7 +269,7 @@ public class widget_receiver extends AppWidgetProvider {
 			this.defined_article(views, context, posi);
 			
 			ComponentName thisWidget = new ComponentName(context,
-					widget_receiver.class);
+					WidgetReceiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
 			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
@@ -298,22 +298,22 @@ public class widget_receiver extends AppWidgetProvider {
 		Log.d("ASI", "deleted widget");
 	}
 
-	private Vector<article> get_new_articles(Vector<article> articles2,
+	private Vector<Article> get_new_articles(Vector<Article> articles2,
 			Context c) {
 		// TODO Auto-generated method stub
-		Vector<article> ar = new Vector<article>();
+		Vector<Article> ar = new Vector<Article>();
 		for (int i = 0; i < articles2.size(); i++) {
-			if (!this.get_datas(c).contain_articles_lues(
+			if (!this.get_datas(c).containArticlesRead(
 					articles2.elementAt(i).getUri()))
 				ar.add(articles2.elementAt(i));
 		}
 		return (ar);
 	}
 
-	public shared_datas get_datas(Context c) {
-		shared_datas datas = shared_datas.shared;
+	public SharedData get_datas(Context c) {
+		SharedData datas = SharedData.shared;
 		if (datas == null)
-			return (new shared_datas(c));
+			return (new SharedData(c));
 		datas.setContext(c);
 		return datas;
 	}

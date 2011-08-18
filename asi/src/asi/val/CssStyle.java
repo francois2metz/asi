@@ -15,13 +15,13 @@
 
 package asi.val;
 
-public class css_style {
+public class CssStyle {
 
-	public css_style(){
+	public CssStyle(){
 		
 	}
 	
-	public String get_css_data(){
+	public String getCssData(){
 		StringBuffer data = new StringBuffer() ;
 		data.append("body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,button,textarea,p,blockquote,th,td,hr { margin:0; padding:0; outline:0;}"+"\n");
 		data.append("table {border-collapse:collapse;border-spacing:0}"+"\n");

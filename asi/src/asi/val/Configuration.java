@@ -16,7 +16,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class configuration extends asi_activity {
+public class Configuration extends AsiActivity {
 
 	int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
@@ -37,11 +37,11 @@ public class configuration extends asi_activity {
 		ImageView v = (ImageView) findViewById(R.id.cat_image);
 		v.setImageResource(R.drawable.toutlesite);
 
-		this.load_data();
+		this.loadData();
 
 	}
 
-	private void load_data() {
+	private void loadData() {
 		ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> map;
 		// Chargement des catégories
@@ -77,16 +77,16 @@ public class configuration extends asi_activity {
 				HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 						.getItemAtPosition(position);
 				if (map.get("type").equalsIgnoreCase("autologin"))
-					configuration.this.do_on_autologin(map.get("titre"));
+					Configuration.this.onAutologin(map.get("titre"));
 				if (map.get("type").equalsIgnoreCase("dlsync"))
-					configuration.this.do_on_dlsync(map.get("titre"));
+					Configuration.this.onDlsync(map.get("titre"));
 				if (map.get("type").equalsIgnoreCase("zoom"))
-					configuration.this.do_on_zoom(map.get("titre"));
+					Configuration.this.onZoom(map.get("titre"));
 			}
 		});
 	}
 
-	private void do_on_autologin(String titre) {
+	private void onAutologin(String titre) {
 		final CharSequence[] items = { "Oui", "Non"};
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(titre);
@@ -97,9 +97,9 @@ public class configuration extends asi_activity {
 		    public void onClick(DialogInterface dialog, int item) {
 		       // Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
 				if (items[item].equals("Oui")) {
-					configuration.this.get_datas().setAutologin(true);
+					Configuration.this.get_datas().setAutologin(true);
 				} else {
-					configuration.this.get_datas().setAutologin(false);
+					Configuration.this.get_datas().setAutologin(false);
 				}
 				dialog.dismiss();
 			}
@@ -108,7 +108,7 @@ public class configuration extends asi_activity {
 		alert.show();
 	}
 	
-	private void do_on_dlsync(String titre) {
+	private void onDlsync(String titre) {
 		final CharSequence[] items = {"Parallèle", "Série"};
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(titre);
@@ -119,9 +119,9 @@ public class configuration extends asi_activity {
 		    public void onClick(DialogInterface dialog, int item) {
 		       // Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
 				if (items[item].equals("Parallèle")) {
-					configuration.this.get_datas().setDlSync(true);
+					Configuration.this.get_datas().setDlSync(true);
 				} else {
-					configuration.this.get_datas().setDlSync(false);
+					Configuration.this.get_datas().setDlSync(false);
 				}
 				dialog.dismiss();
 			}
@@ -130,7 +130,7 @@ public class configuration extends asi_activity {
 		alert.show();
 	}
 	
-	private void do_on_zoom(String titre) {
+	private void onZoom(String titre) {
 		final CharSequence[] items = new CharSequence[8];
 		final int[] zoomlevel = new int[8];
 		int posi = 0;
@@ -146,7 +146,7 @@ public class configuration extends asi_activity {
 		builder.setSingleChoiceItems(items, posi, new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int item) {
 		       // Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
-				configuration.this.get_datas().setZoomLevel(zoomlevel[item]);
+				Configuration.this.get_datas().setZoomLevel(zoomlevel[item]);
 				dialog.dismiss();
 			}
 		});

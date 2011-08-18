@@ -39,10 +39,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class liste_articles extends asi_activity {
+public class ArticlesList extends AsiActivity {
 	protected ListView maListViewPerso;
 
-	protected Vector<article> articles;
+	protected Vector<Article> articles;
 
 	protected String color;
 
@@ -74,15 +74,15 @@ public class liste_articles extends asi_activity {
 		} else
 			v.setImageResource(R.drawable.toutlesite);
 
-		this.load_content();
+		this.loadContent();
 
 	}
 
-	public void load_content() {
+	public void loadContent() {
 		// TODO Auto-generated method stub
 		// récupération de l'URL des flux RSS
 		String url = this.getIntent().getExtras().getString("url");
-		new get_rss_url().execute(url);
+		new RssUrl().execute(url);
 		// État de la liste view
 		state = null;
 	}
@@ -91,7 +91,7 @@ public class liste_articles extends asi_activity {
 		super.onResume();
 		Log.d("ASI", "liste_article onResume");
 		if (articles != null) {
-			this.load_data();
+			this.loadData();
 		}
 		//if (state != null)
 			//maListViewPerso.onRestoreInstanceState(state);
@@ -117,7 +117,7 @@ public class liste_articles extends asi_activity {
 			map.put("url", articles.elementAt(i).getUri());
 			map.put("color", articles.elementAt(i).getColor());
 			if (this.get_datas()
-					.contain_articles_lues(articles.elementAt(i).getUri()))
+					.containArticlesRead(articles.elementAt(i).getUri()))
 				map.put("griser", "enabled-true");
 			else
 				map.put("griser", "enabled-false");
@@ -126,7 +126,7 @@ public class liste_articles extends asi_activity {
 		return listItem;
 	}
 
-	public void load_data() {
+	public void loadData() {
 
 		// Création de la ArrayList qui nous permettra de remplir la listView
 		ArrayList<HashMap<String, String>> listItem = this.get_listitem();
@@ -140,7 +140,7 @@ public class liste_articles extends asi_activity {
 						R.id.date });
 
 		// on ajoute le binder
-		mSchedule.setViewBinder(new bind_color());
+		mSchedule.setViewBinder(new BindColor());
 		
 		//on sauve
 		state = maListViewPerso.onSaveInstanceState();
@@ -158,9 +158,9 @@ public class liste_articles extends asi_activity {
 				HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 						.getItemAtPosition(position);
 				if (map.get("url").contains("recherche.php"))
-					liste_articles.this.do_on_recherche_item(map.get("url"));
+					ArticlesList.this.onSearchItem(map.get("url"));
 				else
-					liste_articles.this.load_page(map.get("url"),
+					ArticlesList.this.loadPage(map.get("url"),
 							map.get("titre"));
 			}
 		});
@@ -174,9 +174,9 @@ public class liste_articles extends asi_activity {
 						HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 								.getItemAtPosition(position);
 						if (map.get("url").contains("recherche.php"))
-							liste_articles.this.do_on_recherche_item(map.get("url"));
+							ArticlesList.this.onSearchItem(map.get("url"));
 						else
-							liste_articles.this.choice_action_item(
+							ArticlesList.this.choice_action_item(
 									map.get("url"), map.get("titre"));
 
 						return false;
@@ -194,11 +194,11 @@ public class liste_articles extends asi_activity {
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visualiser")) {
-					liste_articles.this.load_page(url, titre);
+					ArticlesList.this.loadPage(url, titre);
 				} else if (items[item].equals("Partager")) {
-					liste_articles.this.partage(url, titre);
+					ArticlesList.this.share(url, titre);
 				} else {
-					liste_articles.this.marquer_comme_lu(url);
+					ArticlesList.this.markAsRead(url);
 				}
 				// download_view.this.load_data();
 			}
@@ -207,11 +207,11 @@ public class liste_articles extends asi_activity {
 		alert.show();
 	}
 	
-	protected void do_on_recherche_item(String url){
+	protected void onSearchItem(String url){
 		//à faire uniquement dans les recherches
 	}
 
-	private void partage(String url, String titre) {
+	private void share(String url, String titre) {
 		// TODO Auto-generated method stub
 		try {
 			Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -223,35 +223,35 @@ public class liste_articles extends asi_activity {
 			startActivity(Intent.createChooser(emailIntent,
 					"Partager cet article"));
 		} catch (Exception e) {
-			new erreur_dialog(this, "Chargement de la page", e).show();
+			new ErrorDialog(this, "Chargement de la page", e).show();
 		}
 	}
 
-	private void marquer_comme_lu(String url) {
+	private void markAsRead(String url) {
 		try {
-			this.get_datas().add_articles_lues(url);
+			this.get_datas().addArticlesRead(url);
 			state = maListViewPerso.onSaveInstanceState();
-			this.load_data();
+			this.loadData();
 			maListViewPerso.onRestoreInstanceState(state);
 		} catch (Exception e) {
-			new erreur_dialog(this, "Chargement de la page", e).show();
+			new ErrorDialog(this, "Chargement de la page", e).show();
 		}
 		// new page(main.this);
 	}
 
-	private void load_page(String url, String titre) {
+	private void loadPage(String url, String titre) {
 		try {
-			Intent i = new Intent(this, page.class);
+			Intent i = new Intent(this, Page.class);
 			i.putExtra("url", url);
 			i.putExtra("titre", titre);
 			this.startActivity(i);
 		} catch (Exception e) {
-			new erreur_dialog(this, "Chargement de la page", e).show();
+			new ErrorDialog(this, "Chargement de la page", e).show();
 		}
 		// new page(main.this);
 	}
 
-	public void set_articles(Vector<article> art) {
+	public void setArticles(Vector<Article> art) {
 		this.articles = art;
 	}
 	
@@ -266,18 +266,18 @@ public class liste_articles extends asi_activity {
 		switch (item.getItemId()) {
 		case R.id.item4:
 			for(int i =0;i<articles.size();i++)
-				this.get_datas().add_articles_lues(articles.elementAt(i).getUri());
+				this.get_datas().addArticlesRead(articles.elementAt(i).getUri());
 			if(articles.size()>0)
-				this.marquer_comme_lu(articles.elementAt(0).getUri());
+				this.markAsRead(articles.elementAt(0).getUri());
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
 
-	private class get_rss_url extends AsyncTask<String, Void, String> {
-		private final progress_dialog dialog = new progress_dialog(
-				liste_articles.this, this);
+	private class RssUrl extends AsyncTask<String, Void, String> {
+		private final ProgressDialog dialog = new ProgressDialog(
+				ArticlesList.this, this);
 
 		// can use UI thread here
 		protected void onPreExecute() {
@@ -290,9 +290,9 @@ public class liste_articles extends asi_activity {
 			// List<String> names =
 			// Main.this.application.getDataHelper().selectAll();
 			try {
-				rss_download rss = new rss_download(args[0]);
-				rss.get_rss_articles();
-				liste_articles.this.set_articles(rss.getArticles());
+				RssDownload rss = new RssDownload(args[0]);
+				rss.getRssArticles();
+				ArticlesList.this.setArticles(rss.getArticles());
 			} catch (Exception e) {
 				String error = e.toString() + "\n" + e.getStackTrace()[0]
 						+ "\n" + e.getStackTrace()[1];
@@ -310,10 +310,10 @@ public class liste_articles extends asi_activity {
 				}
 			}
 			if (error == null)
-				liste_articles.this.load_data();
+				ArticlesList.this.loadData();
 			else {
 				//new erreur_dialog(liste_articles.this, "Chargement des articles", error).show();
-				liste_articles.this.erreur_loading(error);
+				ArticlesList.this.onLoadError(error);
 			}
 			// Main.this.output.setText(result);
 		}

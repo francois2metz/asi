@@ -35,10 +35,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class download_view extends reload_activity {
+public class DownloadView extends ReloadActivity {
 	private ListView maListViewPerso;
 
-	private Vector<download_video> video_download;
+	private Vector<DownloadVideo> video_download;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,7 +58,7 @@ public class download_view extends reload_activity {
 		//this.load_data();
 	}
 
-	protected void load_data() {
+	protected void loadData() {
 		// try {
 		// Thread.sleep(100);
 		// } catch (Exception e) {
@@ -67,7 +67,7 @@ public class download_view extends reload_activity {
 		// Création de la ArrayList qui nous permettra de remplir la listView
 		ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> map;
-		download_video dvid;
+		DownloadVideo dvid;
 		//
 		// teste de remplissage
 		// for(int j=0;j<10;j++){
@@ -82,20 +82,20 @@ public class download_view extends reload_activity {
 			boolean visible = true;
 			dvid = video_download.elementAt(i);
 			map = new HashMap<String, String>();
-			map.put("titre", dvid.get_download_video().getTitle_and_number());
+			map.put("titre", dvid.getDownloadVideo().getTitleAndNumber());
 			Status status = dvid.getStatus();
 			if (status == Status.RUNNING)
 				map.put("description",
-						"Téléchargement - " + dvid.get_pourcentage_download());
+						"Téléchargement - " + dvid.getDownloadPercent());
 			else if (status == Status.PENDING)
 				map.put("description", "Téléchargement - En attente");
 			else {
-				if (dvid.get_error() == null) {
-					if (dvid.is_video_complete())
+				if (dvid.getError() == null) {
+					if (dvid.isComplete())
 						visible = false;
 					else
 						map.put("description", "Téléchargement interrompu - "
-								+ dvid.get_pourcentage_download());
+								+ dvid.getDownloadPercent());
 				} else
 					map.put("description", "ERREUR lors du téléchargement");// -
 																			// "
@@ -147,7 +147,7 @@ public class download_view extends reload_activity {
 				HashMap<String, String> map = (HashMap<String, String>) maListViewPerso
 						.getItemAtPosition(position);
 				if (!map.get("int").equals("null"))
-					download_view.this.traitement_video(map.get("int"));
+					DownloadView.this.traitement_video(map.get("int"));
 			}
 		});
 
@@ -155,20 +155,20 @@ public class download_view extends reload_activity {
 		maListViewPerso.onRestoreInstanceState(state);
 	}
 
-	private void do_on_video_error(final download_video vid) throws Exception {
+	private void onVideoError(final DownloadVideo vid) throws Exception {
 		final CharSequence[] items = { "Relancer", "Effacer", "Erreur" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(vid.get_download_video().getTitle_and_number());
+		builder.setTitle(vid.getDownloadVideo().getTitleAndNumber());
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Relancer")) {
-					download_view.this.get_datas().get_download_video().remove(vid);
-					download_view.this.get_datas().downloadvideo(vid.get_download_video());
+					DownloadView.this.get_datas().get_download_video().remove(vid);
+					DownloadView.this.get_datas().downloadvideo(vid.getDownloadVideo());
 				} else if (items[item].equals("Effacer")) {
-					download_view.this.get_datas().get_download_video().remove(vid);
+					DownloadView.this.get_datas().get_download_video().remove(vid);
 				} else {
-					new erreur_dialog(download_view.this, vid.get_download_video().getTitle_and_number(), vid
-							.get_error()).show();
+					new ErrorDialog(DownloadView.this, vid.getDownloadVideo().getTitleAndNumber(), vid
+							.getError()).show();
 				}
 				// download_view.this.load_data();
 			}
@@ -177,15 +177,15 @@ public class download_view extends reload_activity {
 		alert.show();
 	}
 
-	private void do_on_video_running(final download_video vid) throws Exception {
+	private void onVideoRunning(final DownloadVideo vid) throws Exception {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(vid.get_download_video().getTitle_and_number());
+		builder.setTitle(vid.getDownloadVideo().getTitleAndNumber());
 		builder.setMessage("Arrêter le téléchargement en cours ?")
 				.setCancelable(false)
 				.setPositiveButton("Oui",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								vid.Stop_download();
+								vid.stopDownload();
 							}
 						})
 				.setNegativeButton("Non",
@@ -198,11 +198,11 @@ public class download_view extends reload_activity {
 		stop.show();
 	}
 
-	private void do_on_video_finished(final download_video vid)
+	private void onVideoFinished(final DownloadVideo vid)
 			throws Exception {
 		final CharSequence[] items = { "Visualiser", "Effacer", "Relancer" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(vid.get_download_video().getTitle_and_number());
+		builder.setTitle(vid.getDownloadVideo().getTitleAndNumber());
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Visualiser")) {
@@ -210,13 +210,13 @@ public class download_view extends reload_activity {
 					Intent intent = new Intent();
 					intent.setAction(android.content.Intent.ACTION_VIEW);
 					intent.setDataAndType(
-							Uri.fromFile(vid.get_download_path()), "video/*");
-					download_view.this.startActivity(intent);
+							Uri.fromFile(vid.getDownloadPath()), "video/*");
+					DownloadView.this.startActivity(intent);
 				} else if (items[item].equals("Effacer")) {
-					download_view.this.get_datas().get_download_video().remove(vid);
+					DownloadView.this.get_datas().get_download_video().remove(vid);
 				} else if (items[item].equals("Relancer")) {
-					download_view.this.get_datas().get_download_video().remove(vid);
-					download_view.this.get_datas().downloadvideo(vid.get_download_video());
+					DownloadView.this.get_datas().get_download_video().remove(vid);
+					DownloadView.this.get_datas().downloadvideo(vid.getDownloadVideo());
 				}
 				// download_view.this.load_data();
 			}
@@ -228,22 +228,22 @@ public class download_view extends reload_activity {
 	private void traitement_video(String num) {
 		try {
 			Log.d("ASI", "Num=" + num);
-			download_video vid = video_download
+			DownloadVideo vid = video_download
 					.elementAt(Integer.parseInt(num));
 			Status status = vid.getStatus();
 			Log.d("ASI", "Status=" + status.toString());
 			if (status == Status.FINISHED) {
-				if (vid.get_error() != null)
-					this.do_on_video_error(vid);
+				if (vid.getError() != null)
+					this.onVideoError(vid);
 				else
-					this.do_on_video_finished(vid);
+					this.onVideoFinished(vid);
 			} else {
 				// proposer d'arrêter le thread
-				this.do_on_video_running(vid);
+				this.onVideoRunning(vid);
 			}
 
 		} catch (Exception e) {
-			new erreur_dialog(this, "Traitement de la vidéo", e).show();
+			new ErrorDialog(this, "Traitement de la vidéo", e).show();
 		}
 
 	}

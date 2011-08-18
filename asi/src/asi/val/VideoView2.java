@@ -25,8 +25,8 @@ import android.view.KeyEvent;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-public class video_view extends Activity {
-	private String url_ok;
+public class VideoView2 extends Activity {
+	private String url;
 
 	private int current_position;
 
@@ -52,15 +52,15 @@ public class video_view extends Activity {
 
 	}
 
-	public void load_video() {
+	public void loadVideo() {
 		try {
 			video.setMediaController(control);
-			video.setVideoURI(Uri.parse(url_ok));
+			video.setVideoURI(Uri.parse(url));
 			video.requestFocus();
 			video.setSaveEnabled(true);
 			video.setOnErrorListener(new MediaPlayer.OnErrorListener() {
 	            public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
-	            	new erreur_dialog(video_view.this,"Impossible de lire la vidéo","").show();
+	            	new ErrorDialog(VideoView2.this,"Impossible de lire la vidéo","").show();
 	    			if(loading.getStatus().toString().equals("RUNNING"))
 	    				loading.cancel(true);
 	                Log.e("ASI", "MediaPlayer.onError: what=" + what + " extra=" + extra);
@@ -75,7 +75,7 @@ public class video_view extends Activity {
 			loading.execute(video);
 
 		} catch (Exception e) {
-			new erreur_dialog(this,"Chargement de la vidéo",e).show();
+			new ErrorDialog(this,"Chargement de la vidéo",e).show();
 		}
 
 	}
@@ -128,13 +128,13 @@ public class video_view extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	public void set_valid_url(String url) {
-		this.url_ok = url;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	private class get_video_url extends AsyncTask<String, Void, String> {
-		private final progress_dialog dialog = new progress_dialog(
-				video_view.this,this);
+		private final ProgressDialog dialog = new ProgressDialog(
+				VideoView2.this,this);
 
 		// can use UI thread here
 		protected void onPreExecute() {
@@ -149,10 +149,10 @@ public class video_view extends Activity {
 		// automatically done on worker thread (separate from UI thread)
 		protected String doInBackground(String... args) {
 			try {
-				video_url vid = new video_url(args[0]);
+				VideoUrl vid = new VideoUrl(args[0]);
 				vid.setTitle("Streaming");
-				String s = vid.get_relink_adress();
-				video_view.this.set_valid_url(s);
+				String s = vid.getRelinkAdress();
+				VideoView2.this.setUrl(s);
 			} catch (Exception e) {
 				String error = e.toString() + "\n" + e.getStackTrace()[0]
 						+ "\n" + e.getStackTrace()[1];
@@ -169,16 +169,16 @@ public class video_view extends Activity {
 				Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
 			}
 			if (error == null)
-				video_view.this.load_video();
+				VideoView2.this.loadVideo();
 			else {
-				new erreur_dialog(video_view.this,"Récupération de l'URL",error).show();
+				new ErrorDialog(VideoView2.this,"Récupération de l'URL",error).show();
 			}
 		}
 	}
 
 	private class loading_video extends AsyncTask<VideoView, Void, String> {
-		private final progress_dialog dialog = new progress_dialog(
-				video_view.this,this);
+		private final ProgressDialog dialog = new ProgressDialog(
+				VideoView2.this,this);
 
 		// can use UI thread here
 		protected void onPreExecute() {
@@ -224,7 +224,7 @@ public class video_view extends Activity {
 				}
 			}
 			if (error != null)
-				new erreur_dialog(video_view.this,"Chargement de la vidéo",error).show();
+				new ErrorDialog(VideoView2.this,"Chargement de la vidéo",error).show();
 		}
 	}
 }

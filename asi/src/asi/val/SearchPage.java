@@ -13,35 +13,35 @@ import java.util.regex.Pattern;
 
 import android.util.Log;
 
-public class page_recherche {
+public class SearchPage {
 
 	private URL url;
 
 	private String post;
 
-	private Vector<article> articles;
+	private Vector<Article> articles;
 	
 	private HTMLEntities convert = new HTMLEntities();
 
-	public page_recherche(String u) throws MalformedURLException {
+	public SearchPage(String u) throws MalformedURLException {
 		// lancer directement une recherche depuis un lien
 		url = new URL(u);
-		articles = new Vector<article>();
+		articles = new Vector<Article>();
 		post="";
 	}
 
-	public page_recherche() throws MalformedURLException {
+	public SearchPage() throws MalformedURLException {
 		// créer une recherche
-		articles = new Vector<article>();
+		articles = new Vector<Article>();
 		url = new URL("http://www.arretsurimages.net/recherche.php");
 		post="";
 	}
 	
-	public void set_post(String p){
-		post=p;
+	public void setPost(String p){
+		post = p;
 	}
 
-	public Vector<article> getArticles() throws Exception {
+	public Vector<Article> getArticles() throws Exception {
 		BufferedReader in = null;
 		OutputStreamWriter out = null;
 		try {
@@ -63,7 +63,7 @@ public class page_recherche {
 			StringBuffer description = new StringBuffer("");
 			boolean start = false;
 			boolean nextpage=false;
-			article article = new article();
+			Article article = new Article();
 			//élément de recherche
 			Matcher m ;
 			Pattern date = Pattern.compile(".*\\<span class\\=\"typo-date\"\\>(.*?)\\<\\/span\\>.*");
@@ -76,7 +76,7 @@ public class page_recherche {
 				
 				if(articles.size()>30&&ligneCodeHTML.contains("rech-filtres-droite")){
 					nextpage=true;
-					article = new article();
+					article = new Article();
 					article.setTitle("Plus de résultats");
 					article.setDate(">");
 					start = false;
@@ -88,7 +88,7 @@ public class page_recherche {
 				//récupérer le lien des pages suivantes et le nombre de résultats comme un article ???
 				if(nextpage){
 					if(ligneCodeHTML.contains("typo-info")){
-						article.setDescription_on_recherche(this.convert_html_to_string(ligneCodeHTML));
+						article.setDescription_on_recherche(this.convertHtmlToString(ligneCodeHTML));
 					}
 					m = link_next.matcher(ligneCodeHTML);
 					while(m.find()){
@@ -118,8 +118,8 @@ public class page_recherche {
 			//on récupère les informations de chaque article;
 				if (ligneCodeHTML.contains("bloc-contenu-5")||ligneCodeHTML.contains("bloc-contenu-6")){//bloc-rech
 					start = true;
-					article = new article();
-					article.set_color_from_recherche(ligneCodeHTML);
+					article = new Article();
+					article.setColorFromSearch(ligneCodeHTML);
 				}
 				if (ligneCodeHTML.contains("rech-filtres-gauche"))//recherche.php
 					start=false;
@@ -141,7 +141,7 @@ public class page_recherche {
 						m = titre.matcher(ligneCodeHTML);
 						if(m.find()){
 							String d = m.group(1).replaceFirst("<span.*?</span>", "");
-							article.setTitle(this.convert_html_to_string(d));
+							article.setTitle(this.convertHtmlToString(d));
 						}
 						else
 						article.setTitle(ligneCodeHTML);
@@ -159,7 +159,7 @@ public class page_recherche {
 					
 					if(desc&&ligneCodeHTML.contains("</div>")){
 						desc=false;
-						article.setDescription_on_recherche(this.convert_html_to_string(description.toString()));
+						article.setDescription_on_recherche(this.convertHtmlToString(description.toString()));
 						description  = new StringBuffer("");
 						articles.add(article);
 					}
@@ -189,7 +189,7 @@ public class page_recherche {
 		return articles;
 	}
 	
-	private String convert_html_to_string(String html){
+	private String convertHtmlToString(String html){
 		html = html.replaceAll("<.*?>", "");
 		html = html.replaceAll("\\s+", " ");
 		return (convert.unhtmlentities(html));

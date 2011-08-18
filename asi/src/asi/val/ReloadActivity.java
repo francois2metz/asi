@@ -17,7 +17,7 @@ package asi.val;
 
 import android.util.Log;
 
-public class reload_activity extends asi_activity {
+public class ReloadActivity extends AsiActivity {
 	
 	protected auto_updated update;
 	
@@ -52,7 +52,7 @@ public class reload_activity extends asi_activity {
 		Log.d("ASI","onresume reload_activity");
 	}
 
-	protected void load_data() {
+	protected void loadData() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -67,7 +67,7 @@ public class reload_activity extends asi_activity {
 			this.stop = false;
 			run = new Runnable() {
 			    public void run() {
-					reload_activity.this.load_data();
+					ReloadActivity.this.loadData();
 			    }
 			};
 		}

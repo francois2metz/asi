@@ -28,9 +28,9 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
-public class download_video extends AsyncTask<String, Void, String> {
+public class DownloadVideo extends AsyncTask<String, Void, String> {
 
-	private video_url vid;
+	private VideoUrl vid;
 
 	private FileOutputStream out;
 
@@ -44,9 +44,9 @@ public class download_video extends AsyncTask<String, Void, String> {
 
 	private boolean cancel;
 	
-	private shared_datas share;
+	private SharedData share;
 	
-	public download_video(shared_datas share, video_url v){
+	public DownloadVideo(SharedData share, VideoUrl v){
 		this.share = share;
 		vid = v;
 		error = null;
@@ -72,7 +72,7 @@ public class download_video extends AsyncTask<String, Void, String> {
 						"La carte SD n'est pas montée, impossible d'enregistrer");
 
 			HttpURLConnection.getFollowRedirects();
-			URL url = new URL(vid.get_download_url());
+			URL url = new URL(vid.getDownloadUrl());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 			in = conn.getInputStream();
@@ -81,7 +81,7 @@ public class download_video extends AsyncTask<String, Void, String> {
 			if (in == null)
 				throw new RuntimeException("stream is null");
 
-			File temp = this.get_download_path();
+			File temp = this.getDownloadPath();
 			temp.createNewFile();
 			Log.d("ASI", "vid save=" + temp.getAbsolutePath());
 
@@ -106,7 +106,7 @@ public class download_video extends AsyncTask<String, Void, String> {
 				MediaScannerConnection medconn = new MediaScannerConnection(
 						share.getContext(), null);
 				medconn.connect();
-				medconn.scanFile(this.get_download_path().getAbsolutePath(),
+				medconn.scanFile(this.getDownloadPath().getAbsolutePath(),
 						null);
 				medconn.disconnect();
 			} catch (Exception e) {
@@ -121,12 +121,12 @@ public class download_video extends AsyncTask<String, Void, String> {
 			return (er);
 		} finally {
 			// Dans tous les cas on ferme le bufferedReader s'il n'est pas null
-			this.Stop_buffer();
+			this.stopBuffer();
 		}
 		return null;
 	}
 
-	private void Stop_buffer() {
+	private void stopBuffer() {
 		if (in != null) {
 			try {
 				in.close();
@@ -141,15 +141,15 @@ public class download_video extends AsyncTask<String, Void, String> {
 		}
 	}
 
-	public void Stop_download() {
+	public void stopDownload() {
 		Log.d("ASI", "Cancelled_video");
 		cancel = true;
-		this.set_error("Stop");
+		this.setError("Stop");
 	}
 
 	protected void onPostExecute(String er) {
-		share.download_next_video();
-		this.set_error(er);
+		share.downloadNextVideo();
+		this.setError(er);
 		if (error == null) {
 			String text = "Téléchargement terminé de :\n" + vid.getTitle()
 					+ " - " + vid.getNumber();
@@ -164,13 +164,13 @@ public class download_video extends AsyncTask<String, Void, String> {
 							+ " - " + vid.getNumber(), Toast.LENGTH_LONG)
 					.show();
 			// effacer le fichier contenant des erreurs de téléchargement
-			File down = this.get_download_path();
+			File down = this.getDownloadPath();
 			if (down.exists())
 				down.delete();
 		}
 	}
 
-	public File get_download_path() {
+	public File getDownloadPath() {
 		File path = new File(Environment.getExternalStorageDirectory() + "/ASI");
 		if (!path.exists())
 			path.mkdir();
@@ -184,7 +184,7 @@ public class download_video extends AsyncTask<String, Void, String> {
 		return (temp);
 	}
 
-	public String get_pourcentage_download() {
+	public String getDownloadPercent() {
 		if (totalsize == -1)
 			return ("En préparation");
 		int psize = this.size / 1000;
@@ -193,22 +193,21 @@ public class download_video extends AsyncTask<String, Void, String> {
 		return (pour);
 	}
 
-	public boolean is_video_complete() {
+	public boolean isComplete() {
 		if (this.size < this.totalsize)
 			return false;
 		return true;
 	}
 
-	public String get_error() {
+	public String getError() {
 		return (this.error);
 	}
 
-	private void set_error(String er) {
+	private void setError(String er) {
 		this.error = er;
 	}
 
-	public video_url get_download_video() {
-		// TODO Auto-generated method stub
+	public VideoUrl getDownloadVideo() {
 		return this.vid;
 	}
 

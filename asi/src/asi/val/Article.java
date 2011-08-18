@@ -15,7 +15,7 @@
 
 package asi.val;
 
-public class article {
+public class Article {
 
 	private String title;
 
@@ -27,14 +27,14 @@ public class article {
 
 	private String color;
 
-	public article(String t, String d, String u) {
+	public Article(String t, String d, String u) {
 		this.title = t;
 		this.description = d;
 		this.uri = u;
 		this.color=null;
 	}
 
-	public article() {
+	public Article() {
 		this.title = "T";
 		this.description = "d";
 		this.uri = "";
@@ -126,7 +126,7 @@ public class article {
 		return color;
 	}
 
-	public void set_color_from_recherche(String rec) {
+	public void setColorFromSearch(String rec) {
 		if(rec.contains("vite"))
 			this.color="#FEC763";
 		else if(rec.contains("chro"))

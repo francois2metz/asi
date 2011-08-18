@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class page_load {
+public class PageLoad {
 
 	private String content;
 
@@ -32,19 +32,19 @@ public class page_load {
 
 	private String cookies;
 	
-	private ArrayList<video_url> videos;
+	private ArrayList<VideoUrl> videos;
 	
-	public ArrayList<video_url> getVideos() {
+	public ArrayList<VideoUrl> getVideos() {
 		return videos;
 	}
 
-	public page_load(String u) throws Exception {
+	public PageLoad(String u) throws Exception {
 		setContent("");
 		u.replaceAll(" ", "");
 		url = new URL(u);
 		//cookies = main.group.getCookies();
-		cookies = shared_datas.shared.getCookies();
-		videos = new ArrayList<video_url>();
+		cookies = SharedData.shared.getCookies();
+		videos = new ArrayList<VideoUrl>();
 	}
 
 	private String getPage() throws Exception {
@@ -138,8 +138,8 @@ public class page_load {
 					// on enlève les animations flash et recupère les vidéos
 					// iphone
 					if (ligneCodeHTML.matches(".*iphone\\.dailymotion\\.com.*")) {
-						video_url video = new video_url();
-						String s = video.parse_to_url(ligneCodeHTML);
+						VideoUrl video = new VideoUrl();
+						String s = video.parseToUrl(ligneCodeHTML);
 						if (s == null)
 							;
 						// ligneCodeHTML = this
@@ -148,7 +148,7 @@ public class page_load {
 							video_count++;
 							video.setNumber(video_count);
 							videos.add(video);
-							ligneCodeHTML = video.get_href_link_url();
+							ligneCodeHTML = video.getHrefLinkUrl();
 						}
 					}
 					// on cherche les fichiers mp3
@@ -249,7 +249,7 @@ public class page_load {
 		// On retourne le stringBuffer
 		// return
 		// "<link href=\"/styles/style.css?new=1\" media=\"all\" rel=\"stylesheet\" type=\"text/css\" /> \n"
-		return this.get_style() + sb.toString();// + "</div>";
+		return this.getStyle() + sb.toString();// + "</div>";
 	}
 
 	public void setContent(String content) {
@@ -275,10 +275,10 @@ public class page_load {
 		return (S2);
 	}
 
-	public String get_style() {
+	public String getStyle() {
 		StringBuffer sb2 = new StringBuffer("");
 		sb2.append("<style type=\"text/css\">");
-		sb2.append(new css_style().get_css_data());
+		sb2.append(new CssStyle().getCssData());
 		sb2.append("</style>");
 		return (sb2.toString());
 	}

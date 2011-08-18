@@ -23,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-public class erreur_dialog extends AlertDialog.Builder {
+public class ErrorDialog extends AlertDialog.Builder {
 
 	private String message;
 
@@ -31,7 +31,7 @@ public class erreur_dialog extends AlertDialog.Builder {
 	
 	private Context mContext;
 
-	public erreur_dialog(Context arg0, String message, String error) {
+	public ErrorDialog(Context arg0, String message, String error) {
 		super(arg0);
 		// TODO Auto-generated constructor stub
 		this.mContext = arg0;
@@ -40,7 +40,7 @@ public class erreur_dialog extends AlertDialog.Builder {
 		this.defined_interface();
 	}
 
-	public erreur_dialog(Context arg0, String message, Exception e) {
+	public ErrorDialog(Context arg0, String message, Exception e) {
 		super(arg0);
 		// TODO Auto-generated constructor stub
 		this.mContext = arg0;

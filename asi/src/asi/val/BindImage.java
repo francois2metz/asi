@@ -15,28 +15,20 @@
 
 package asi.val;
 
-import android.graphics.Color;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter.ViewBinder;
 
-public class bind_color implements ViewBinder {
+public class BindImage implements ViewBinder {
 
 	public boolean setViewValue(View arg0, Object arg1, String arg2) {
-		// TODO Auto-generated method stub
-		
-		if (arg2.matches("#\\w+")) {
-			arg0.setBackgroundColor(Color.parseColor(arg2));
-			return (true);
-		} else if (arg2.contains("enabled-")) {
-			//Log.d("ASI","bind_color_enabled"+" "+arg2);
-			if (arg2.contains("true")){
-				//Log.d("ASI","bind_color_enabled"+" "+arg2);
-				arg0.setBackgroundColor(Color.parseColor("#e7e7e7"));
-			}
-			else{
-				arg0.setBackgroundColor(Color.parseColor("#ffffff"));
-			}
-			return (true);
+		// TODO Auto-generated method stub	
+		if(arg2.contains("png-")){
+			//Log.d("ASI","bind_image_arg"+" "+arg2);
+			ImageView vi = (ImageView) arg0;
+			arg2 = arg2.replaceFirst("png-", "");
+			vi.setImageResource(Integer.parseInt(arg2));
+			return(true);
 		}
 		return false;
 	}

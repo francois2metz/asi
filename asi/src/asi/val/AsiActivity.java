@@ -24,23 +24,23 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class asi_activity extends Activity {
+public class AsiActivity extends Activity {
 
-	protected shared_datas datas;
+	protected SharedData datas;
 
-	public shared_datas get_datas() {
-		datas = shared_datas.shared;
+	public SharedData get_datas() {
+		datas = SharedData.shared;
 		if (datas == null)
-			return (new shared_datas(this));
+			return (new SharedData(this));
 		datas.setContext(this);
 		return datas;
 	}
 	
-	public void load_content() {
+	public void loadContent() {
 		
 	}
 	
-	protected void erreur_loading(String error){
+	protected void onLoadError(String error){
 		Log.e("ASI",error);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Une erreur réseau s'est produite lors du chargement.")
@@ -48,20 +48,20 @@ public class asi_activity extends Activity {
 				.setPositiveButton("Réessayer",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								asi_activity.this.load_content();
+								AsiActivity.this.loadContent();
 							}
 						})
 				.setNegativeButton("Annuler",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								asi_activity.this.finish();
+								AsiActivity.this.finish();
 							}
 						});
 		AlertDialog quitte = builder.create();
 		quitte.show();
 	}
 	
-	public void closed_application() {
+	public void onCloseApp() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Quitter ?");
 		builder.setMessage("Tous les téléchargements en cours seront arrêtés")
@@ -69,8 +69,8 @@ public class asi_activity extends Activity {
 				.setPositiveButton("Oui",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								asi_activity.this.get_datas().stop_all_download();
-								asi_activity.this.finish();
+								AsiActivity.this.get_datas().stopAllDownload();
+								AsiActivity.this.finish();
 							}
 						})
 				.setNegativeButton("Non",
@@ -93,15 +93,15 @@ public class asi_activity extends Activity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.item1:
-			Intent i = new Intent(this, download_view.class);
+			Intent i = new Intent(this, DownloadView.class);
 			this.startActivity(i);
 			return true;
 		case R.id.item2:
-			Intent i2 = new Intent(this, SD_video_view.class);
+			Intent i2 = new Intent(this, VideoViewSD.class);
 			this.startActivity(i2);
 			return true;
 		case R.id.item3:
-			Intent i3 = new Intent(this, configuration.class);
+			Intent i3 = new Intent(this, Configuration.class);
 			this.startActivity(i3);
 			return true;
 		case R.id.info_item:
@@ -118,7 +118,7 @@ public class asi_activity extends Activity {
 			builder.show();
 			return true;
 		case R.id.close_item:
-			this.closed_application();
+			this.onCloseApp();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
