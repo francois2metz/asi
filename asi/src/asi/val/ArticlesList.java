@@ -94,7 +94,7 @@ public class ArticlesList extends AsiActivity {
 				return true;
 			} else if (columnIndex == cursor.getColumnIndex(Article.DATE_NAME)) {
 				Date date = new Date(cursor.getLong(columnIndex));
-				SimpleDateFormat format = new SimpleDateFormat("E d/M k:m");
+				SimpleDateFormat format = new SimpleDateFormat("E dd/MM kk:mm");
 			    ((TextView) view).setText(format.format(date));
 				return true;
 			}
