@@ -40,7 +40,7 @@ public class Page extends AsiActivity {
 
 	private String pagedata;
 
-	private String page_title;
+	private String pageTitle;
 
 	protected ArrayList<VideoUrl> videos;
 
@@ -85,6 +85,8 @@ public class Page extends AsiActivity {
 	}
 
 	public void loadContent(){
+	    final android.app.ProgressDialog pg = android.app.ProgressDialog.show(this, "", "Chargement...", true, true);
+
 		final String url = this.getIntent().getExtras().getString("url");
 		
 		String queryString = Article.URL_PARAM_NAME + "=" +
@@ -101,13 +103,13 @@ public class Page extends AsiActivity {
 				 * because an asynchronous request will be triggered to update the content
 				 */
 				c.requery();
-				renderCursor(c, url);
+				renderCursor(c, url, pg);
 			}
 		});
-		renderCursor(c, url);
+		renderCursor(c, url, pg);
 	}
 
-	private void renderCursor(Cursor c, String url) {
+	private void renderCursor(Cursor c, String url, android.app.ProgressDialog pg) {
 		// probably a bug is getCount() return an integer > 1
 		if (c.getCount() > 0) {
 			c.moveToFirst();
@@ -115,6 +117,7 @@ public class Page extends AsiActivity {
 		    this.setPagedata(this.getStyle() + content);
 			this.getData().addArticlesRead(url);
 		    this.loadPage();
+		    pg.dismiss();
 		}
 	}
 	
@@ -280,7 +283,7 @@ public class Page extends AsiActivity {
 						for (int i = 0; i < nb_actes; i++) {
 							video_selected = videos.get(i);
 							video_selected.setNumber(i + 1);
-							video_selected.setTitle(page_title);
+							video_selected.setTitle(pageTitle);
 							Page.this.getData().downloadvideo(video_selected);
 						}
 					}
@@ -299,7 +302,7 @@ public class Page extends AsiActivity {
 					new get_video_url().execute(url);
 				} else {
 					VideoUrl vid = new VideoUrl(url);
-					vid.setTitle(page_title);
+					vid.setTitle(pageTitle);
 					Page.this.getData().downloadvideo(vid);
 				}
 			}
@@ -312,59 +315,13 @@ public class Page extends AsiActivity {
 		return pagedata;
 	}
 
-	private class get_page_content extends AsyncTask<String, Void, String> {
-		private final ProgressDialog dialog = new ProgressDialog(Page.this,
-				this);
-
-		// can use UI thread here
-		protected void onPreExecute() {
-			this.dialog.setMessage("Chargement...");
-			this.dialog.show();
-		}
-
-		protected void onCancelled() {
-			Log.d("ASI", "onCancelled");
-		}
-
-		// automatically done on worker thread (separate from UI thread)
-		protected String doInBackground(String... args) {
-			try {
-				PageLoad page_d = new PageLoad(args[0]);
-
-				Page.this.setPagedata(page_d.getContent());
-				Page.this.setVideo(page_d.getVideos());
-
-				Page.this.getData().addArticlesRead(args[0]);
-			} catch (Exception e) {
-				String error = e.getMessage();
-				return (error);
-			}
-			return null;
-		}
-
-		protected void onPostExecute(String error) {
-			try {
-				if (dialog.isShowing())
-					dialog.dismiss();
-			} catch (Exception e) {
-				Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
-			}
-			if (error == null) {
-				Page.this.loadPage();
-			} else {
-				//new erreur_dialog(page.this, "Chargement de la page", error).show();
-				Page.this.onLoadError(error);
-			}
-		}
-	}
-
 	public void setPageTitle(String page_title) {
 		if (page_title != null) {
-			this.page_title = page_title;
-			Log.d("ASI", this.page_title);
+			this.pageTitle = page_title;
+			Log.d("ASI", this.pageTitle);
 		} else {
 			Log.d("ASI", "pas de titre");
-			this.page_title = "Sans titre";
+			this.pageTitle = "Sans titre";
 		}
 	}
 
@@ -392,7 +349,7 @@ public class Page extends AsiActivity {
 		protected String doInBackground(String... args) {
 			try {
 				VideoUrl vid = new VideoUrl(args[0]);
-				vid.setTitle(page_title);
+				vid.setTitle(pageTitle);
 				valid_url = vid.getRelinkAdress();
 			} catch (Exception e) {
 				String error = e.getMessage();
