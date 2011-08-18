@@ -17,6 +17,7 @@ package asi.val;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import android.content.ContentUris;
 import android.net.Uri;
@@ -198,7 +199,7 @@ public class Article {
 	
 	public static long parseDate(String date) {
 		// <pubDate>Tue, 31 Aug 2010 19:37:08 +0200</pubDate>
-		SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+		SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
 		try {
 			return formatter.parse(date).getTime();
 		} catch (ParseException e) {
