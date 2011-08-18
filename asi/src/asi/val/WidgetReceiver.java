@@ -1,14 +1,17 @@
 package asi.val;
 
-import java.util.Vector;
-
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
+import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -26,9 +29,20 @@ public class WidgetReceiver extends AppWidgetProvider {
 
 	public static final String UPDATE_WIDGET = "asi.val.action.UPDATE_WIDGET";
 
-	private Vector<Article> articles;
+	public Cursor queryUnreadWithUpdate(Context context) {
+		Uri articlesUri = ContentUris.withAppendedId(Article.ARTICLES_URI, 1);
+		return queryUnread(context, articlesUri);
+	}
 
-	private String url = "http://www.arretsurimages.net/tous-les-contenus.rss";
+	public Cursor queryUnreadWithoutUdate(Context context) {
+		Uri articlesUri = Uri.parse(ContentUris.withAppendedId(Article.ARTICLES_URI, 1) +"?"+ Article.UPDATE_PARAM +"=1");
+		return queryUnread(context, articlesUri);
+	}
+
+	protected Cursor queryUnread(Context context, Uri uri) {
+		String where = Article.READ_NAME+" IS NULL";
+		return context.getContentResolver().query(uri, null, where, null, null);
+	}
 
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
@@ -44,35 +58,25 @@ public class WidgetReceiver extends AppWidgetProvider {
 			this.defined_intent(context, views, appWidgetIds);
 
 			views.setTextViewText(R.id.widget_message, "Mise à jour en cours");
-			// views.setInt(R.id.widget_message, "setBackgroundResource",
-			// R.color.color_text);
+
 			views.setTextColor(R.id.widget_color, R.color.color_text);
 			views.setTextViewText(R.id.widget_next_texte, "0/0");
 			views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
 			appWidgetManager.updateAppWidget(appWidgetId, views);
+			Cursor c = queryUnreadWithUpdate(context);
 
 			try {
-				RssDownload d = new RssDownload(url);
 				Log.d("ASI", "widget téléchargement");
-				if (i == 0) {
-					d.getRssArticles();
-					articles = d.getArticles();
-					// on recherche si ils sont déjà lus
-					articles = this.get_new_articles(articles, context);
-					Log.d("ASI", "download_articles:" + articles.size());
-				} else
-					articles = this.getData(context).get_widget_article();
-				if (articles.size() == 0)
-					throw new StopException("Pas de nouvel article");
-				views.setTextViewText(R.id.widget_message, articles
-						.elementAt(0).getTitle());
-				// views.setInt(R.id.widget_message, "setBackgroundResource",
-				// Color.parseColor(articles.elementAt(0).getColor()));
-				views.setTextColor(R.id.widget_color,
-						Color.parseColor(articles.elementAt(0).getColor()));
-				views.setTextViewText(R.id.widget_next_texte,
-						"1/" + articles.size());
 
+				if (c.getCount() == 0)
+					throw new StopException("Pas de nouvel article");
+
+				c.moveToFirst();
+				views.setTextViewText(R.id.widget_message, c.getString(c.getColumnIndex(Article.TITLE_NAME)));
+
+				views.setTextColor(R.id.widget_color,
+						Color.parseColor(c.getString(c.getColumnIndex(Article.COLOR_NAME))));
+				views.setTextViewText(R.id.widget_next_texte, "1/" + c.getCount());
 				// Tell the AppWidgetManager to perform an update on the current
 				// App Widget
 				appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -89,11 +93,8 @@ public class WidgetReceiver extends AppWidgetProvider {
 				appWidgetManager.updateAppWidget(appWidgetId, views);
 				Log.e("ASI", "Error widget " + e.getMessage());
 			} finally {
-				if (articles == null) {
-					articles = new Vector<Article>();
-				}
-				this.getData(context).save_widget_article(articles);
-				this.getData(context).save_widget_posi(0);
+				c.close();
+				this.getData(context).saveWidgetPosi(0);
 			}
 		}
 	}
@@ -154,31 +155,28 @@ public class WidgetReceiver extends AppWidgetProvider {
 		views.setOnClickPendingIntent(R.id.widget_next, pendingIntent);
 	}
 
-	private void defined_article(RemoteViews views,Context context,int posi){
-		if (articles.size() != 0) {
+	private void defined_article(RemoteViews views,Context context, Cursor articles, int posi) {
+		if (articles.getCount() != 0) {
+			articles.moveToPosition(posi);
 			views.setTextViewText(R.id.widget_message,
-					articles.elementAt(posi).getTitle());
-			// views.setInt(R.id.widget_message, "setBackgroundResource",
-			// Color.parseColor(articles.elementAt(posi).getColor()));
+						articles.getString(articles.getColumnIndex(Article.TITLE_NAME)));
 			views.setTextColor(R.id.widget_color,
-					Color.parseColor(articles.elementAt(posi).getColor()));
-			this.getData(context).save_widget_posi(posi);
+					Color.parseColor(articles.getString(articles.getColumnIndex(Article.COLOR_NAME))));
+			this.getData(context).saveWidgetPosi(posi);
 			views.setTextViewText(R.id.widget_next_texte, (posi + 1) + "/"
-					+ articles.size());
-			// FIXME: use the READ_NAME column in ArticleProvider
-			//if (this.getData(context).containArticlesRead(
-			//		articles.elementAt(posi).getUri()))
-			//	views.setViewVisibility(R.id.widget_check, View.VISIBLE);
-			//else
-			//	views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
-		}else{
+					+ articles.getCount());
+			if (articles.getInt(articles.getColumnIndex(Article.READ_NAME)) == 1)
+				views.setViewVisibility(R.id.widget_check, View.VISIBLE);
+			else
+				views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
+		} else {
 			views.setTextViewText(R.id.widget_message,"Aucun article non lu");
 			views.setTextColor(R.id.widget_color, R.color.color_text);
 			views.setTextViewText(R.id.widget_next_texte, "0/0");
 			views.setViewVisibility(R.id.widget_check, View.INVISIBLE);
 		}
 	}
-	
+
 	public void onReceive(Context context, Intent intent) {
 		// v1.5 fix that doesn't call onDelete Action
 		final String action = intent.getAction();
@@ -192,68 +190,69 @@ public class WidgetReceiver extends AppWidgetProvider {
 				this.onDeleted(context, new int[] { appWidgetId });
 			}
 		} else if (SHOW_CURRENT.equals(action)) {
-			articles = this.getData(context)
-					.get_widget_article();
-			int posi = this.getData(context).get_widget_posi();
+			Cursor c = queryUnreadWithoutUdate(context);
+			int posi = this.getData(context).getWidgetPosi();
 			intent = new Intent(context, Page.class);
+
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			if (posi < articles.size()) {
-				intent.putExtra("url", articles.elementAt(posi).getUri());
-				intent.putExtra("titre", articles.elementAt(posi).getTitle());
+			if (posi < c.getCount()) {
+				c.moveToPosition(posi);
+				intent.putExtra("id", c.getLong(c.getColumnIndex(BaseColumns._ID)));
+				intent.putExtra("titre", c.getString(c.getColumnIndex(Article.TITLE_NAME)));
 				context.startActivity(intent);
 			}
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
 			// On met l'article courant lu et on rend visible l'image check
-			this.defined_article(views, context, posi);
+			this.defined_article(views, context, c, posi);
+			c.close();
 			views.setViewVisibility(R.id.widget_check, View.VISIBLE);
-			
+
 			ComponentName thisWidget = new ComponentName(context,
 					WidgetReceiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
 			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
 					manager.getAppWidgetIds(thisWidget));
-			manager.updateAppWidget(thisWidget, views);		
+			manager.updateAppWidget(thisWidget, views);
 		} else if (SHOW_NEXT.equals(action)) {
-			articles = this.getData(context)
-					.get_widget_article();
-			int posi = this.getData(context).get_widget_posi();
+			Cursor c = queryUnreadWithoutUdate(context);
+			int posi = this.getData(context).getWidgetPosi();
 
-			if ((posi + 1) == articles.size())
+			if ((posi + 1) == c.getCount())
 				posi = 0;
 			else
 				posi++;
 			Log.d("ASI", "position widget;" + posi);
-			Log.d("ASI", "save_articles:" + articles.size());
+			Log.d("ASI", "save_articles:" + c.getCount());
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
-			this.defined_article(views, context, posi);
-
+			this.defined_article(views, context,c, posi);
+			c.close();
 			ComponentName thisWidget = new ComponentName(context,
 					WidgetReceiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
 			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
 					manager.getAppWidgetIds(thisWidget));
-			// int[] temp = manager.getAppWidgetIds(thisWidget);
-			// for(int z=0;z<temp.length;z++)
-			// Log.d("ASI","intent update of:"+temp[z]);
 			manager.updateAppWidget(thisWidget, views);
 			// appWidgetManager.updateAppWidget(appWidgetId, views);
 		} else if (CHECK_CURRENT.equals(action)) {
-			articles = this.getData(context)
-					.get_widget_article();
-			int posi = this.getData(context).get_widget_posi();
-			//if (posi < articles.size())
-			//	this.getData(context).addArticlesRead(
-			//			articles.elementAt(posi).getUri());
+			Cursor c = queryUnreadWithoutUdate(context);
+			int posi = this.getData(context).getWidgetPosi();
+			if (posi < c.getCount()) {
+				// mark as read
+				c.moveToPosition(posi);
+				final long id = c.getLong(c.getColumnIndex(BaseColumns._ID));
+				Uri articleUri = ContentUris.withAppendedId(Article.ARTICLE_URI, id);
+				ContentValues values = new ContentValues();
+				values.put(Article.READ_NAME, 1);
+			    context.getContentResolver().update(articleUri, values, null, null);
+			}
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.widget_asi);
-			// On met l'article courant lu et on rend visible l'image check
-			//views.setViewVisibility(R.id.widget_check, View.VISIBLE);
-			this.defined_article(views, context, posi);
-			
+			this.defined_article(views, context, c, posi);
+			c.close();
 			ComponentName thisWidget = new ComponentName(context,
 					WidgetReceiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
@@ -267,18 +266,6 @@ public class WidgetReceiver extends AppWidgetProvider {
 		} else {
 			super.onReceive(context, intent);
 		}
-	}
-
-	private Vector<Article> get_new_articles(Vector<Article> articles2,
-			Context c) {
-		Vector<Article> ar = new Vector<Article>();
-		for (int i = 0; i < articles2.size(); i++) {
-			// FIXME: use the READ_NAME column in ArticleProvider
-			//if (!this.getData(c).containArticlesRead(
-			//		articles2.elementAt(i).getUri()))
-				ar.add(articles2.elementAt(i));
-		}
-		return (ar);
 	}
 
 	public SharedData getData(Context c) {

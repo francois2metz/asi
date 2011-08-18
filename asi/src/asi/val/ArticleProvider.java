@@ -140,7 +140,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 	    		queryCursor = queryCategory(uri, projection, whereArgs, sortOrder);
 	    		break;
 	    	case ARTICLES_BY_CATEGORY:
-	    		queryCursor = queryArticlesByCategory(uri, sortOrder);
+	    		queryCursor = queryArticlesByCategory(uri, where, sortOrder);
 	    		break;
 	        case ARTICLE:
 	        	queryCursor = queryArticle(uri, projection, whereArgs, sortOrder);
@@ -178,7 +178,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 		return queryCursor;
 	}
 
-	private Cursor queryArticlesByCategory(Uri uri, String sortOrder) {
+	private Cursor queryArticlesByCategory(Uri uri, String where, String sortOrder) {
 		long catId = Integer.parseInt(uri.getPathSegments().get(1));
 		String select2 = "SELECT a."+ BaseColumns._ID +", a."+
 		        		Article.TITLE_NAME +", a."+
@@ -189,6 +189,9 @@ public class ArticleProvider extends RESTfulContentProvider {
 		        		Article.READ_NAME +
 		        		" FROM " + ARTICLES_TABLE_NAME + " as a JOIN "+
 		         CATEGORIES_ARTICLES_TABLE_NAME + " as c ON c.article = a._id WHERE c.category="+catId;
+		if (where != null) {
+			select2 += " and a."+ where;
+		}
 		if (sortOrder != null)
 			select2 += " ORDER BY a."+ sortOrder;
 		Cursor queryCursor = mDb.rawQuery(select2, null);
@@ -200,6 +203,10 @@ public class ArticleProvider extends RESTfulContentProvider {
 		String defaultColor = c.getString(c.getColumnIndex(Category.COLOR_NAME));
 		String url = c.getString(c.getColumnIndex(Category.URL_NAME));
 		c.close();
+		if ("1".equals(uri.getQueryParameter(Article.UPDATE_PARAM))) {
+			Log.d("ASI", "quering articles without update");
+			return queryCursor;
+		}
 		asyncQueryRequest("category_"+ catId, url, this.createRssResponseHandler(catId, defaultColor));
 		return queryCursor;
 	}

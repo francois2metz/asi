@@ -69,6 +69,11 @@ public class Article {
 	 */
 	public static final String READ_NAME = "read";
 
+	/**
+	 * Disable update
+	 */
+	public static final String UPDATE_PARAM = "update";
+
 	private String title;
 
 	private String description;

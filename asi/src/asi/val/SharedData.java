@@ -1,9 +1,5 @@
 package asi.val;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.util.Vector;
 
 import android.content.Context;
@@ -17,8 +13,6 @@ public class SharedData {
 	public static SharedData shared;
 
 	private String Cookies;
-
-	private static final String FILENAME_WIDGET = "widget_articles";
 
 	public static final String PREFERENCE = "asi_pref";
 
@@ -144,7 +138,7 @@ public class SharedData {
 		}
 	}
 
-	public void save_widget_posi(int posi) {
+	public void saveWidgetPosi(int posi) {
 		SharedPreferences settings = activity.getSharedPreferences(PREFERENCE,
 				0);
 		Editor editor = settings.edit();
@@ -152,68 +146,10 @@ public class SharedData {
 		editor.commit();
 	}
 
-	public int get_widget_posi() {
+	public int getWidgetPosi() {
 		SharedPreferences settings = activity.getSharedPreferences(PREFERENCE,
 				0);
 		return settings.getInt("posi_widget", 0);
-	}
-
-	public void save_widget_article(Vector<Article> arts) {
-		try {
-			FileOutputStream fos = activity.openFileOutput(FILENAME_WIDGET,
-					Context.MODE_PRIVATE);
-			String temp = "";
-			for (int i = 0; i < arts.size(); i++) {
-				temp = arts.elementAt(i).getTitle() + "\n"
-						+ arts.elementAt(i).getUri() + "\n"
-						+ arts.elementAt(i).getColor() + "\n";
-				fos.write(temp.getBytes());
-			}
-			fos.flush();
-			fos.close();
-		} catch (java.io.FileNotFoundException e) {
-			Log.d("ASI", "sauver données partagées" + e.getMessage());
-		} catch (Exception e) {
-			new ErrorDialog(this.activity, "ACCÈS aux données partagées", e)
-					.show();
-			Log.e("ASI", "ACCES aux données partagées " + e.getMessage());
-		}
-	}
-
-	@SuppressWarnings("finally")
-	public Vector<Article> get_widget_article() {
-		Vector<Article> temp = new Vector<Article>();
-		try {
-			FileInputStream fos = activity.openFileInput(FILENAME_WIDGET);
-			InputStreamReader isr = new InputStreamReader(fos);
-			BufferedReader objBufferReader = new BufferedReader(isr);
-			String strLine;
-			int value = 0;
-			Article ar = new Article();
-			while ((strLine = objBufferReader.readLine()) != null) {
-				value++;
-				if (value == 1) {
-					ar.setTitle(strLine);
-				} else if (value == 2) {
-					ar.setUri(strLine);
-				} else {
-					ar.setColor(strLine);
-					temp.add(ar);
-					ar = new Article();
-					value = 0;
-				}
-			}
-			;
-			fos.close();
-		} catch (java.io.FileNotFoundException e) {
-			Log.d("ASI", "sauver données partagées" + e.getMessage());
-		} catch (Exception e) {
-			new ErrorDialog(this.activity, "ACCÈS aux données partagées", e)
-					.show();
-			Log.e("ASI", "ACCÈS aux données partagées " + e.getMessage());
-		} finally {
-			return (temp);
-		}
 	}
 
 }
