@@ -77,7 +77,7 @@ public class Main extends AsiActivity {
 		//main.group = this;
 
 		// autologin activé
-		this.autologin = this.get_datas().isAutologin();
+		this.autologin = this.getData().isAutologin();
 
 		// on récupère l'ancien cookie
 		//Cookies = settings.getString("cookies", "");
@@ -110,7 +110,7 @@ public class Main extends AsiActivity {
 	public void onStart() {
 		super.onStart();
 		// démarrage de l'autologin
-		if (!this.get_datas().getCookies().equals("phorum_session_v5=deleted") && this.autologin) {
+		if (!this.getData().getCookies().equals("phorum_session_v5=deleted") && this.autologin) {
 			//this.get_datas().setCookies(Cookies);
 			this.load_page(false);
 			Toast.makeText(this, txt_username.getText() + " connecté.",
@@ -154,7 +154,7 @@ public class Main extends AsiActivity {
 		//this.autologin = true;
 		// Commit the edits!
 		editor.commit();
-		this.get_datas().setCookies(cookies);
+		this.getData().setCookies(cookies);
 	}
 
 	private class get_cookies_value extends AsyncTask<String, Void, String> {
@@ -261,7 +261,7 @@ public class Main extends AsiActivity {
 
 	private void connect_to_gratuit() {
 		//this.setCookies("phorum_session_v5=deleted");
-		this.get_datas().setCookies("phorum_session_v5=deleted");
+		this.getData().setCookies("phorum_session_v5=deleted");
 		this.load_page(true);
 	}
 
@@ -270,7 +270,7 @@ public class Main extends AsiActivity {
 			Intent i = new Intent(this, MainView.class);
 			i.putExtra("gratuit", gratuit);
 			this.startActivity(i);
-			if(this.datas.isAutologin())
+			if(this.data.isAutologin())
 				this.finish();
 
 		} catch (Exception e) {

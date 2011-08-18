@@ -53,7 +53,7 @@ public class DownloadView extends ReloadActivity {
 
 		text.setText("Téléchargements en cours");
 		// récuperation de la liste de téléchargements
-		this.video_download = this.get_datas().get_download_video();
+		this.video_download = this.getData().get_download_video();
 
 		//this.load_data();
 	}
@@ -162,10 +162,10 @@ public class DownloadView extends ReloadActivity {
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (items[item].equals("Relancer")) {
-					DownloadView.this.get_datas().get_download_video().remove(vid);
-					DownloadView.this.get_datas().downloadvideo(vid.getDownloadVideo());
+					DownloadView.this.getData().get_download_video().remove(vid);
+					DownloadView.this.getData().downloadvideo(vid.getDownloadVideo());
 				} else if (items[item].equals("Effacer")) {
-					DownloadView.this.get_datas().get_download_video().remove(vid);
+					DownloadView.this.getData().get_download_video().remove(vid);
 				} else {
 					new ErrorDialog(DownloadView.this, vid.getDownloadVideo().getTitleAndNumber(), vid
 							.getError()).show();
@@ -213,10 +213,10 @@ public class DownloadView extends ReloadActivity {
 							Uri.fromFile(vid.getDownloadPath()), "video/*");
 					DownloadView.this.startActivity(intent);
 				} else if (items[item].equals("Effacer")) {
-					DownloadView.this.get_datas().get_download_video().remove(vid);
+					DownloadView.this.getData().get_download_video().remove(vid);
 				} else if (items[item].equals("Relancer")) {
-					DownloadView.this.get_datas().get_download_video().remove(vid);
-					DownloadView.this.get_datas().downloadvideo(vid.getDownloadVideo());
+					DownloadView.this.getData().get_download_video().remove(vid);
+					DownloadView.this.getData().downloadvideo(vid.getDownloadVideo());
 				}
 				// download_view.this.load_data();
 			}

@@ -190,7 +190,7 @@ public class MainView extends AsiActivity {
 	// public void onBackPressed(){
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			if(this.get_datas().isAutologin()){
+			if(this.getData().isAutologin()){
 				//this.closed_application();
 				this.finish();
 				return true;

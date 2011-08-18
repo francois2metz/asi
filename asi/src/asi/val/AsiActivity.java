@@ -26,14 +26,14 @@ import android.view.MenuItem;
 
 public class AsiActivity extends Activity {
 
-	protected SharedData datas;
+	protected SharedData data;
 
-	public SharedData get_datas() {
-		datas = SharedData.shared;
-		if (datas == null)
+	public SharedData getData() {
+		data = SharedData.shared;
+		if (data == null)
 			return (new SharedData(this));
-		datas.setContext(this);
-		return datas;
+		data.setContext(this);
+		return data;
 	}
 	
 	public void loadContent() {
@@ -69,7 +69,7 @@ public class AsiActivity extends Activity {
 				.setPositiveButton("Oui",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								AsiActivity.this.get_datas().stopAllDownload();
+								AsiActivity.this.getData().stopAllDownload();
 								AsiActivity.this.finish();
 							}
 						})

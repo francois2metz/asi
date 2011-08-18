@@ -113,7 +113,7 @@ public class Page extends AsiActivity {
 			c.moveToFirst();
 		    String content = c.getString(c.getColumnIndex(Article.CONTENT_NAME));
 		    this.setPagedata(this.getStyle() + content);
-			this.get_datas().addArticlesRead(url);
+			this.getData().addArticlesRead(url);
 		    this.loadPage();
 		}
 	}
@@ -157,7 +157,7 @@ public class Page extends AsiActivity {
 			mywebview.loadDataWithBaseURL("http://www.arretsurimages.net",
 					this.pagedata, mimeType, encoding, null);
 			mywebview.setWebViewClient(new myWebViewClient());
-			mywebview.setInitialScale((int) (this.get_datas().getZoomLevel()*mywebview.getScale()));
+			mywebview.setInitialScale((int) (this.getData().getZoomLevel()*mywebview.getScale()));
 
 		} catch (Exception e) {
 			new ErrorDialog(this, "Chargement de la page", e).show();
@@ -281,7 +281,7 @@ public class Page extends AsiActivity {
 							video_selected = videos.get(i);
 							video_selected.setNumber(i + 1);
 							video_selected.setTitle(page_title);
-							Page.this.get_datas().downloadvideo(video_selected);
+							Page.this.getData().downloadvideo(video_selected);
 						}
 					}
 				});
@@ -300,7 +300,7 @@ public class Page extends AsiActivity {
 				} else {
 					VideoUrl vid = new VideoUrl(url);
 					vid.setTitle(page_title);
-					Page.this.get_datas().downloadvideo(vid);
+					Page.this.getData().downloadvideo(vid);
 				}
 			}
 		});
@@ -334,7 +334,7 @@ public class Page extends AsiActivity {
 				Page.this.setPagedata(page_d.getContent());
 				Page.this.setVideo(page_d.getVideos());
 
-				Page.this.get_datas().addArticlesRead(args[0]);
+				Page.this.getData().addArticlesRead(args[0]);
 			} catch (Exception e) {
 				String error = e.getMessage();
 				return (error);

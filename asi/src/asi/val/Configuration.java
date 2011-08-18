@@ -91,15 +91,15 @@ public class Configuration extends AsiActivity {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(titre);
 		int posi = 0;
-		if(!this.get_datas().isAutologin())
+		if(!this.getData().isAutologin())
 			posi=1;
 		builder.setSingleChoiceItems(items, posi, new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int item) {
 		       // Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
 				if (items[item].equals("Oui")) {
-					Configuration.this.get_datas().setAutologin(true);
+					Configuration.this.getData().setAutologin(true);
 				} else {
-					Configuration.this.get_datas().setAutologin(false);
+					Configuration.this.getData().setAutologin(false);
 				}
 				dialog.dismiss();
 			}
@@ -113,15 +113,15 @@ public class Configuration extends AsiActivity {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(titre);
 		int posi = 0;
-		if(!this.get_datas().isDlSync())
+		if(!this.getData().isDlSync())
 			posi=1;
 		builder.setSingleChoiceItems(items, posi, new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int item) {
 		       // Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
 				if (items[item].equals("Parallèle")) {
-					Configuration.this.get_datas().setDlSync(true);
+					Configuration.this.getData().setDlSync(true);
 				} else {
-					Configuration.this.get_datas().setDlSync(false);
+					Configuration.this.getData().setDlSync(false);
 				}
 				dialog.dismiss();
 			}
@@ -138,7 +138,7 @@ public class Configuration extends AsiActivity {
 			int value = (i*10+80);
 			items[i] = value+" %";
 			zoomlevel[i]=value;
-			if(value==this.get_datas().getZoomLevel())
+			if(value==this.getData().getZoomLevel())
 				posi=i;
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -146,7 +146,7 @@ public class Configuration extends AsiActivity {
 		builder.setSingleChoiceItems(items, posi, new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int item) {
 		       // Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
-				Configuration.this.get_datas().setZoomLevel(zoomlevel[item]);
+				Configuration.this.getData().setZoomLevel(zoomlevel[item]);
 				dialog.dismiss();
 			}
 		});

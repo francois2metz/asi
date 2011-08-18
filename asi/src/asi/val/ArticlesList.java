@@ -115,7 +115,7 @@ public class ArticlesList extends AsiActivity {
 			map.put("date", articles.elementAt(i).getDate());
 			map.put("url", articles.elementAt(i).getUri());
 			map.put("color", articles.elementAt(i).getColor());
-			if (this.get_datas()
+			if (this.getData()
 					.containArticlesRead(articles.elementAt(i).getUri()))
 				map.put("griser", "enabled-true");
 			else
@@ -226,7 +226,7 @@ public class ArticlesList extends AsiActivity {
 
 	private void markAsRead(String url) {
 		try {
-			this.get_datas().addArticlesRead(url);
+			this.getData().addArticlesRead(url);
 			state = maListViewPerso.onSaveInstanceState();
 			this.loadData();
 			maListViewPerso.onRestoreInstanceState(state);
@@ -263,7 +263,7 @@ public class ArticlesList extends AsiActivity {
 		switch (item.getItemId()) {
 		case R.id.item4:
 			for(int i =0;i<articles.size();i++)
-				this.get_datas().addArticlesRead(articles.elementAt(i).getUri());
+				this.getData().addArticlesRead(articles.elementAt(i).getUri());
 			if(articles.size()>0)
 				this.markAsRead(articles.elementAt(0).getUri());
 			return true;
