@@ -83,36 +83,42 @@ public class Page extends AsiActivity {
 		// titre de la page
 		setPageTitle(this.getIntent().getExtras().getString("titre"));
 	}
-	
+
 	public void loadContent(){
-		String url = this.getIntent().getExtras().getString("url");
+		final String url = this.getIntent().getExtras().getString("url");
 		
 		String queryString = Article.URL_PARAM_NAME + "=" +
 		        Uri.encode(url);
 		Uri queryUri =
 		    Uri.parse(Article.ARTICLE_URI + "?" +
 		        queryString);
-		Cursor c = managedQuery(queryUri, null, null, null, null);
+		final Cursor c = managedQuery(queryUri, null, null, null, null);
 		c.registerContentObserver(new ContentObserver(null) {
 			@Override
 			public void onChange(boolean selfChange) {
-				Log.d("ASI", "cursor have changed, please refresh." + selfChange);
-				// TODO Auto-generated method stub
-				super.onChange(selfChange);
+				/**
+				 * FIXME: requery is deprecated, but we cannot recall the ArticleProvider
+				 * because an asynchronous request will be triggered to update the content
+				 */
+				c.requery();
+				renderCursor(c, url);
 			}
 		});
-		c.moveToFirst();
-		while (c.isAfterLast() == false) {
+		renderCursor(c, url);
+	}
+
+	private void renderCursor(Cursor c, String url) {
+		// probably a bug is getCount() return an integer > 1
+		if (c.getCount() > 0) {
+			c.moveToFirst();
 		    String content = c.getString(c.getColumnIndex(Article.CONTENT_NAME));
 		    this.setPagedata(this.getStyle() + content);
 			this.get_datas().addArticlesRead(url);
 		    this.loadPage();
-		    c.moveToNext();
 		}
-		c.close();
 	}
 	
-	public String getStyle() {
+	private String getStyle() {
 		StringBuffer sb2 = new StringBuffer("");
 		sb2.append("<style type=\"text/css\">");
 		sb2.append(new CssStyle().getCssData());
@@ -364,10 +370,6 @@ public class Page extends AsiActivity {
 
 	public void setVideo(ArrayList<VideoUrl> videos2) {
 		this.videos = videos2;
-	}
-
-	public String getPage_title() {
-		return page_title;
 	}
 
 	private class get_video_url extends AsyncTask<String, Void, String> {

@@ -89,7 +89,6 @@ public class ArticleProvider extends RESTfulContentProvider {
 		if (sUriMatcher.match(uri) != ARTICLE) {
 			throw new IllegalArgumentException("Unknown URI " + uri); }
 
-		Log.d("ArticleProvider", "insert new result "+ uri);
 		String url = values.get(Article.URL_NAME).toString();
 		String id = Uri.parse(url).getQueryParameter("id");
 		Log.d("ArticleProvider", "id "+ id);
@@ -97,7 +96,6 @@ public class ArticleProvider extends RESTfulContentProvider {
 
         long rowId = mDb.insert(ARTICLES_TABLE_NAME, null, values);
         if (rowId > 0) {
-        	Log.d("ArticleProvider", "rowId h"+ rowId);
             getContext().getContentResolver().notifyChange(uri, null);
             return uri;
         } else {
