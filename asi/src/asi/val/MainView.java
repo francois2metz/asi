@@ -44,7 +44,7 @@ public class MainView extends AsiActivity {
 		
 		free = this.getIntent().getExtras().getBoolean("free");
 		TextView text = (TextView) findViewById(R.id.list_text);
-		text.setText("Choix des catégories");
+		text.setText(R.string.select_categories);
 
 		ImageView v = (ImageView) findViewById(R.id.cat_image);
 		v.setImageResource(R.drawable.toutlesite);
