@@ -43,10 +43,6 @@ import android.widget.Toast;
 
 public class Main extends AsiActivity {
 
-	//private String Cookies;
-
-	//public static main group;
-
 	public static final String PREFERENCE = "asi_pref";
 
 	private EditText txt_username;
@@ -60,10 +56,10 @@ public class Main extends AsiActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
-		Log.d("ASI", "Main create");
-		// Récupération de la listview créée dans le fichier main.xml
-		txt_username = (EditText) findViewById(R.id.txt_username);
 
+		Log.d("ASI", "Main create");
+
+		txt_username = (EditText) findViewById(R.id.txt_username);
 		txt_password = (EditText) findViewById(R.id.txt_password);
 
 		// récupération des préférences
@@ -71,22 +67,16 @@ public class Main extends AsiActivity {
 		txt_username.setText(settings.getString("user", ""));
 		txt_password.setText(settings.getString("pass", ""));
 
-		this.button_load();
-
-		// On lie l'activity
-		//main.group = this;
+		this.buttonLoad();
 
 		// autologin activé
 		this.autologin = this.getData().isAutologin();
 
-		// on récupère l'ancien cookie
-		//Cookies = settings.getString("cookies", "");
-
-		// on teste la version de l'application, si mise à jour, alors ajout
+		// on teste la version de l'application, si mise à jour, alors ajou
 		// d'un message sur les nouveautés
 		int old_version = settings.getInt("old_version", 34);
 		if (old_version < 41) {
-			this.show_news_dialog();
+			this.showNewsDialog();
 			SharedPreferences.Editor editor = settings.edit();
 			editor.putInt("old_version", 41);
 			editor.commit();
@@ -94,7 +84,7 @@ public class Main extends AsiActivity {
 		}
 	}
 
-	private void show_news_dialog() {
+	private void showNewsDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Nouveautés");
 		builder.setMessage(R.string.news);
@@ -111,14 +101,13 @@ public class Main extends AsiActivity {
 		super.onStart();
 		// démarrage de l'autologin
 		if (!this.getData().getCookies().equals("phorum_session_v5=deleted") && this.autologin) {
-			//this.get_datas().setCookies(Cookies);
-			this.load_page(false);
+			this.loadPage(false);
 			Toast.makeText(this, txt_username.getText() + " connecté.",
 					Toast.LENGTH_SHORT).show();
 		}
 	}
 
-	private void connect_to_abonne() {
+	private void connectAsMember() {
 		try {
 			if (txt_username.getText().toString().equalsIgnoreCase(""))
 				throw new StopException("Login vide");
@@ -135,7 +124,7 @@ public class Main extends AsiActivity {
 					+ URLEncoder.encode(txt_password.getText().toString(),
 							"UTF-8"));
 			String donneeStr = donnees.toString();
-			new get_cookies_value().execute(donneeStr);
+			new GetCookiesValue().execute(donneeStr);
 		} catch (StopException e) {
 			new ErrorDialog(Main.this, "Connexion au site", e.toString())
 					.show();
@@ -144,20 +133,19 @@ public class Main extends AsiActivity {
 		}
 	}
 
-	protected void save_login_password(String cookies) {
+	protected void saveLoginPassword(String cookies) {
 		// on sauve les préférences car le login/pass ok
 		SharedPreferences settings = getSharedPreferences(PREFERENCE, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString("user", txt_username.getText().toString());
 		editor.putString("pass", txt_password.getText().toString());
 		editor.putString("cookies", cookies);
-		//this.autologin = true;
 		// Commit the edits!
 		editor.commit();
 		this.getData().setCookies(cookies);
 	}
 
-	private class get_cookies_value extends AsyncTask<String, Void, String> {
+	private class GetCookiesValue extends AsyncTask<String, Void, String> {
 		private final ProgressDialog dialog = new ProgressDialog(Main.this,
 				this);
 
@@ -208,9 +196,6 @@ public class Main extends AsiActivity {
 							if (value.equalsIgnoreCase("deleted"))
 								throw new StopException(
 										"Login / mot de passe incorrect");
-							// else
-							// throw new
-							// StopException("Login / mot de passe ok");
 						}
 
 					}
@@ -251,21 +236,20 @@ public class Main extends AsiActivity {
 			}
 			if (mess.matches(".*phorum_session_v5.*")) {
 				//main.this.setCookies(mess);
-				Main.this.save_login_password(mess);
-				Main.this.load_page(false);
+				Main.this.saveLoginPassword(mess);
+				Main.this.loadPage(false);
 			} else {
 				new ErrorDialog(Main.this, "Connexion au site", mess).show();
 			}
 		}
 	};
 
-	private void connect_to_gratuit() {
-		//this.setCookies("phorum_session_v5=deleted");
+	private void connectToFreeVersion() {
 		this.getData().setCookies("phorum_session_v5=deleted");
-		this.load_page(true);
+		this.loadPage(true);
 	}
 
-	private void load_page(boolean gratuit) {
+	private void loadPage(boolean gratuit) {
 		try {
 			Intent i = new Intent(this, MainView.class);
 			i.putExtra("gratuit", gratuit);
@@ -279,12 +263,12 @@ public class Main extends AsiActivity {
 		// new page(main.this);
 	}
 
-	private void button_load() {
+	private void buttonLoad() {
 		Button button_login = (Button) findViewById(R.id.login_button);
 		// this is the action listener
 		button_login.setOnClickListener(new OnClickListener() {
 			public void onClick(View viewParam) {
-				Main.this.connect_to_abonne();
+				Main.this.connectAsMember();
 			}
 		}); // end of launch.setOnclickListener
 
@@ -292,7 +276,7 @@ public class Main extends AsiActivity {
 
 		button_gratuit.setOnClickListener(new OnClickListener() {
 			public void onClick(View viewParam) {
-				Main.this.connect_to_gratuit();
+				Main.this.connectToFreeVersion();
 			}
 		});
 
@@ -309,7 +293,6 @@ public class Main extends AsiActivity {
 		});
 	}
 
-	// public void onBackPressed(){
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 			// do something on back.
@@ -326,9 +309,5 @@ public class Main extends AsiActivity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.layout.info_menu, menu);
 		return true;
-	}
-
-	public void is_autologin(boolean b) {
-		this.autologin = b;
 	}
 }
