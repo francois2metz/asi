@@ -47,14 +47,15 @@ public abstract class RESTfulContentProvider extends ContentProvider {
      */
     protected abstract ResponseHandler newResponseHandler(String requestTag);
     
-    UriRequestTask newQueryTask(String requestTag, String url) {
+    UriRequestTask newQueryTask(String requestTag, String url, ResponseHandler handler) {
         UriRequestTask requestTask;
 
         final HttpGet get = new HttpGet(url);
         // XXX: a beautiful hack to add cookies support
 		String cookies = SharedData.shared.getCookies();
 		get.addHeader("cookie", cookies);
-        ResponseHandler handler = newResponseHandler(requestTag);
+		if (handler == null)
+			handler = newResponseHandler(requestTag);
         requestTask = new UriRequestTask(requestTag, this, get,
                 handler, getContext());
 
@@ -69,11 +70,11 @@ public abstract class RESTfulContentProvider extends ContentProvider {
      *
      * @param queryUri the complete URI that should be access by this request.
      */
-    public void asyncQueryRequest(String queryTag, String queryUri) {
+    public void asyncQueryRequest(String queryTag, String queryUri, ResponseHandler handler) {
         synchronized (mRequestsInProgress) {
             UriRequestTask requestTask = getRequestTask(queryTag);
             if (requestTask == null) {
-                requestTask = newQueryTask(queryTag, queryUri);
+                requestTask = newQueryTask(queryTag, queryUri, handler);
                 Thread t = new Thread(requestTask);
                 // allows other requests to run in parallel.
                 t.start();

@@ -156,8 +156,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 		String articleUrl = getArticleUrl(Integer.parseInt(articleId));
 
 		// Part 1: get the cached version on the database
-		String select = Article.URL_NAME+
-		        " = '" +  articleUrl + "'";
+		String select = Article.URL_NAME +" = '" +  articleUrl + "'";
 
 		Log.d("ArticleProvider", "url "+ articleUrl);
 
@@ -173,12 +172,12 @@ public class ArticleProvider extends RESTfulContentProvider {
 		queryCursor.setNotificationUri(
 		        getContext().getContentResolver(), uri);
 		// Part 2: get the latest version
-		asyncQueryRequest("article", articleUrl);
+		asyncQueryRequest("article_"+ articleId, articleUrl, this.createArticleResponseHandler());
 		return queryCursor;
 	}
 
 	private Cursor queryArticlesByCategory(Uri uri, String sortOrder) {
-		String catId = uri.getPathSegments().get(1);
+		long catId = Integer.parseInt(uri.getPathSegments().get(1));
 		String select2 = "SELECT a."+ BaseColumns._ID +", a."+
 		        		Article.TITLE_NAME +", a."+
 		        		Article.DESCRIPTION_NAME +", a."+
@@ -187,15 +186,19 @@ public class ArticleProvider extends RESTfulContentProvider {
 		        		Article.URL_NAME + ", a."+
 		        		Article.READ_NAME +
 		        		" FROM " + ARTICLES_TABLE_NAME + " as a JOIN "+
-		         CATEGORIES_ARTICLES_TABLE_NAME + " as c ON c.article = a._id WHERE c.category=?";
+		         CATEGORIES_ARTICLES_TABLE_NAME + " as c ON c.article = a._id WHERE c.category="+catId;
 		if (sortOrder != null)
 			select2 += " ORDER BY a."+ sortOrder;
-		Cursor queryCursor = mDb.rawQuery(select2, new String[] { catId });
+		Cursor queryCursor = mDb.rawQuery(select2, null);
 		// make the cursor observe the requested query
 		queryCursor.setNotificationUri(
 		        getContext().getContentResolver(), uri);
 		// Part 2: get the latest version
-		asyncQueryRequest(catId, getCategoryUrl(Integer.parseInt(catId)));
+		Cursor c = getCategory(catId);
+		String defaultColor = c.getString(c.getColumnIndex(Category.COLOR_NAME));
+		String url = c.getString(c.getColumnIndex(Category.URL_NAME));
+		c.close();
+		asyncQueryRequest("category_"+ catId, url, this.createRssResponseHandler(catId, defaultColor));
 		return queryCursor;
 	}
 
@@ -217,6 +220,8 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+		if (sUriMatcher.match(uri) != ARTICLE) {
+			throw new IllegalArgumentException("Unknown URI " + uri); }
 		String articleId = uri.getPathSegments().get(1);
 		return mDb.update(ARTICLES_TABLE_NAME, values, BaseColumns._ID +" = "+ articleId, null);
 	}
@@ -240,13 +245,11 @@ public class ArticleProvider extends RESTfulContentProvider {
 	/**
 	 * Return the URL of the category
 	 */
-	protected String getCategoryUrl(int id) {
+	protected Cursor getCategory(long id) {
 		String where = BaseColumns._ID +" = "+ id;
 		Cursor c = mDb.query(CATEGORIES_TABLE_NAME, null, where, null, null, null, null);
 		c.moveToFirst();
-		String url = c.getString(c.getColumnIndex(Category.URL_NAME));
-		c.close();
-		return url;
+		return c;
 	}
 	
 	/**
@@ -363,11 +366,15 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	@Override
 	protected ResponseHandler newResponseHandler(String queryTag) {
-		if ("article".equals(queryTag)) {
-			return new ArticleHandler(this);
-		} else {
-			return new RssHandler(this, queryTag);
-		}
+		return null;
+	}
+	
+	protected ResponseHandler createArticleResponseHandler() {
+		return new ArticleHandler(this);
+	}
+	
+	protected ResponseHandler createRssResponseHandler(long catId, String defaultColor) {
+		return new RssHandler(this, catId, defaultColor);
 	}
 	
 	class RssHandler implements ResponseHandler {
@@ -375,9 +382,12 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 		private long catId;
 		
-		public RssHandler(RESTfulContentProvider restfulProvider, String queryTag) {
+		private String defaultColor;
+		
+		public RssHandler(RESTfulContentProvider restfulProvider, long catId, String defaultColor) {
 			this.provider = (ArticleProvider) restfulProvider;
-			this.catId = Integer.parseInt(queryTag);
+			this.catId = catId;
+			this.defaultColor = defaultColor;
 		}
 
 		public void handleResponse(HttpResponse response, Uri uri)
@@ -412,7 +422,10 @@ public class ArticleProvider extends RESTfulContentProvider {
 						value.put(Article.TITLE_NAME, arti.getFirstChild().getNodeValue());
 					if (arti.getNodeName().equalsIgnoreCase("description")) {
 						value.put(Article.DESCRIPTION_NAME, Article.parseDescription(arti.getFirstChild().getNodeValue()));
-						value.put(Article.COLOR_NAME, Article.determinedColor(arti.getFirstChild().getNodeValue()));
+						String color = Article.parseColor(arti.getFirstChild().getNodeValue());
+						if (color == null)
+							color = this.defaultColor;
+						value.put(Article.COLOR_NAME, color);
 					}
 					if (arti.getNodeName().equalsIgnoreCase("link"))
 						value.put(Article.URL_NAME, arti.getFirstChild().getNodeValue());

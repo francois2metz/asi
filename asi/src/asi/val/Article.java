@@ -113,7 +113,6 @@ public class Article {
 		des = des.replaceAll("\n", "");
 		String[] parse = des.split("<br />");
 		if(parse.length > 1) {
-			//this.determined_color(parse[0]);
 			des = parse[1];
 		}
 		int fin = des.length();
@@ -126,7 +125,6 @@ public class Article {
 	}
 	
 	public static String parseColor(String des) {
-		des = des.replaceAll("\n", "");
 		String[] parse = des.split("<br />");
 		if(parse.length > 1) {
 			return determinedColor(parse[0]);
@@ -150,7 +148,7 @@ public class Article {
 		this.description = des;
 	}
 	
-	public static String determinedColor(String title) {
+	protected static String determinedColor(String title) {
 		if(title.contains("Vite dit"))
 			return "#FEC763";
 		else if(title.contains("chronique"))
