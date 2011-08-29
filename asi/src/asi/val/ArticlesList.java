@@ -179,6 +179,8 @@ public class ArticlesList extends AsiActivity {
 					ArticlesList.this.share(url, title);
 				} else {
 					ArticlesList.this.markAsRead(id);
+					// refresh the cursor to set the current background as gray
+					getCurrentCursor().requery();
 				}
 			}
 		});
@@ -221,8 +223,7 @@ public class ArticlesList extends AsiActivity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.item4:
-			SimpleCursorAdapter adapter = (SimpleCursorAdapter) maListViewPerso.getAdapter();
-			Cursor c = adapter.getCursor();
+			Cursor c = getCurrentCursor();
 			c.moveToFirst();
 			for(int i = 0; i < c.getCount(); i++) {
 				c.moveToPosition(i);
@@ -241,5 +242,14 @@ public class ArticlesList extends AsiActivity {
 		ContentValues values = new ContentValues();
 		values.put(Article.READ_NAME, 1);
 	    getContentResolver().update(uri, values, null, null);
+	}
+
+	/**
+	 * Return the current cursor associated to the listview
+	 * @return Cursor
+	 */
+	protected Cursor getCurrentCursor() {
+		SimpleCursorAdapter adapter = (SimpleCursorAdapter) maListViewPerso.getAdapter();
+		return adapter.getCursor();
 	}
 }
