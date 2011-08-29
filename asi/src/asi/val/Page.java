@@ -27,6 +27,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -193,18 +194,20 @@ public class Page extends AsiActivity {
 						intent.setAction(android.content.Intent.ACTION_VIEW);
 						intent.setDataAndType(Uri.parse(url), "audio/*");
 						startActivity(intent);
-					} else if (url
-							.matches(".*arretsurimages\\.net\\/contenu.*")) {
-						Log.d("ASI", "Chargement arrêt sur image");
+					} else if (url.matches(".*arretsurimages\\.net\\/contenu.*")
+							   || url.matches(".*arretsurimages\\.net\\/vite.*")) {
+						Log.d("ASI", "Chargement arrêt sur images "+ url);
+						/**
+						 * The page class can only load article with an id
+						 * So we insert the article with only the url field
+						 * The content provider return the id
+						 */
+						ContentValues values = new ContentValues();
+						values.put(Article.URL_NAME, url);
+						getContentResolver().insert(Article.createUriFor(url), values);
 						Intent i = new Intent(getApplicationContext(),
 								Page.class);
-						i.putExtra("url", url);
-						Page.this.startActivity(i);
-					} else if (url.matches(".*arretsurimages\\.net\\/vite.*")) {
-						Log.d("ASI", "Chargement arrêt sur image");
-						Intent i = new Intent(getApplicationContext(),
-								Page.class);
-						i.putExtra("url", url);
+						i.putExtra("id", values.getAsLong(BaseColumns._ID));
 						Page.this.startActivity(i);
 					} else if (url
 							.matches(".*arretsurimages\\.net\\/dossier.*")) {
