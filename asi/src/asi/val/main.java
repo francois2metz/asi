@@ -41,7 +41,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class Main extends AsiActivity {
+public class main extends AsiActivity {
 
 	public static final String PREFERENCE = "asi_pref";
 
@@ -126,10 +126,10 @@ public class Main extends AsiActivity {
 			String donneeStr = donnees.toString();
 			new GetCookiesValue().execute(donneeStr);
 		} catch (StopException e) {
-			new ErrorDialog(Main.this, "Connexion au site", e.toString())
+			new ErrorDialog(main.this, "Connexion au site", e.toString())
 					.show();
 		} catch (Exception e) {
-			new ErrorDialog(Main.this, "Connexion au site", e).show();
+			new ErrorDialog(main.this, "Connexion au site", e).show();
 		}
 	}
 
@@ -146,7 +146,7 @@ public class Main extends AsiActivity {
 	}
 
 	private class GetCookiesValue extends AsyncTask<String, Void, String> {
-		private final ProgressDialog dialog = new ProgressDialog(Main.this,
+		private final ProgressDialog dialog = new ProgressDialog(main.this,
 				this);
 
 		private BufferedReader in;
@@ -236,10 +236,10 @@ public class Main extends AsiActivity {
 			}
 			if (mess.matches(".*phorum_session_v5.*")) {
 				//main.this.setCookies(mess);
-				Main.this.saveLoginPassword(mess);
-				Main.this.loadPage(false);
+				main.this.saveLoginPassword(mess);
+				main.this.loadPage(false);
 			} else {
-				new ErrorDialog(Main.this, "Connexion au site", mess).show();
+				new ErrorDialog(main.this, "Connexion au site", mess).show();
 			}
 		}
 	};
@@ -258,7 +258,7 @@ public class Main extends AsiActivity {
 				this.finish();
 
 		} catch (Exception e) {
-			new ErrorDialog(Main.this, "Chargement des catégories", e).show();
+			new ErrorDialog(main.this, "Chargement des catégories", e).show();
 		}
 		// new page(main.this);
 	}
@@ -268,7 +268,7 @@ public class Main extends AsiActivity {
 		// this is the action listener
 		button_login.setOnClickListener(new OnClickListener() {
 			public void onClick(View viewParam) {
-				Main.this.connectAsMember();
+				main.this.connectAsMember();
 			}
 		}); // end of launch.setOnclickListener
 
@@ -276,7 +276,7 @@ public class Main extends AsiActivity {
 
 		button_gratuit.setOnClickListener(new OnClickListener() {
 			public void onClick(View viewParam) {
-				Main.this.connectToFreeVersion();
+				main.this.connectToFreeVersion();
 			}
 		});
 

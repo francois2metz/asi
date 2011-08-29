@@ -3,7 +3,7 @@
       package="asi.val"
       android:installLocation="auto" android:versionName="1.4.2" android:versionCode="41">
     <application android:label="@string/app_name" android:icon="@drawable/asi" android:theme="@android:style/Theme.Light">
-        <activity android:name=".Main"
+        <activity android:name=".main"
                   android:label="@string/app_name" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +21,7 @@
 <activity android:name=".AsiActivity"></activity>
 <activity android:name=".VideoViewSD"></activity>
 <activity android:name=".ArticlesListSearch"></activity>
-<receiver android:label="@string/widget_name" android:name=".WidgetReceiver" android:icon="@drawable/asi">
+<receiver android:label="@string/widget_name" android:name=".widget_receiver" android:icon="@drawable/asi">
     <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
     <action android:name="asi.val.action.SHOW_CURRENT"></action>

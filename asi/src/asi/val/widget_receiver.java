@@ -17,7 +17,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-public class WidgetReceiver extends AppWidgetProvider {
+public class widget_receiver extends AppWidgetProvider {
 
 	public static final String PREFERENCE = "asi_pref";
 
@@ -102,7 +102,7 @@ public class WidgetReceiver extends AppWidgetProvider {
 	private void defined_intent(Context context, RemoteViews views,
 			int[] appWidgetIds) {
 		// Create an Intent to launch asi main
-		Intent intent = new Intent(context, Main.class);
+		Intent intent = new Intent(context, main.class);
 		intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		intent.setAction(Intent.ACTION_MAIN);
 		intent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
@@ -125,7 +125,7 @@ public class WidgetReceiver extends AppWidgetProvider {
 		views.setOnClickPendingIntent(R.id.widget_emi, pendingIntent);
 
 		// update du widget
-		intent = new Intent(context, WidgetReceiver.class);
+		intent = new Intent(context, widget_receiver.class);
 		// intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 		// intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
 		intent.setAction(UPDATE_WIDGET);
@@ -136,19 +136,19 @@ public class WidgetReceiver extends AppWidgetProvider {
 		views.setOnClickPendingIntent(R.id.widget_chro, pendingIntent);
 
 		// Check de l'article en cours
-		intent = new Intent(context, WidgetReceiver.class);
+		intent = new Intent(context, widget_receiver.class);
 		intent.setAction(CHECK_CURRENT);
 		pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		views.setOnClickPendingIntent(R.id.widget_vite, pendingIntent);
 
-		intent = new Intent(context, WidgetReceiver.class);
+		intent = new Intent(context, widget_receiver.class);
 		intent.setAction(SHOW_CURRENT);
 		pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		views.setOnClickPendingIntent(R.id.widget_mes, pendingIntent);
 
-		intent = new Intent(context, WidgetReceiver.class);
+		intent = new Intent(context, widget_receiver.class);
 		intent.setAction(SHOW_NEXT);
 		pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
@@ -209,7 +209,7 @@ public class WidgetReceiver extends AppWidgetProvider {
 			views.setViewVisibility(R.id.widget_check, View.VISIBLE);
 
 			ComponentName thisWidget = new ComponentName(context,
-					WidgetReceiver.class);
+					widget_receiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
 			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
@@ -230,7 +230,7 @@ public class WidgetReceiver extends AppWidgetProvider {
 			this.defined_article(views, context,c, posi);
 			c.close();
 			ComponentName thisWidget = new ComponentName(context,
-					WidgetReceiver.class);
+					widget_receiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
 			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
@@ -254,7 +254,7 @@ public class WidgetReceiver extends AppWidgetProvider {
 			this.defined_article(views, context, c, posi);
 			c.close();
 			ComponentName thisWidget = new ComponentName(context,
-					WidgetReceiver.class);
+					widget_receiver.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
 			// On redéfinit les actions sur les éléments du widget
 			this.defined_intent(context, views,
