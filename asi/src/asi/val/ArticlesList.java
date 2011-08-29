@@ -190,7 +190,7 @@ public class ArticlesList extends AsiActivity {
 		try {
 			Intent emailIntent = new Intent(Intent.ACTION_SEND);
 			emailIntent.putExtra(Intent.EXTRA_TEXT,
-					"Un article interessant sur le site arretsurimage.net :\n"
+					"Un article intéressant sur le site arretsurimages.net :\n"
 							+ title + "\n" + url);
 			emailIntent.setType("text/plain");
 			startActivity(Intent.createChooser(emailIntent,
