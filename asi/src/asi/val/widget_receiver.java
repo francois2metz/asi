@@ -198,7 +198,7 @@ public class widget_receiver extends AppWidgetProvider {
 			if (posi < c.getCount()) {
 				c.moveToPosition(posi);
 				intent.putExtra("id", c.getLong(c.getColumnIndex(BaseColumns._ID)));
-				intent.putExtra("titre", c.getString(c.getColumnIndex(Article.TITLE_NAME)));
+				intent.putExtra("title", c.getString(c.getColumnIndex(Article.TITLE_NAME)));
 				context.startActivity(intent);
 			}
 			RemoteViews views = new RemoteViews(context.getPackageName(),

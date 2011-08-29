@@ -186,12 +186,12 @@ public class ArticlesList extends AsiActivity {
 		alert.show();
 	}
 
-	private void share(String url, String titre) {
+	private void share(String url, String title) {
 		try {
 			Intent emailIntent = new Intent(Intent.ACTION_SEND);
 			emailIntent.putExtra(Intent.EXTRA_TEXT,
 					"Un article interessant sur le site arretsurimage.net :\n"
-							+ titre + "\n" + url);
+							+ title + "\n" + url);
 			emailIntent.setType("text/plain");
 			startActivity(Intent.createChooser(emailIntent,
 					"Partager cet article"));
@@ -200,11 +200,11 @@ public class ArticlesList extends AsiActivity {
 		}
 	}
 
-	private void loadPage(long id, String titre) {
+	private void loadPage(long id, String title) {
 		try {
 			Intent i = new Intent(this, Page.class);
 			i.putExtra("id", id);
-			i.putExtra("titre", titre);
+			i.putExtra("title", title);
 			this.startActivity(i);
 		} catch (Exception e) {
 			new ErrorDialog(this, "Chargement de la page", e).show();

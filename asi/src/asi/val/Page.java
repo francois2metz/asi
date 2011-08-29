@@ -59,7 +59,7 @@ public class Page extends AsiActivity {
 		else
 			this.loadContent();
 		// titre de la page
-		setPageTitle(this.getIntent().getExtras().getString("titre"));
+		setPageTitle(this.getIntent().getExtras().getString("title"));
 	}
 
 	public void onSaveInstanceState(final Bundle b) {
@@ -83,7 +83,7 @@ public class Page extends AsiActivity {
 			this.loadContent();
 		}
 		// titre de la page
-		setPageTitle(this.getIntent().getExtras().getString("titre"));
+		setPageTitle(this.getIntent().getExtras().getString("title"));
 	}
 
 	public void loadContent(){
