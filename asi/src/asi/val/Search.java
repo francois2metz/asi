@@ -2,8 +2,9 @@ package asi.val;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
+import asi.val.provider.ArticleProvider;
 
-class Search implements BaseColumns {
+public class Search implements BaseColumns {
 	/**
 	 * Search articles
 	 */

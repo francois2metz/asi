@@ -16,6 +16,7 @@
 package asi.val;
 
 import android.net.Uri;
+import asi.val.provider.ArticleProvider;
 
 public class Category {
 

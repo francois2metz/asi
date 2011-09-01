@@ -22,6 +22,7 @@ import java.util.Locale;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.util.Log;
+import asi.val.provider.ArticleProvider;
 
 public class Article {
 

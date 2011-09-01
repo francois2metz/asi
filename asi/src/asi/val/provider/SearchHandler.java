@@ -17,7 +17,6 @@ import android.content.ContentValues;
 import android.net.Uri;
 import android.util.Log;
 import asi.val.Article;
-import asi.val.ArticleProvider;
 import asi.val.HTMLEntities;
 import asi.val.StopException;
 
