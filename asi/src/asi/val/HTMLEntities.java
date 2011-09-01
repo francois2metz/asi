@@ -273,11 +273,13 @@ public class HTMLEntities {
 	/**
 	 * Map to convert extended characters in html entities.
 	 */
+	@SuppressWarnings("rawtypes")
 	private final Hashtable htmlentities_map = new Hashtable();
 	
 	/**
 	 * Map to convert html entities in exteden characters.
 	 */
+	@SuppressWarnings("rawtypes")
 	private final Hashtable unhtmlentities_map = new Hashtable();
 	
 	//==============================================================================
@@ -294,6 +296,7 @@ public class HTMLEntities {
 	/**
 	 * Initialize HTML entities table.
 	 */
+	@SuppressWarnings("unchecked")
 	private void initializeEntitiesTables() {
 		// initialize html translation maps
 		for (int i = 0; i < html_entities_table.length; ++i) {
