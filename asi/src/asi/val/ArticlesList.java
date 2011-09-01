@@ -58,7 +58,7 @@ public class ArticlesList extends AsiActivity {
 		// Récupération de la listview créée dans le fichier main.xml
 		maListViewPerso = (ListView) findViewById(R.id.listview);
 
-		int catId = this.getIntent().getExtras().getInt("id");
+		long catId = this.getIntent().getExtras().getLong("id");
 		
 		// get the category
 		Uri catUri = ContentUris.withAppendedId(Category.CATEGORIES_URI, catId);
@@ -111,7 +111,7 @@ public class ArticlesList extends AsiActivity {
 	}
 
 	public void loadContent() {
-		int catId = this.getIntent().getExtras().getInt("id");
+		long catId = this.getIntent().getExtras().getLong("id");
 		Cursor c = managedQuery(ContentUris.withAppendedId(Article.ARTICLES_URI, catId), null, null, null, Article.DATE_NAME +" DESC");
 		// create adapter
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.listview, c, 

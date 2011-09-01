@@ -84,8 +84,8 @@ public class MainView extends AsiActivity {
 				String title = c.getString(c.getColumnIndex(Category.TITLE_NAME));
 				String color = c.getString(c.getColumnIndex(Category.COLOR_NAME));
 				String url = c.getString(c.getColumnIndex(Category.URL_NAME));
-				int id = c.getInt(c.getColumnIndex(BaseColumns._ID));
-				
+				long id = c.getLong(c.getColumnIndex(BaseColumns._ID));
+
 				if("recherche".equalsIgnoreCase(url)) {
 					String image = c.getString(c.getColumnIndex(Category.IMAGE_NAME));
 					doSearch(title, color, image);
@@ -107,7 +107,7 @@ public class MainView extends AsiActivity {
 		new SearchDialog(this, titre, color,image).show();	
 	}
 
-	private void loadPage(int idCat) {
+	private void loadPage(long idCat) {
 		Intent i = new Intent(this, ArticlesList.class);
 		i.putExtra("id", idCat);
 		this.startActivity(i);
@@ -141,7 +141,7 @@ public class MainView extends AsiActivity {
 		builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				subcategories.moveToPosition(item);
-				int id = subcategories.getInt(subcategories.getColumnIndex(BaseColumns._ID));
+				long id = subcategories.getLong(subcategories.getColumnIndex(BaseColumns._ID));
 				subcategories.close();
 				MainView.this.loadPage(id);
 			}
