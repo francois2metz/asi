@@ -3,6 +3,8 @@
 	<string name="app_name">arretsurimages.net</string>
 	<string name="widget_name">arretsurimages.net</string>
 	<string name="select_categories">Choix des catégories</string>
+	<string name="search">Recherche</string>
+	<string name="search_launch">Lancer</string>
 	<color name="color_text">#47637f</color>
 	<color name="color_fond">#ACB7C6</color>
 	<color name="color_white">#FFFFFF</color>

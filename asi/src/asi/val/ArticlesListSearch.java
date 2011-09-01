@@ -1,72 +1,17 @@
 package asi.val;
 
-import java.util.Vector;
-
-import android.os.AsyncTask;
-import android.os.Bundle;
+import android.database.Cursor;
+import android.net.Uri;
 import android.util.Log;
+
 public class ArticlesListSearch extends ArticlesList {
-
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	/**
+	 * Return the cursor for the current search
+	 */
+	@Override
+	protected Cursor createCursor() {
+		Uri uri = Uri.parse(this.getIntent().getExtras().getString("uri"));
+		Log.d("ASI", "search with "+ uri);
+		return managedQuery(uri, null, null, null, null);
 	}
-
-	public void loadContent() {
-
-		// État de la liste view
-		state = null;
-
-		// récuperation des articles via l'URL
-		String url = this.getIntent().getExtras().getString("url");
-		new SearchUrl().execute(url);
-	}
-
-	protected void onSearchItem(String url) {
-		// à faire uniquement dans les recherches
-		new SearchUrl().execute(url);
-	}
-
-	private class SearchUrl extends AsyncTask<String, Void, String> {
-		private final ProgressDialog dialog = new ProgressDialog(
-				ArticlesListSearch.this, this);
-
-		// can use UI thread here
-		protected void onPreExecute() {
-			this.dialog.setMessage("Chargement...");
-			this.dialog.show();
-		}
-
-		// automatically done on worker thread (separate from UI thread)
-		protected String doInBackground(String... args) {
-			// List<String> names =
-			// Main.this.application.getDataHelper().selectAll();
-			try {
-				SearchPage re = new SearchPage(args[0]);
-				//ArticlesListSearch.this.setArticles(re.getArticles());
-			} catch (Exception e) {
-				String error = e.toString() + "\n" + e.getStackTrace()[0]
-						+ "\n" + e.getStackTrace()[1];
-				return (error);
-			}
-			return null;
-		}
-
-		protected void onPostExecute(String error) {
-			if (this.dialog.isShowing()) {
-				try {
-					this.dialog.dismiss();
-				} catch (Exception e) {
-					Log.e("ASI", "Erreur d'arrêt de la boîte de dialogue");
-				}
-			}
-			if (error == null)
-				ArticlesListSearch.this.loadContent();
-			else {
-				//new erreur_dialog(liste_articles_recherche.this,"Chargement des articles", error).show();
-				ArticlesListSearch.this.onLoadError(error);
-			}
-			// Main.this.output.setText(result);
-		}
-	}
-
 }

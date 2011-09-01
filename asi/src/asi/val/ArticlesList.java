@@ -110,9 +110,13 @@ public class ArticlesList extends AsiActivity {
 		}
 	}
 
-	public void loadContent() {
+	protected Cursor createCursor() {
 		long catId = this.getIntent().getExtras().getLong("id");
-		Cursor c = managedQuery(ContentUris.withAppendedId(Article.ARTICLES_URI, catId), null, null, null, Article.DATE_NAME +" DESC");
+		return managedQuery(ContentUris.withAppendedId(Article.ARTICLES_URI, catId), null, null, null, Article.DATE_NAME +" DESC");
+	}
+
+	public void loadContent() {
+		Cursor c = createCursor();
 		// create adapter
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.listview, c, 
 				new String[] { Article.COLOR_NAME, Article.TITLE_NAME, 

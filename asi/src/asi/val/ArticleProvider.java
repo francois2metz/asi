@@ -50,6 +50,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
+import asi.val.provider.SearchHandler;
 
 /**
  * ContentProvider for Articles and categories
@@ -63,7 +64,11 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	private static final String CATEGORIES_TABLE_NAME = "categories";
 
-	private static final String CATEGORIES_ARTICLES_TABLE_NAME = "articles_categories";
+	private static final String CATEGORIES_ARTICLES_TABLE_NAME = "categories_articles";
+
+	private static final String SEARCH_TABLE_NAME = "search";
+
+	private static final String SEARCH_ARTICLES_TABLE_NAME = "search_articles";
 
 	private static final int ARTICLE = 1;
 
@@ -73,7 +78,9 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	private static final int CATEGORY_ID = 4;
 
-	static int DATABASE_VERSION = 18;
+	private static final int SEARCH = 5;
+
+	static int DATABASE_VERSION = 20;
 
 	private static final UriMatcher sUriMatcher;
 
@@ -86,6 +93,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 		sUriMatcher.addURI(AUTHORITY, "articles/#", ARTICLES_BY_CATEGORY);
 		sUriMatcher.addURI(AUTHORITY, "categories", CATEGORIES);
 		sUriMatcher.addURI(AUTHORITY, "categories/#", CATEGORY_ID);
+		sUriMatcher.addURI(AUTHORITY, "search", SEARCH);
 	}
 
 	@Override
@@ -117,7 +125,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 		if (rowId == -1) {
 			rowId = mDb.insert(ARTICLES_TABLE_NAME, null, values);
 		} else {
-			mDb.update(ARTICLES_TABLE_NAME, values, Article.URL_NAME +" = ?", 
+			mDb.update(ARTICLES_TABLE_NAME, values, Article.URL_NAME +" = ?",
      			   new String[] { values.getAsString(Article.URL_NAME) });
 		}
 		// put the id for later usage
@@ -145,6 +153,9 @@ public class ArticleProvider extends RESTfulContentProvider {
 	        case ARTICLE:
 	        	queryCursor = queryArticle(uri, projection, whereArgs, sortOrder);
 	            break;
+	        case SEARCH:
+				queryCursor = querySearch(uri, projection, where, whereArgs, sortOrder);
+				break;
 	        default:
 	            throw new IllegalArgumentException("unsupported uri: " + uri);
 	    }
@@ -180,7 +191,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 
 	private Cursor queryArticlesByCategory(Uri uri, String where, String sortOrder) {
 		long catId = Integer.parseInt(uri.getPathSegments().get(1));
-		String select2 = "SELECT a."+ BaseColumns._ID +", a."+
+		String select = "SELECT a."+ BaseColumns._ID +", a."+
 		        		Article.TITLE_NAME +", a."+
 		        		Article.DESCRIPTION_NAME +", a."+
 		        		Article.DATE_NAME + ", a."+
@@ -190,11 +201,11 @@ public class ArticleProvider extends RESTfulContentProvider {
 		        		" FROM " + ARTICLES_TABLE_NAME + " as a JOIN "+
 		         CATEGORIES_ARTICLES_TABLE_NAME + " as c ON c.article = a._id WHERE c.category="+catId;
 		if (where != null) {
-			select2 += " and a."+ where;
+			select += " and a."+ where;
 		}
 		if (sortOrder != null)
-			select2 += " ORDER BY a."+ sortOrder;
-		Cursor queryCursor = mDb.rawQuery(select2, null);
+			select += " ORDER BY a."+ sortOrder;
+		Cursor queryCursor = mDb.rawQuery(select, null);
 		// make the cursor observe the requested query
 		queryCursor.setNotificationUri(
 		        getContext().getContentResolver(), uri);
@@ -227,6 +238,44 @@ public class ArticleProvider extends RESTfulContentProvider {
 		        null, sortOrder);
 	}
 
+	/**
+	 * Do search
+	 */
+	private Cursor querySearch(Uri uri, String[] projection, String where,
+			String[] whereArgs, String sortOrder) {
+		long searchId = insertSearch(uri);
+		String select = "SELECT a."+ BaseColumns._ID +", a."+
+				Article.TITLE_NAME +", a."+
+				Article.DESCRIPTION_NAME +", a."+
+				Article.DATE_NAME + ", a."+
+				Article.COLOR_NAME + ", a."+
+				Article.URL_NAME + ", a."+
+				Article.READ_NAME +
+		" FROM " + ARTICLES_TABLE_NAME + " as a JOIN "+
+         SEARCH_ARTICLES_TABLE_NAME + " as c ON c.article = a._id WHERE c.search="+searchId;
+
+		if (where != null) {
+			select += " and a."+ where;
+		}
+		if (sortOrder != null)
+			select += " ORDER BY a."+ sortOrder;
+		Cursor queryCursor = mDb.rawQuery(select, null);
+		// make the cursor observe the requested query
+		queryCursor.setNotificationUri(
+		        getContext().getContentResolver(), uri);
+		// Part 2: get the latest version
+		asyncQueryRequest("search_"+ uri, getSearchUrl(uri), this.createSearchResponseHandler(uri, searchId));
+		return queryCursor;
+	}
+
+	/**
+	 * Create the search URL
+	 */
+	private String getSearchUrl(Uri uri) {
+		return "http://www.arretsurimages.net/recherche.php?" + uri.getQuery() +
+				"t=0&periode=0&jour1=00&mois1=00&annee1=0&jour2=00&mois2=00&annee2=0&orderby=num";
+	}
+
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		if (sUriMatcher.match(uri) != ARTICLE) {
@@ -234,7 +283,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 		String articleId = uri.getPathSegments().get(1);
 		return mDb.update(ARTICLES_TABLE_NAME, values, BaseColumns._ID +" = "+ articleId, null);
 	}
-	
+
 	public void insertEntryForCategory(ArrayList<ContentValues> values, long catId) {
 		ContentValues categoryArticle;
 		for (ContentValues value: values) {
@@ -250,7 +299,32 @@ public class ArticleProvider extends RESTfulContentProvider {
 		// notify cursor
         getContext().getContentResolver().notifyChange(ContentUris.withAppendedId(Article.ARTICLES_URI, catId), null);
 	}
-	
+
+	public void insertEntryForSearch(Uri uri, ArrayList<ContentValues> values, long searchId) {
+		ContentValues searchArticle;
+		for (ContentValues value: values) {
+			searchArticle = new ContentValues();
+			searchArticle.put("search", searchId);
+			searchArticle.put("article", value.getAsInteger(BaseColumns._ID));
+			try {
+				mDb.insertOrThrow(SEARCH_ARTICLES_TABLE_NAME, null, searchArticle);
+			} catch (SQLException e) {
+				// do nothing
+			}
+		}
+		// notify cursor
+        getContext().getContentResolver().notifyChange(uri, null);
+	}
+
+	/**
+	 * Create a new Search entry and return the id
+	 */
+	public long insertSearch(Uri uri) {
+		ContentValues values = new ContentValues();
+		values.put(Search.URI_NAME, uri.toString());
+		return mDb.insertOrThrow(SEARCH_TABLE_NAME, null, values);
+	}
+
 	/**
 	 * Return the URL of the category
 	 */
@@ -260,7 +334,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 		c.moveToFirst();
 		return c;
 	}
-	
+
 	/**
 	 * Return the URL of the article
 	 */
@@ -272,7 +346,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 		c.close();
 		return url;
 	}
-	
+
 	/**
 	 * Return the id
 	 */
@@ -288,7 +362,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 		c.close();
 		return id;
 	}
-	
+
 	/**
 	 * Simple Helper to manipulate the database.
 	 * This is mostly a boilerplate
@@ -329,8 +403,19 @@ public class ArticleProvider extends RESTfulContentProvider {
 	                    Category.FREE_NAME + " INTEGER, " +
 	                    Category.PARENT_NAME + " TEXT);";
 	             sqLiteDatabase.execSQL(qs);
+	             // categories - articles table
 	             qs = "CREATE TABLE "+ CATEGORIES_ARTICLES_TABLE_NAME +" ("+
 	            		 "category INT, article INT, UNIQUE (category, article));";
+	             sqLiteDatabase.execSQL(qs);
+	             // search table
+				qs = "CREATE TABLE "+ SEARCH_TABLE_NAME +" ("+
+						Search._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+						Search.URI_NAME + " TEXT, " +
+						Search.NB_RESULT_NAME +" INTEGER);";
+	             sqLiteDatabase.execSQL(qs);
+	             // search - articles table
+	             qs = "CREATE TABLE "+ SEARCH_ARTICLES_TABLE_NAME +" ("+
+	            		 "search INT, article INT, UNIQUE (search, article));";
 	             sqLiteDatabase.execSQL(qs);
 	             insertCategories(sqLiteDatabase);
 	        }
@@ -341,9 +426,9 @@ public class ArticleProvider extends RESTfulContentProvider {
 	        {
 	        	Log.d("ASI", "upgrade table");
 	        	String[] tables = new String[] { ARTICLES_TABLE_NAME, CATEGORIES_TABLE_NAME,
-	        				CATEGORIES_ARTICLES_TABLE_NAME };
+	        			CATEGORIES_ARTICLES_TABLE_NAME, SEARCH_TABLE_NAME, SEARCH_ARTICLES_TABLE_NAME };
 	        	for (String table: tables) {
-	        		sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ table + ";");   
+	        		sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ table + ";");
 	        	}
 	            createTable(sqLiteDatabase);
 	        }
@@ -431,22 +516,26 @@ public class ArticleProvider extends RESTfulContentProvider {
 	protected ResponseHandler newResponseHandler(String queryTag) {
 		return null;
 	}
-	
+
 	protected ResponseHandler createArticleResponseHandler() {
 		return new ArticleHandler(this);
 	}
-	
+
 	protected ResponseHandler createRssResponseHandler(long catId, String defaultColor) {
 		return new RssHandler(this, catId, defaultColor);
 	}
-	
+
+	protected ResponseHandler createSearchResponseHandler(Uri uri, long searchId) {
+		return new SearchHandler(this, uri, searchId);
+	}
+
 	class RssHandler implements ResponseHandler {
 		private ArticleProvider provider;
 
 		private long catId;
-		
+
 		private String defaultColor;
-		
+
 		public RssHandler(RESTfulContentProvider restfulProvider, long catId, String defaultColor) {
 			this.provider = (ArticleProvider) restfulProvider;
 			this.catId = catId;
@@ -467,7 +556,7 @@ public class ArticleProvider extends RESTfulContentProvider {
 				Log.e("ASI", "ERROR "+ e.toString());
 			}
 		}
-		
+
 		protected ArrayList<ContentValues> parseContent(HttpEntity entity) throws ParserConfigurationException, IllegalStateException, SAXException, IOException {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();

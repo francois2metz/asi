@@ -82,13 +82,11 @@ public class MainView extends AsiActivity {
 				c.moveToPosition(position);
 				
 				String title = c.getString(c.getColumnIndex(Category.TITLE_NAME));
-				String color = c.getString(c.getColumnIndex(Category.COLOR_NAME));
 				String url = c.getString(c.getColumnIndex(Category.URL_NAME));
 				long id = c.getLong(c.getColumnIndex(BaseColumns._ID));
 
 				if("recherche".equalsIgnoreCase(url)) {
-					String image = c.getString(c.getColumnIndex(Category.IMAGE_NAME));
-					doSearch(title, color, image);
+					doSearch(id);
 				} else {
 					// has subcat ?
 					Cursor subcats = getContentResolver().query(Category.CATEGORIES_URI, null, Category.PARENT_NAME+"="+id, null, null);
@@ -103,8 +101,8 @@ public class MainView extends AsiActivity {
 		});
 	}
 	
-	protected void doSearch(String titre, String color, String image) {
-		new SearchDialog(this, titre, color,image).show();	
+	protected void doSearch(long catId) {
+		new SearchDialog(this, catId).show();
 	}
 
 	private void loadPage(long idCat) {

@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import android.content.ContentUris;
 import android.net.Uri;
+import android.util.Log;
 
 public class Article {
 
@@ -74,43 +75,6 @@ public class Article {
 	 * Disable update
 	 */
 	public static final String UPDATE_PARAM = "update";
-
-	private String title;
-
-	private String description;
-
-	private String uri;
-
-	private String date;
-
-	private String color;
-
-	public Article(String t, String d, String u) {
-		this.title = t;
-		this.description = d;
-		this.uri = u;
-		this.color=null;
-	}
-
-	public Article() {
-		this.title = "T";
-		this.description = "d";
-		this.uri = "";
-		this.date = "";
-		this.color=null;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getDescription() {
-		return description;
-	}
 	
 	public static Uri createUriFor(long id) {
         return ContentUris.withAppendedId(Article.ARTICLE_URI, id);
@@ -120,11 +84,12 @@ public class Article {
 		long id = Integer.parseInt(Uri.parse(url).getQueryParameter("id"));
 		return createUriFor(id);
 	}
-	
+
 	public static String parseDescription(String des) {
 		des = des.replaceAll("\n", "");
 		String[] parse = des.split("<br />");
 		if(parse.length > 1) {
+			// only available in the main rss
 			des = parse[1];
 		}
 		int fin = des.length();
@@ -135,48 +100,11 @@ public class Article {
 		des = des + " ...";
 		return des;
 	}
-	
-	public static String parseColor(String des) {
-		String[] parse = des.split("<br />");
-		if(parse.length > 1) {
-			return determinedColor(parse[0]);
-		}
-		return null;
-	}
 
-	public void setDescription(String des) {
-		des = des.replaceAll("\n", "");
-		String[] parse = des.split("<br />");
-		if(parse.length>1){
-			this.determined_color(parse[0]);
-			des=parse[1];
-		}
-		int fin = des.length();
-		if (fin > 100)
-			fin = 100;
-		des = des.substring(0, fin);
-		des = des.replaceFirst(" \\w+$", "");
-		des = des + " ...";
-		this.description = des;
-	}
-	
-	protected static String determinedColor(String title) {
-		if(title.contains("Vite dit"))
-			return "#FEC763";
-		else if(title.contains("chronique"))
-			return "#FF398E";
-		else if(title.contains("mission"))
-			return "#3A36FF";
-		else if(title.contains("Article"))
-			return "#3399FF";
-		return null;
-	}
-
-	private void determined_color(String title) {
-		this.color = Article.determinedColor(title);
-	}
-
-	public void setDescription_on_recherche(String html) {
+	/**
+	 * TODO: Merge with parseDescription
+	 */
+	public static String parseDescriptionFromSearch(String html) {
 		html = html.replaceAll("\n", "");
 		html = html.replaceAll("\\s+", " ");
 
@@ -186,58 +114,61 @@ public class Article {
 		html = html.substring(0, fin);
 		html = html.replaceFirst(" \\w+$", "");
 		html = html + " ...";
-		this.description = html;
-	}
-
-	public String getUri() {
-		return uri;
-	}
-
-	public void setUri(String uri) {
-		this.uri = uri;
+		return html;
 	}
 	
+	public static String parseColor(String des) {
+		String[] parse = des.split("<br />");
+		if(parse.length > 1) {
+			return determinedColor(parse[0]);
+		}
+		return null;
+	}
+
+	/**
+	 * TODO: merge with determinedColor ?
+	 */
+	public static String parseColorFromSearch(String rec) {
+		if (rec.contains("vite"))
+			return "#FEC763";
+		else if (rec.contains("chro"))
+			return "#FF398E";
+		else if (rec.contains("emi"))
+			return "#3A36FF";
+		else if(rec.contains("doss"))
+			return "#3399FF";
+		return null;
+	}
+	
+	protected static String determinedColor(String title) {
+		if (title.contains("Vite dit"))
+			return "#FEC763";
+		else if (title.contains("chronique"))
+			return "#FF398E";
+		else if (title.contains("mission"))
+			return "#3A36FF";
+		else if (title.contains("Article"))
+			return "#3399FF";
+		return null;
+	}
+
 	public static long parseDate(String date) {
 		// <pubDate>Tue, 31 Aug 2010 19:37:08 +0200</pubDate>
-		SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
+		return parseDateWith("EEE, dd MMM yyyy HH:mm:ss zzz", date);
+	}
+
+	public static long parseDateFromSearch(String date) {
+		// 13/05/2009
+		return parseDateWith("dd/MM/yyyy", date);
+	}
+	
+	protected static long parseDateWith(String formater, String date) {
+		SimpleDateFormat formatter = new SimpleDateFormat(formater, Locale.US);
 		try {
 			return formatter.parse(date).getTime();
 		} catch (ParseException e) {
-			e.printStackTrace();
+			Log.e("ASI", "error when parsing date "+ e.getMessage());
 			return 0;
 		}
 	}
-
-	public void setDate(String dat) {
-		// <pubDate>Tue, 31 Aug 2010 19:37:08 +0200</pubDate>
-		dat = dat.replaceAll("\\+0\\d+", "");
-		this.date = dat.replaceFirst("^.*, ", "");
-	}
-
-	public String getDate() {
-		return date;
-	}
-
-	public void setColor(String color2) {
-		if (this.color == null)
-			this.color = color2;
-	}
-
-	public String getColor() {
-		if(this.color == null)
-			return("#ACB7C6");
-		return color;
-	}
-
-	public void setColorFromSearch(String rec) {
-		if(rec.contains("vite"))
-			this.color = "#FEC763";
-		else if(rec.contains("chro"))
-			this.color = "#FF398E";
-		else if(rec.contains("emi"))
-			this.color = "#3A36FF";
-		else if(rec.contains("doss"))
-			this.color = "#3399FF";
-	}
-
 }
