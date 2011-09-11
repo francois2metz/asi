@@ -62,6 +62,9 @@ public class SearchDialog extends AlertDialog.Builder {
 		this.setTitle(R.string.search);
 		this.setPositiveButton(R.string.search_launch, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
+				if ("".equalsIgnoreCase(searchField.getText().toString())) {
+					return;
+				}
 				try {
 					Intent i = new Intent(mContext, ArticlesListSearch.class);
 					Uri searchUri = SearchDialog.this.getSearchUri();
@@ -74,7 +77,7 @@ public class SearchDialog extends AlertDialog.Builder {
 							.show();
 					dialog.cancel();
 				}
-				Log.d("ASI","recherche "+searchField.getText());
+				Log.d("ASI","search "+searchField.getText());
 				dialog.cancel();
 			}
 		});
