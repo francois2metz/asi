@@ -21,24 +21,6 @@ public class ReloadActivity extends AsiActivity {
 	
 	protected auto_updated update;
 	
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		MenuInflater inflater = getMenuInflater();
-//		inflater.inflate(R.layout.download_menu, menu);
-//		return true;
-//	}
-//
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		// Handle item selection
-//		switch (item.getItemId()) {
-//		case R.id.download_item:
-//			this.load_data();
-//			return true;
-//		default:
-//			return super.onOptionsItemSelected(item);
-//		}
-//	}
-	
-	
 	public void onPause(){
 		super.onPause();
 		update.stop_update();

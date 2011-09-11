@@ -41,8 +41,6 @@ public class VideoView2 extends Activity {
 		Log.d("ASI", "video_Oncreate");
 		setContentView(R.layout.video);
 
-		// Récupération de la listview créée dans le fichier main.xml
-		// mywebview = (WebView) this.findViewById(R.id.WebViewperso);
 		video = (VideoView) findViewById(R.id.myvideo);
 		control = new MediaController(this);
 		new get_video_url().execute(this.getIntent().getExtras().getString(
@@ -87,7 +85,6 @@ public class VideoView2 extends Activity {
 		video.seekTo(current_position);
 		video.start();
 		Log.d("ASI", "Position : " + current_position);
-		// new loading_video().execute(video);
 	}
 
 	//	
